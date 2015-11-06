@@ -2,6 +2,7 @@ var app = require('express')();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var path = require('path');
+var express = require('express');
 
 app.get('/', function(req, res){
 	res.sendfile('index.html');
@@ -14,6 +15,8 @@ app.get('/spritesheet.png', function (req, res) {
 app.get('/gameClass.js', function (req, res) {
     res.sendfile(__dirname + '\\gameClass.js');
 });
+
+app.use(express.static('public'));
 
 var mySocket;
 
@@ -28,10 +31,6 @@ io.on('connection', function(socket){
 	
 	mySocket = socket;
 });
-
-setTimeout(function(){
-	mySocket.emit('message', 'Yo');
-}, 3000);
 
 http.listen(3000, function(){
 	console.log('listening on *:3000');

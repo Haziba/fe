@@ -9,7 +9,16 @@
 	console.log(e);
   });
 </script>
-<script src="gameClass.js"></script>
+<script src="js/pubsub.js"></script>
+<script src="js/spriteHandler.js"></script>
+<script src="js/inputHandler.js"></script>
+<script src="js/control.js"></script>
+<script src="js/gameClass.js"></script>
+<script src="js/tileManager.js"></script>
+<script src="js/tile.js"></script>
+<script src="js/soldierManager.js"></script>
+<script src="js/soldier.js"></script>
+<script src="js/stageManager.js"></script>
 <script>
 	$(function(){
 		var canvas = $("#gameCanvas")[0];
@@ -22,7 +31,9 @@
 		
 		var sprite = new Image();
 		sprite.onload = function(){
-			StartGame(context, sprite);
+			InputHandler.Initialise(canvas);
+			SpriteHandler.Initialise(context, sprite);
+			StartGame();
 		};
 		sprite.src = "spritesheet.png";
 	});
