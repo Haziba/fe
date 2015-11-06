@@ -36,7 +36,7 @@ var InputHandler = {
 			e.preventDefault();
 		});
 	},
-     
+    
     Update: function(){
         this.prevMouseDown = this.mouseDown;
     },

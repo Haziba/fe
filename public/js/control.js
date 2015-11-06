@@ -1,5 +1,5 @@
 var NewControl = function(){
-	var _me = {};
+	var _me = {id: makeid()};
 	
 	var tileHighlight = {x: 0, y: 0};
 	

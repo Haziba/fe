@@ -1,10 +1,10 @@
-var NewSoldier = function(x, y, soldierType, team)
+var NewSoldier = function(_position, _soldierType, _team)
 {
-	var _me = {};
+	var _me = {id: makeid()};
 	var _selected = false;
 	
 	var GetSprite = function(){
-		switch(soldierType)
+		switch(_soldierType)
 		{
 			case Soldier.SWORD:
 				return Sprite.SWORD;
@@ -16,7 +16,7 @@ var NewSoldier = function(x, y, soldierType, team)
 	}
 	
 	_me.GetPosition = function(){
-		return {x: x, y: y};
+		return {x: _position.x, y: _position.y};
 	}
 	
 	_me.Deselect = function(){
@@ -27,12 +27,25 @@ var NewSoldier = function(x, y, soldierType, team)
 		_selected = true;
 	}
 	
-	_me.Draw = function(){
-		SpriteHandler.Draw(GetSprite(), {x: x * 20, y: y * 20});
+	_me.SelectGround = function(position){
+		if(!_selected)
+			return;
 		
-		SpriteHandler.Draw(team == Team.ENEMY ? Sprite.YOUR_UNIT : Sprite.THEIR_UNIT, {x: x * 20, y: y * 20});
+		_position = {x: position.x, y: position.y};
+		
+		window.bus.pub('soldier move', _me);
+	}
+	
+	_me.Update = function(){
+		// not currently needed
+	}
+	
+	_me.Draw = function(){
+		SpriteHandler.Draw(GetSprite(), {x: _position.x * 20, y: _position.y * 20});
+		
+		SpriteHandler.Draw(_team == Team.ENEMY ? Sprite.YOUR_UNIT : Sprite.THEIR_UNIT, {x: _position.x * 20, y: _position.y * 20});
 		if(_selected)
-			SpriteHandler.Draw(Sprite.SELECTION, {x: x * 20, y: y * 20});
+			SpriteHandler.Draw(Sprite.SELECTION, {x: _position.x * 20, y: _position.y * 20});
 	}
 	
 	window.bus.pub('soldier place', _me);

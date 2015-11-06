@@ -7,10 +7,21 @@ var StartGame = function()
 	
 	var _control = NewControl();
 	
+	var updateRunning = false;
+	
 	setInterval(function(){
+		if(updateRunning)
+			return;
+			
+		updateRunning = true;
+		
 		_tileManager.Update();
 		_soldierManager.Update();
 		_control.Update();
+		
+		InputHandler.Update();
+		
+		updateRunning = false;
 	}, 1 / 30);
 	
 	var Draw = function(){
@@ -25,4 +36,15 @@ var StartGame = function()
 	}
 	
 	window.requestAnimationFrame(Draw);
+}
+
+function makeid()
+{
+    var text = "";
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+    for( var i=0; i < 4; i++ )
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+    return text;
 }
