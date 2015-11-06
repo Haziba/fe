@@ -6,6 +6,9 @@ var NewControl = function(){
 	_me.Update = function(){
 		tileHighlight.x = Math.floor(InputHandler.MousePosition().x / 20);
 		tileHighlight.y = Math.floor(InputHandler.MousePosition().y / 20);
+		
+		if(InputHandler.MouseClicked())
+			window.bus.pub('cursor click', tileHighlight);
 	}
 	
 	_me.Draw = function(){

@@ -1,7 +1,9 @@
 var NewStageManager = function() {
+	var _me = {};
+
 	var oldSoldierPositions = {};
-	
 	var tiles = [];
+	var currentSelection;
 	
 	for(var i = 0; i < 35; i++) {
 		tiles[i] = [];
@@ -25,7 +27,27 @@ var NewStageManager = function() {
 		tiles[newPosition.x][newPosition.y] = soldier;
 		
 		oldSoldierPositions[soldier] = newPosition;
-		
-		debugger;
 	});
+	
+	window.bus.sub('cursor click', function(position){
+		if(!tiles[position.x][position.y])
+			return;
+		
+		if(currentSelection)
+			currentSelection.Deselect();
+		tiles[position.x][position.y].Select();
+		
+		currentSelection = tiles[position.x][position.y];
+	});
+	
+	_me.Draw = function(){
+		if(!currentSelection)
+			return;
+	
+		var selectionPosition = currentSelection.GetPosition();
+		
+		SpriteHandler.Draw(Sprite.SELECTION, selectionPosition.x, selectionPosition.y);
+	}
+	
+	return _me;
 }

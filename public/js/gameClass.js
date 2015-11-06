@@ -19,6 +19,7 @@ var StartGame = function()
 		_tileManager.Draw();
 		_soldierManager.Draw();
 		_control.Draw();
+		_stageManager.Draw();
 		
 		window.requestAnimationFrame(Draw);
 	}
