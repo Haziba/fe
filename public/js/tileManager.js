@@ -1,5 +1,5 @@
 var NewTileManager = function(){
-	var _me = {};
+	var _me = {id: makeid()};
 	
 	var _tiles = [];
 	
