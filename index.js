@@ -1,6 +1,5 @@
 var app = require('express')();
-var http = require('http').Server(app);
-var io = require('socket.io')(http);
+var http = require('http');
 var path = require('path');
 var express = require('express');
 
@@ -20,6 +19,18 @@ app.use(express.static('public'));
 
 var sockets = {};
 var teams = [0, 1];
+
+app.set('port', process.env.OPENSHIFT_NODEJS_PORT || process.env.PORT || 3000);
+app.set('ip', process.env.OPENSHIFT_NODEJS_IP || "127.0.0.1");
+
+
+var server = http.Server(app);
+
+server.listen(app.get('port') ,app.get('ip'), function () {
+	console.log('listening on *:' + app.get('port'));
+});
+
+var io = require('socket.io')(server);
 
 io.on('connection', function(socket){
 	var socketId;
@@ -53,8 +64,4 @@ io.on('connection', function(socket){
 				sockets[s].s.emit('update', message);
 			}
 	});
-});
-
-http.listen(8080, function(){
-	console.log('listening on *:8080');
 });
