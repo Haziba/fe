@@ -1,5 +1,5 @@
 var NewTile = function(x, y, tileType) {
-	var _me = {id: makeid()};
+	var _me = {id: Global.NewId()};
 	
 	var GetSprite = function(){
 		switch(tileType)

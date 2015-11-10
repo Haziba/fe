@@ -13,7 +13,9 @@ window.bus = {
 		if(!this.eventHandlers[event])
 			return;
 		
+		var data = [].splice.call(arguments, 1);
+		
 		for(var i = 0; i < this.eventHandlers[event].length; i++)
-			this.eventHandlers[event][i].apply(null, [].splice.call(arguments, 1));
+			this.eventHandlers[event][i].apply(null, data);
 	}
 }

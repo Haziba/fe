@@ -1,15 +1,9 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
 <script src="/socket.io/socket.io.js"></script>
-<script>
-  var socket = io();
-  
-  socket.emit('message', 'I am alive');
-  
-  socket.on('message', function(e){
-	console.log(e);
-  });
-</script>
+<script src="js/global.js"></script>
 <script src="js/pubsub.js"></script>
+<script src="js/socketManager.js"></script>
+<script src="js/tileHelper.js"></script>
 <script src="js/spriteHandler.js"></script>
 <script src="js/inputHandler.js"></script>
 <script src="js/control.js"></script>
@@ -29,12 +23,26 @@
 		context.width = 800;
 		context.height = 600;
 		
+		var spritesInitialised, team;
+		
 		var sprite = new Image();
 		sprite.onload = function(){
 			InputHandler.Initialise(canvas);
 			SpriteHandler.Initialise(context, sprite);
-			StartGame();
+			
+			spritesInitialised = true;
+			
+			if(team)
+				StartGame(team);
 		};
+		
+		window.bus.sub('socket init', function(data){
+			team = data.team;
+			
+			if(spritesInitialised)
+				StartGame(team);
+		});
+		
 		sprite.src = "spritesheet.png";
 	});
 </script>

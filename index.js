@@ -18,18 +18,41 @@ app.get('/gameClass.js', function (req, res) {
 
 app.use(express.static('public'));
 
-var mySocket;
+var sockets = {};
+var teams = [0, 1];
 
 io.on('connection', function(socket){
-	console.log('a user has connected');
+	var socketId;
+	
 	socket.on('disconnect', function(){
-		console.log('a user has disconnected');
-	});
-	socket.on('message', function(msg){
-		console.log(msg);
+		if(sockets[socketId])
+			teams.push(sockets[socketId].team);
+		
+		delete sockets[socketId];
 	});
 	
-	mySocket = socket;
+	socket.on('init', function(msg){
+		socketId = msg.id;
+		
+		console.log("connected", msg.id);
+		
+		var team = teams.splice(Math.floor(Math.random() * teams.length), 1)[0];
+		
+		socket.emit('init', {team: team});
+		
+		sockets[socketId] = {team: team, s: socket};
+	});
+	
+	socket.on('update', function(message){
+		message.event = 'socket ' + message.event;
+		
+		for(var s in sockets)
+			if(sockets[s].s !== socket)
+			{
+				console.log("Emit", s, message);
+				sockets[s].s.emit('update', message);
+			}
+	});
 });
 
 http.listen(3000, function(){

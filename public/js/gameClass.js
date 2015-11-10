@@ -1,9 +1,9 @@
-var StartGame = function()
+var StartGame = function(team)
 {
 	var _stageManager = NewStageManager();
 	
 	var _tileManager = NewTileManager();
-	var _soldierManager = NewSoldierManager();
+	var _soldierManager = NewSoldierManager(team);
 	
 	var _control = NewControl();
 	
@@ -36,15 +36,4 @@ var StartGame = function()
 	}
 	
 	window.requestAnimationFrame(Draw);
-}
-
-function makeid()
-{
-    var text = "";
-    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-
-    for( var i=0; i < 4; i++ )
-        text += possible.charAt(Math.floor(Math.random() * possible.length));
-
-    return text;
 }

@@ -1,5 +1,5 @@
 var NewControl = function(){
-	var _me = {id: makeid()};
+	var _me = {id: Global.NewId()};
 	
 	var tileHighlight = {x: 0, y: 0};
 	
