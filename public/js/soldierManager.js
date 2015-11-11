@@ -12,6 +12,14 @@ var NewSoldierManager = function(units, teamNum){
 				_soldiers[i].MoveTo(data.pos);
 	});
 	
+	window.bus.sub('soldier fight resolve', function(data){
+		for(var unit in data){
+			for(var i = 0; i < _soldiers.length; i++)
+				if(_soldiers[i].id == data[unit].id)
+					_soldiers[i].ResolveCombat(data[unit]);
+		}
+	});
+	
 	_me.Update = function(){
 		for(var i = 0; i < _soldiers.length; i++)
 			_soldiers[i].Update();

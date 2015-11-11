@@ -116,10 +116,43 @@ io.on('connection', function(socket){
 		message.event = 'socket ' + message.event;
 		
 		for(var player in game.players)
-			if(player !== userId && game.players[player].connected)
-			{
+			if(player !== userId && game.players[player].connected){
 				console.log("Send to", player, message);
 				sockets[player].emit('update', message);
 			}
 	});
+	
+	socket.on('process', function(message){
+		console.log(message);
+		switch(message.event){
+			case 'soldier fight start':
+				ResolveFight(message.data);
+				break;
+		}
+	});
 });
+
+var ResolveFight = function(combatants){
+	var myUnit, enemyUnit;
+	
+	for(var i = 0; i < game.units.length; i++) {
+		if(game.units[i].id == combatants.me.id)
+			myUnit = game.units[i];
+		if(game.units[i].id == combatants.enemy.id)
+			enemyUnit = game.units[i];
+	}
+	
+	enemyUnit.stats.health -= myUnit.stats.strength;
+	
+	if(enemyUnit.stats.health > 0)
+		myUnit.stats.health -= enemyUnit.stats.strength;
+	
+	var units = {};
+	units[myUnit.id] = myUnit;
+	units[enemyUnit.id] = enemyUnit;
+	
+	for(var player in game.players)
+		if(game.players[player].connected){
+			sockets[player].emit('process', {event: 'soldier fight resolve', data: units});
+		}
+}

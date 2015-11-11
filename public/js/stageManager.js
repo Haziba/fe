@@ -13,7 +13,10 @@ var NewStageManager = function(initData) {
 	
 	var SelectUnit = function(unit){
 		if(!unit.Selectable())
+		{
+			_currentSelection.SelectUnit(unit);
 			return;
+		}
 		
 		if(_currentSelection)
 			_currentSelection.Deselect();

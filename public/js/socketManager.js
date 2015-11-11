@@ -21,6 +21,14 @@ window.bus.sub('soldier move', function(soldier){
 		socket.emit('update', {event: 'soldier move', data: {id: soldier.id, pos: soldier.GetPosition()}});
 });
 
+window.bus.sub('soldier fight start', function(combatants){
+	socket.emit('process', {event: 'soldier fight start', data: combatants});
+});
+
 socket.on('update', function(message){
+	window.bus.pub(message.event, message.data);
+});
+
+socket.on('process', function(message){
 	window.bus.pub(message.event, message.data);
 });

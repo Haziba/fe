@@ -23,10 +23,6 @@ var NewSoldier = function(initUnit, teamNum)
 		}
 	}
 	
-	_me.GetPosition = function(){
-		return {x: _position.x, y: _position.y};
-	}
-	
 	_me.Deselect = function(){
 		_selected = false;
 		
@@ -66,9 +62,16 @@ var NewSoldier = function(initUnit, teamNum)
 		
 		for(var i = 0; i < _availableMoves.length; i++)
 			if(_availableMoves[i].x == position.x && _availableMoves[i].y == position.y)
-			{
 				_me.MoveTo(position);
-			}
+		
+		_me.Deselect();
+	}
+	
+	_me.SelectUnit = function(unit){
+		if(!_selected)
+			return;
+		
+		window.bus.pub('soldier fight start', {me: _me, enemy: unit});
 		
 		_me.Deselect();
 	}
@@ -77,6 +80,10 @@ var NewSoldier = function(initUnit, teamNum)
 		_position = {x: position.x, y: position.y};
 
 		window.bus.pub('soldier move', _me);
+	}
+	
+	_me.ResolveCombat = function(unit){
+		_stats.health = unit.stats.health;
 	}
 	
 	_me.MovementRange = function(){
@@ -93,6 +100,10 @@ var NewSoldier = function(initUnit, teamNum)
 	
 	_me.Team = function(){
 		return _team;
+	}
+	
+	_me.GetPosition = function(){
+		return {x: _position.x, y: _position.y};
 	}
 	
 	_me.Update = function(){
