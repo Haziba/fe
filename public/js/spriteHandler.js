@@ -14,6 +14,11 @@ var SpriteHandler = {
 	
 	DrawInRect: function(spriteId, location, rect){
 		this.context.drawImage(this.spriteSheet, spriteId.x * 40 + rect.x, spriteId.y * 40 + rect.y, rect.width, rect.height, location.x, location.y, rect.width / (40 / Global.TileSize()), rect.height / (40 / Global.TileSize()));
+	},
+	
+	//todo: Move this elsewhere, shouldn't live here
+	GetContext: function(){
+		return this.context;
 	}
 }
 

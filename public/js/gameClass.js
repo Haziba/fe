@@ -3,9 +3,11 @@ var StartGame = function(initData)
 	var _stageManager = NewStageManager(initData);
 	
 	var _tileManager = NewTileManager(initData);
+	// todo: Just pass through initData
 	var _soldierManager = NewSoldierManager(initData.units, initData.players[socketId].team);
 	
-	var _control = NewControl();
+	var _control = NewControl(initData);
+	var _hud = NewHUD(initData);
 	
 	var updateRunning = false;
 	
@@ -17,7 +19,9 @@ var StartGame = function(initData)
 		
 		_tileManager.Update();
 		_soldierManager.Update();
+		
 		_control.Update();
+		_hud.Update();
 		
 		InputHandler.Update();
 		
@@ -29,8 +33,9 @@ var StartGame = function(initData)
 		
 		_tileManager.Draw();
 		_soldierManager.Draw();
-		_control.Draw();
 		_stageManager.Draw();
+		_control.Draw();
+		_hud.Draw();
 		
 		window.requestAnimationFrame(Draw);
 	}

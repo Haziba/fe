@@ -12,6 +12,7 @@ app.use(express.static('public'));
 var sockets = {};
 
 var game = {
+	state: 0, //todo: Make game state enum available here
 	players: {
 		'Harry': {
 			connected: false,
@@ -26,7 +27,7 @@ var game = {
 		{
 			id: 'Holmes',
 			pos: {x: 3, y: 6},
-			type: 1, // Make soldier types enum available here
+			type: 1, //todo: Make soldier types enum available here
 			team: 0,
 			stats: {
 				health: 18,
@@ -142,10 +143,10 @@ var ResolveFight = function(combatants){
 			enemyUnit = game.units[i];
 	}
 	
-	enemyUnit.stats.health -= myUnit.stats.strength;
+	enemyUnit.stats.health = Math.max(enemyUnit.stats.health - myUnit.stats.strength, 0);
 	
 	if(enemyUnit.stats.health > 0)
-		myUnit.stats.health -= enemyUnit.stats.strength;
+		myUnit.stats.health = Math.max(myUnit.stats.health - enemyUnit.stats.strength, 0);
 	
 	var units = {};
 	units[myUnit.id] = myUnit;
@@ -155,4 +156,34 @@ var ResolveFight = function(combatants){
 		if(game.players[player].connected){
 			sockets[player].emit('process', {event: 'soldier fight resolve', data: units});
 		}
+	
+	if(myUnit.stats.health == 0 || enemyUnit.stats.health == 0)
+		CheckForGameEnd();
+}
+
+var CheckForGameEnd = function(){
+	var remainingZero = RemainingLivingUnitsFor(0);
+	var remainingOne = RemainingLivingUnitsFor(1);
+	
+	if(remainingZero == 0 && remainingOne == 0)
+		game.state = 3;
+	else if(remainingZero == 0)
+		game.state = 2;
+	else if(remainingOne == 0)
+		game.state = 1;
+	
+	if(game.state != 0)
+		for(var player in game.players)
+			if(game.players[player].connected)
+				sockets[player].emit('update', {event: 'game state change', data: game.state});
+}
+
+var RemainingLivingUnitsFor = function(team){
+	var remaining = 0;
+	
+	for(var i = 0; i < game.units.length; i++)
+		if(game.units[i].team == team && game.units[i].stats.health > 0)
+			remaining++;
+	
+	return remaining;
 }
