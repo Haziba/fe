@@ -12,6 +12,10 @@ var NewHUD = function(initData){
 	});
 	
 	_me.Update = function(){
+		if(_gameState != 0){
+			if(InputHandler.MouseClicked())
+				window.bus.pub('game reset start');
+		}
 	}
 	
 	_me.Draw = function(){

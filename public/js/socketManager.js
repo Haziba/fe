@@ -25,6 +25,10 @@ window.bus.sub('soldier fight start', function(combatants){
 	socket.emit('process', {event: 'soldier fight start', data: combatants});
 });
 
+window.bus.sub('game reset start', function(){
+	socket.emit('process', {event: 'game reset start'});
+});
+
 socket.on('update', function(message){
 	window.bus.pub(message.event, message.data);
 });

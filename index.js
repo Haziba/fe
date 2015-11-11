@@ -11,64 +11,6 @@ app.use(express.static('public'));
 
 var sockets = {};
 
-var game = {
-	state: 0, //todo: Make game state enum available here
-	players: {
-		'Harry': {
-			connected: false,
-			team: 0
-		},
-		'Laurie': {
-			connected: false,
-			team: 1
-		}
-	},
-	units: [
-		{
-			id: 'Holmes',
-			pos: {x: 3, y: 6},
-			type: 1, //todo: Make soldier types enum available here
-			team: 0,
-			stats: {
-				health: 18,
-				maxHealth: 18,
-				strength: 4
-			}
-		},
-		{
-			id: 'Ace',
-			pos: {x: 3, y: 8},
-			type: 0,
-			team: 1,
-			stats: {
-				health: 18,
-				maxHealth: 18,
-				strength: 4
-			}
-		}
-	],
-	map: [[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-		  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-		  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-		  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-		  [1,0,0,1,1,1,1,0,1,1,1,1,0,0,1],
-		  [1,0,1,0,0,0,0,0,0,0,0,0,1,0,1],
-		  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-		  [1,0,0,0,0,0,1,0,1,0,0,0,0,0,1],
-		  [1,0,0,1,1,1,1,0,1,1,1,1,0,0,1],
-		  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-		  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-		  [1,0,0,1,1,1,1,0,1,1,1,1,0,0,1],
-		  [1,0,0,0,0,0,1,0,1,0,0,0,0,0,1],
-		  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-		  [1,0,1,0,0,0,0,0,0,0,0,0,1,0,1],
-		  [1,0,0,1,1,1,1,0,1,1,1,1,0,0,1],
-		  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-		  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-		  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-		  [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]]
-};
-
 app.set('port', process.env.OPENSHIFT_NODEJS_PORT || process.env.PORT || 3000);
 app.set('ip', process.env.OPENSHIFT_NODEJS_IP || "127.0.0.1");
 
@@ -129,9 +71,80 @@ io.on('connection', function(socket){
 			case 'soldier fight start':
 				ResolveFight(message.data);
 				break;
+			case 'game reset start':
+				ResetGame();
+				break;
 		}
 	});
 });
+
+var ResetGame = function(){
+	game = InitGame(game);
+	
+	for(var player in game.players)
+		if(game.players[player].connected)
+			sockets[player].emit('process', {event: 'game reset resolve', data: game});
+}
+
+var InitGame = function(lastGame){
+	return {
+		state: 0, //todo: Make game state enum available here
+		players: {
+			'Harry': {
+				connected: lastGame ? lastGame.players['Harry'].connected : false,
+				team: 0
+			},
+			'Laurie': {
+				connected: lastGame ? lastGame.players['Laurie'].connected : false,
+				team: 1
+			}
+		},
+		units: [
+			{
+				id: 'Holmes',
+				pos: {x: 3, y: 6},
+				type: 1, //todo: Make soldier types enum available here
+				team: 0,
+				stats: {
+					health: 18,
+					maxHealth: 18,
+					strength: 4
+				}
+			},
+			{
+				id: 'Ace',
+				pos: {x: 3, y: 8},
+				type: 0,
+				team: 1,
+				stats: {
+					health: 18,
+					maxHealth: 18,
+					strength: 4
+				}
+			}
+		],
+		map: [[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+			  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+			  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+			  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+			  [1,0,0,1,1,1,1,0,1,1,1,1,0,0,1],
+			  [1,0,1,0,0,0,0,0,0,0,0,0,1,0,1],
+			  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+			  [1,0,0,0,0,0,1,0,1,0,0,0,0,0,1],
+			  [1,0,0,1,1,1,1,0,1,1,1,1,0,0,1],
+			  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+			  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+			  [1,0,0,1,1,1,1,0,1,1,1,1,0,0,1],
+			  [1,0,0,0,0,0,1,0,1,0,0,0,0,0,1],
+			  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+			  [1,0,1,0,0,0,0,0,0,0,0,0,1,0,1],
+			  [1,0,0,1,1,1,1,0,1,1,1,1,0,0,1],
+			  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+			  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+			  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+			  [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]]
+	};
+}
 
 var ResolveFight = function(combatants){
 	var myUnit, enemyUnit;
@@ -187,3 +200,5 @@ var RemainingLivingUnitsFor = function(team){
 	
 	return remaining;
 }
+
+var game = InitGame();

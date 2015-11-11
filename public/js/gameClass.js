@@ -9,13 +9,24 @@ var StartGame = function(initData)
 	var _control = NewControl(initData);
 	var _hud = NewHUD(initData);
 	
-	var updateRunning = false;
+	// update mutex
+	var _updateRunning = false;
+	
+	window.bus.sub('game reset resolve', function(data){
+		_stageManager = NewStageManager(data);
+		
+		_tileManager = NewTileManager(data);
+		_soldierManager = NewSoldierManager(data.units, data.players[socketId].team);
+
+		_control = NewControl(data);
+		_hud = NewHUD(data);
+	});
 	
 	setInterval(function(){
-		if(updateRunning)
+		if(_updateRunning)
 			return;
 			
-		updateRunning = true;
+		_updateRunning = true;
 		
 		_tileManager.Update();
 		_soldierManager.Update();
@@ -25,7 +36,7 @@ var StartGame = function(initData)
 		
 		InputHandler.Update();
 		
-		updateRunning = false;
+		_updateRunning = false;
 	}, 1 / 30);
 	
 	var Draw = function(){
