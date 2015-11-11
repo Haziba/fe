@@ -4,15 +4,15 @@ var NewControl = function(){
 	var tileHighlight = {x: 0, y: 0};
 	
 	_me.Update = function(){
-		tileHighlight.x = Math.floor(InputHandler.MousePosition().x / 20);
-		tileHighlight.y = Math.floor(InputHandler.MousePosition().y / 20);
+		tileHighlight.x = Math.floor(InputHandler.MousePosition().x / Global.TileSize());
+		tileHighlight.y = Math.floor(InputHandler.MousePosition().y / Global.TileSize());
 		
 		if(InputHandler.MouseClicked())
 			window.bus.pub('cursor click', tileHighlight);
 	}
 	
 	_me.Draw = function(){
-		SpriteHandler.Draw(Sprite.CURSOR, {x: tileHighlight.x * 20, y: tileHighlight.y * 20});
+		SpriteHandler.Draw(Sprite.CURSOR, {x: tileHighlight.x * Global.TileSize(), y: tileHighlight.y * Global.TileSize()});
 	}
 	
 	return _me;

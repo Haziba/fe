@@ -9,7 +9,11 @@ var SpriteHandler = {
 	},
 	
 	Draw: function(spriteId, location){
-		this.context.drawImage(this.spriteSheet, spriteId.x * 40, spriteId.y * 40, 40, 40, location.x, location.y, 20, 20);
+		this.context.drawImage(this.spriteSheet, spriteId.x * 40, spriteId.y * 40, 40, 40, location.x, location.y, Global.TileSize(), Global.TileSize());
+	},
+	
+	DrawInRect: function(spriteId, location, rect){
+		this.context.drawImage(this.spriteSheet, spriteId.x * 40 + rect.x, spriteId.y * 40 + rect.y, rect.width, rect.height, location.x, location.y, rect.width / (40 / Global.TileSize()), rect.height / (40 / Global.TileSize()));
 	}
 }
 

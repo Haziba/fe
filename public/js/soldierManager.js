@@ -1,10 +1,10 @@
-var NewSoldierManager = function(teamNum){
+var NewSoldierManager = function(units, teamNum){
 	var _me = {id: Global.NewId()};
 	
 	var _soldiers = [];
 	
-	_soldiers.push(NewSoldier({x: 2, y: 4}, Soldier.SWORD, teamNum == 0 ? Team.ME : Team.ENEMY));
-	_soldiers.push(NewSoldier({x: 2, y: 7}, Soldier.AXE, teamNum == 0 ? Team.ENEMY : Team.ME));
+	for(var i = 0; i < units.length; i++)
+		_soldiers.push(NewSoldier(units[i], teamNum));
 	
 	window.bus.sub('socket soldier move', function(data){
 		for(var i = 0; i < _soldiers.length; i++)

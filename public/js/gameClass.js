@@ -1,9 +1,9 @@
-var StartGame = function(team)
+var StartGame = function(initData)
 {
-	var _stageManager = NewStageManager();
+	var _stageManager = NewStageManager(initData);
 	
-	var _tileManager = NewTileManager();
-	var _soldierManager = NewSoldierManager(team);
+	var _tileManager = NewTileManager(initData);
+	var _soldierManager = NewSoldierManager(initData.units, initData.players[socketId].team);
 	
 	var _control = NewControl();
 	

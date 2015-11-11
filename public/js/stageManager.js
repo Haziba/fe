@@ -1,14 +1,14 @@
-var NewStageManager = function() {
+var NewStageManager = function(initData) {
 	var _me = {id: Global.NewId()};
 
 	var _oldSoldierPositions = {};
 	var _tiles = [];
 	var _currentSelection;
 	
-	for(var i = 0; i < 35; i++) {
+	for(var i = 0; i < Global.ScreenSize().width; i++) {
 		_tiles[i] = [];
-		for(var j = 0; j < 25; j++)
-			_tiles[i][j] = undefined;
+		for(var j = 0; j < Global.ScreenSize().height; j++)
+			_tiles[i][j] = initData.map[i][j] == 1 ? true : undefined;
 	}
 	
 	var SelectUnit = function(unit){

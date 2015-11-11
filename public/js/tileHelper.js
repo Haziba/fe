@@ -9,7 +9,7 @@ TileHelper = {
 		var CheckTile = function(currentTile, shift){
 			var newTile = {pos: {x: currentTile.pos.x + shift.x, y: currentTile.pos.y + shift.y}, h: currentTile.h + 1};
 			
-			if(newTile.h >= range || newTile.pos.x < 0 || newTile.pos.x >= tiles.length || newTile.pos.y < 0 || newTile.pos.y >= tiles[0].length)
+			if(newTile.h >= range || newTile.pos.x < 1 || newTile.pos.x >= tiles.length-1 || newTile.pos.y < 1 || newTile.pos.y >= tiles[0].length-1)
 				return;
 			
 			for(var k = 0; k < closed.length; k++)
@@ -37,8 +37,7 @@ TileHelper = {
 		
 		var moves = [];
 		for(var i = 0; i < closed.length; i++)
-			if(!(closed[i].pos.x == pos.x && closed[i].pos.y == pos.y))
-				moves.push(closed[i].pos);
+			moves.push(closed[i].pos);
 		
 		return moves;
 	},

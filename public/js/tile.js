@@ -12,7 +12,7 @@ var NewTile = function(x, y, tileType) {
 	}
 	
 	_me.Draw = function(){
-		SpriteHandler.Draw(GetSprite(), {x: x * 20, y: y * 20});
+		SpriteHandler.Draw(GetSprite(), {x: x * Global.TileSize(), y: y * Global.TileSize()});
 	}
 	
 	return _me;

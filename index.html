@@ -23,7 +23,7 @@
 		context.width = 800;
 		context.height = 600;
 		
-		var spritesInitialised, team;
+		var spritesInitialised, initData;
 		
 		var sprite = new Image();
 		sprite.onload = function(){
@@ -32,18 +32,18 @@
 			
 			spritesInitialised = true;
 			
-			if(team)
-				StartGame(team);
+			if(initData)
+				StartGame(initData);
 		};
 		
 		window.bus.sub('socket init', function(data){
-			team = data.team;
+			initData = data;
 			
 			if(spritesInitialised)
-				StartGame(team);
+				StartGame(initData);
 		});
 		
-		sprite.src = "spritesheet.png";
+		sprite.src = "img/spritesheet.png";
 	});
 </script>
 <canvas id="gameCanvas" style="border: 1px solid #000; width: 800px; height: 600px">
