@@ -41,19 +41,21 @@ var NewSoldier = function(initUnit, teamNum)
 		_displayMoves = [];
 		
 		for(var i = 0; i < _availableMoves.length; i++)
-			if(!(_availableMoves[i].x == _position.x && _availableMoves[i].y == _position.y))
-				_displayMoves.push(_availableMoves[i]);
-		
+			if(!(_availableMoves[i].pos.x == _position.x && _availableMoves[i].pos.y == _position.y))
+				_displayMoves.push(_availableMoves[i].pos);
+				
 		for(var i = 0; i < _availableFights.length; i++) {
+			var fightPos = _availableFights[i].pos;
 			var displayFight = true;
 			for(var j = 0; j < _availableMoves.length; j++)
-				if(_availableFights[i].x == _availableMoves[j].x && _availableFights[i].y == _availableMoves[j].y) {
+				if(fightPos.x == _availableMoves[j].pos.x && fightPos.y == _availableMoves[j].pos.y) {
 					displayFight = false;
 					break;
 				}
 			if(displayFight)
-				_displayFights.push(_availableFights[i]);
+				_displayFights.push(fightPos);
 		}
+		console.log(_displayFights);
 	}
 	
 	_me.SelectGround = function(position){
@@ -61,7 +63,7 @@ var NewSoldier = function(initUnit, teamNum)
 			return;
 		
 		for(var i = 0; i < _availableMoves.length; i++)
-			if(_availableMoves[i].x == position.x && _availableMoves[i].y == position.y)
+			if(_availableMoves[i].pos.x == position.x && _availableMoves[i].pos.y == position.y)
 				_me.MoveTo(position);
 		
 		_me.Deselect();
@@ -71,7 +73,15 @@ var NewSoldier = function(initUnit, teamNum)
 		if(!_selected)
 			return;
 		
-		window.bus.pub('soldier fight start', {me: _me, enemy: unit});
+		var position = unit.GetPosition();
+		
+		for(var i = 0; i < _availableFights.length; i++)
+			if(_availableFights[i].pos.x == position.x && _availableFights[i].pos.y == position.y){
+				debugger;
+				if(!TileHelper.TilesInRange(_position, position, _me.AttackRange()))
+					_me.MoveTo(_availableFights[i].movePos.pos);
+				window.bus.pub('soldier fight start', {me: _me, enemy: unit});
+			}
 		
 		_me.Deselect();
 	}
