@@ -52,7 +52,7 @@ var NewStageManager = function(initData) {
 	});
 	
 	window.bus.sub('cursor click', function(position){
-		if(_tiles[position.x][position.y])
+		if(typeof(_tiles[position.x][position.y]) == 'object')
 			SelectUnit(_tiles[position.x][position.y]);
 		else
 			SelectGround(position);
