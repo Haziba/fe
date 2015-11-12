@@ -1,7 +1,7 @@
 var socketId = Global.QueryStringValue("id");
 
 if(!socketId)
-	socketId =  Global.NewId(true);
+	socketId =  window.location = '/?id=Harry';
 
 var socket = io();
 
