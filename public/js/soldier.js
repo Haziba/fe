@@ -1,6 +1,6 @@
-var NewSoldier = function(initUnit, teamNum)
+var NewSoldier = function(unitId, initUnit, teamNum)
 {
-	var _me = {id: initUnit.id};
+	var _me = {id: unitId};
 	var _selected = false;
 	var _availableFights, _availableMoves;
 	
@@ -77,7 +77,6 @@ var NewSoldier = function(initUnit, teamNum)
 		
 		for(var i = 0; i < _availableFights.length; i++)
 			if(_availableFights[i].pos.x == position.x && _availableFights[i].pos.y == position.y){
-				debugger;
 				if(!TileHelper.TilesInRange(_position, position, _me.AttackRange()))
 					_me.MoveTo(_availableFights[i].movePos.pos);
 				window.bus.pub('soldier fight start', {me: _me, enemy: unit});

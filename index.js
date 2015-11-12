@@ -99,9 +99,8 @@ var InitGame = function(lastGame){
 				team: 1
 			}
 		},
-		units: [
-			{
-				id: 'Holmes',
+		units: {
+			'Holmes': {
 				pos: {x: 3, y: 6},
 				type: 1, //todo: Make soldier types enum available here
 				team: 0,
@@ -111,8 +110,7 @@ var InitGame = function(lastGame){
 					strength: 4
 				}
 			},
-			{
-				id: 'Ace',
+			'Ace': {
 				pos: {x: 3, y: 8},
 				type: 0,
 				team: 1,
@@ -122,7 +120,7 @@ var InitGame = function(lastGame){
 					strength: 4
 				}
 			}
-		],
+		},
 		map: [[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
 			  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
 			  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
@@ -146,15 +144,9 @@ var InitGame = function(lastGame){
 	};
 }
 
-var ResolveFight = function(combatants){
-	var myUnit, enemyUnit;
-	
-	for(var i = 0; i < game.units.length; i++) {
-		if(game.units[i].id == combatants.me.id)
-			myUnit = game.units[i];
-		if(game.units[i].id == combatants.enemy.id)
-			enemyUnit = game.units[i];
-	}
+var ResolveFight = function(combatants){	
+	var myUnit = game.units[combatants.me.id]
+	var enemyUnit = game.units[combatants.enemy.id];
 	
 	enemyUnit.stats.health = Math.max(enemyUnit.stats.health - myUnit.stats.strength, 0);
 	
@@ -162,8 +154,8 @@ var ResolveFight = function(combatants){
 		myUnit.stats.health = Math.max(myUnit.stats.health - enemyUnit.stats.strength, 0);
 	
 	var units = {};
-	units[myUnit.id] = myUnit;
-	units[enemyUnit.id] = enemyUnit;
+	units[combatants.me.id] = myUnit;
+	units[combatants.enemy.id] = enemyUnit;
 	
 	for(var player in game.players)
 		if(game.players[player].connected){
@@ -194,8 +186,8 @@ var CheckForGameEnd = function(){
 var RemainingLivingUnitsFor = function(team){
 	var remaining = 0;
 	
-	for(var i = 0; i < game.units.length; i++)
-		if(game.units[i].team == team && game.units[i].stats.health > 0)
+	for(var unitId in game.units)
+		if(game.units[unitId].team == team && game.units[unitId].stats.health > 0)
 			remaining++;
 	
 	return remaining;
