@@ -4,6 +4,10 @@ var NewHUD = function(initData){
 	var _team = initData.players[socketId].team
 	var _gameState = initData.state;
 	
+	var _endTurnButton = NewButton("End Turn", {x: 20, y: 20}, function(){
+		window.bus.pub('turn end start');
+	})
+	
 	window.bus.sub('game state change', function(gameState){
 		_gameState = gameState;
 		
@@ -15,6 +19,8 @@ var NewHUD = function(initData){
 		if(_gameState != 0){
 			if(InputHandler.MouseClicked())
 				window.bus.pub('game reset start');
+		} else {
+			_endTurnButton.Update();
 		}
 	}
 	
@@ -40,6 +46,7 @@ var NewHUD = function(initData){
 			context.font = '14px Arial black';
 			context.fillText('Click anywhere to restart the game', 400, 320);
 		}
+			_endTurnButton.Draw();
 	}
 	
 	return _me;

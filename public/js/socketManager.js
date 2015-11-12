@@ -29,6 +29,10 @@ window.bus.sub('game reset start', function(){
 	socket.emit('process', {event: 'game reset start'});
 });
 
+window.bus.sub('turn end start', function(){
+	socket.emit('process', {event: 'turn end start'});
+});
+
 socket.on('update', function(message){
 	window.bus.pub(message.event, message.data);
 });

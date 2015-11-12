@@ -144,6 +144,10 @@ var NewSoldier = function(unitId, initUnit, teamNum)
 			SpriteHandler.Draw(Sprite.RED, {x: _displayFights[i].x * Global.TileSize(), y: _displayFights[i].y * Global.TileSize()});
 	}
 	
+	window.bus.sub('end turn resolve', function(){
+		_waiting = true;
+	});
+	
 	window.bus.pub('soldier place', _me);
 	
 	return _me;
