@@ -74,9 +74,24 @@ io.on('connection', function(socket){
 			case 'game reset start':
 				ResetGame();
 				break;
+			case 'turn end start':
+				NextTurn();
+				break;
 		}
 	});
 });
+
+var NextTurn = function(){
+	for(var unitId in game.units)
+		game.units[unitId].waiting = true;
+	
+	game.currentTeam = 1 - game.currentTeam;
+	
+	for(var player in game.players){
+		if(game.players[player].connected)
+			sockets[player].emit('turn end resolve');
+	}
+}
 
 var ResetGame = function(){
 	game = InitGame(game);
@@ -89,6 +104,7 @@ var ResetGame = function(){
 var InitGame = function(lastGame){
 	return {
 		state: 0, //todo: Make game state enum available here
+		currentTeam: 0,
 		players: {
 			'Harry': {
 				connected: lastGame ? lastGame.players['Harry'].connected : false,
@@ -104,6 +120,7 @@ var InitGame = function(lastGame){
 				pos: {x: 3, y: 6},
 				type: 1, //todo: Make soldier types enum available here
 				team: 0,
+				waiting: true,
 				stats: {
 					health: 18,
 					maxHealth: 18,
@@ -114,6 +131,7 @@ var InitGame = function(lastGame){
 				pos: {x: 3, y: 8},
 				type: 0,
 				team: 1,
+				waiting: false,
 				stats: {
 					health: 18,
 					maxHealth: 18,

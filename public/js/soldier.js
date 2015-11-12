@@ -7,6 +7,7 @@ var NewSoldier = function(unitId, initUnit, teamNum)
 	var _position = initUnit.pos;
 	var _soldierType = initUnit.type;
 	var _team = initUnit.team == teamNum;
+	var _waiting = initUnit.waiting;
 	var _stats = initUnit.stats;
 	
 	var _displayMoves, _displayFights;
@@ -104,7 +105,7 @@ var NewSoldier = function(unitId, initUnit, teamNum)
 	}
 	
 	_me.Selectable = function(){
-		return _team == Team.ME;
+		return _team == Team.ME && _waiting;
 	}
 	
 	_me.Team = function(){
@@ -121,6 +122,10 @@ var NewSoldier = function(unitId, initUnit, teamNum)
 	
 	_me.Draw = function(){
 		SpriteHandler.Draw(GetSprite(), {x: _position.x * Global.TileSize(), y: _position.y * Global.TileSize()});
+		
+		if(!_waiting){
+			SpriteHandler.Draw(Sprite.FADE_OUT, {x: _position.x * Global.TileSize(), y: _position.y * Global.TileSize()});
+		}
 		
 		SpriteHandler.Draw(_team == Team.ME ? Sprite.YOUR_UNIT : Sprite.THEIR_UNIT, {x: _position.x * Global.TileSize(), y: _position.y * Global.TileSize()});
 		
