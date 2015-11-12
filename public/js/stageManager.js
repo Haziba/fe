@@ -12,9 +12,9 @@ var NewStageManager = function(initData) {
 	}
 	
 	var SelectUnit = function(unit){
-		if(!unit.Selectable())
-		{
-			_currentSelection.SelectUnit(unit);
+		if(!unit.Selectable()){
+			if(_currentSelection)
+				_currentSelection.SelectUnit(unit);
 			return;
 		}
 		
