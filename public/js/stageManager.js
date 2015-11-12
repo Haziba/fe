@@ -23,8 +23,8 @@ var NewStageManager = function(initData) {
 		
 		_currentSelection = unit;
 		
-		var availableMoves = TileHelper.GetAvailableMoves(_tiles, unit);
-		var availableFights = TileHelper.GetAvailableFights(unit, availableMoves);
+		var availableMoves = unit.CanMove() ? TileHelper.GetAvailableMoves(_tiles, unit) : [{pos: unit.GetPosition()}];
+		var availableFights = unit.CanFight() ? TileHelper.GetAvailableFights(unit, availableMoves) : [];
 		
 		_currentSelection.Select(availableFights, availableMoves);
 	}

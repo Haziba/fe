@@ -50,9 +50,7 @@ io.on('connection', function(socket){
 		console.log(message);
 		switch(message.event){
 			case 'soldier move':
-				for(var i = 0; i < game.units.length; i++)
-					if(game.units[i].id == message.data.id)
-						game.units[i].pos = message.data.pos;
+				game.units[message.data.id].pos = message.data.pos;
 				break;
 		}
 		
@@ -89,7 +87,7 @@ var NextTurn = function(){
 	
 	for(var player in game.players){
 		if(game.players[player].connected)
-			sockets[player].emit('turn end resolve');
+			sockets[player].emit('process', {event: 'turn end resolve'});
 	}
 }
 

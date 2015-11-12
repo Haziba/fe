@@ -12,6 +12,8 @@ var NewSoldier = function(unitId, initUnit, teamNum)
 	
 	var _displayMoves, _displayFights;
 	
+	var _actionsAvailable = {move: true, fight: true};
+	
 	var GetSprite = function(){
 		switch(_soldierType)
 		{
@@ -64,8 +66,13 @@ var NewSoldier = function(unitId, initUnit, teamNum)
 			return;
 		
 		for(var i = 0; i < _availableMoves.length; i++)
-			if(_availableMoves[i].pos.x == position.x && _availableMoves[i].pos.y == position.y)
+			if(_availableMoves[i].pos.x == position.x && _availableMoves[i].pos.y == position.y){
 				_me.MoveTo(position);
+				
+				if(!_actionsAvailable.fight)
+					_waiting = false;
+				_actionsAvailable.move = false;
+			}
 		
 		_me.Deselect();
 	}
@@ -78,9 +85,15 @@ var NewSoldier = function(unitId, initUnit, teamNum)
 		
 		for(var i = 0; i < _availableFights.length; i++)
 			if(_availableFights[i].pos.x == position.x && _availableFights[i].pos.y == position.y){
-				if(!TileHelper.TilesInRange(_position, position, _me.AttackRange()))
+				if(!TileHelper.TilesInRange(_position, position, _me.AttackRange())){
 					_me.MoveTo(_availableFights[i].movePos.pos);
+					_actionsAvailable.move = false;
+				}
 				window.bus.pub('soldier fight start', {me: _me, enemy: unit});
+				
+				if(!_actionsAvailable.move)
+					_waiting = false;
+				_actionsAvailable.fight = false;
 			}
 		
 		_me.Deselect();
@@ -116,6 +129,14 @@ var NewSoldier = function(unitId, initUnit, teamNum)
 		return {x: _position.x, y: _position.y};
 	}
 	
+	_me.CanMove = function(){
+		return _actionsAvailable.move;
+	}
+	
+	_me.CanFight = function(){
+		return _actionsAvailable.fight;
+	}
+	
 	_me.Update = function(){
 		// not currently needed
 	}
@@ -144,8 +165,10 @@ var NewSoldier = function(unitId, initUnit, teamNum)
 			SpriteHandler.Draw(Sprite.RED, {x: _displayFights[i].x * Global.TileSize(), y: _displayFights[i].y * Global.TileSize()});
 	}
 	
-	window.bus.sub('end turn resolve', function(){
+	window.bus.sub('turn end resolve', function(){
 		_waiting = true;
+		
+		_actionsAvailable = {move: true, fight: true}
 	});
 	
 	window.bus.pub('soldier place', _me);
