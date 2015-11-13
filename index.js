@@ -33,6 +33,10 @@ io.on('connection', function(socket){
 		
 		game.players[userId].connected = false;
 		delete sockets[userId];
+		
+		for(var player in game.players)
+			if(game.players[player].connected)
+				sockets[player].emit('update', {event: 'enemy connection', data: false});
 	});
 	
 	socket.on('init', function(msg){
@@ -44,6 +48,10 @@ io.on('connection', function(socket){
 		sockets[userId] = this;
 		
 		socket.emit('init', game);
+		
+		for(var player in game.players)
+			if(player != userId && game.players[player].connected)
+				sockets[player].emit('update', {event: 'enemy connection', data: true});
 	});
 	
 	socket.on('update', function(message){

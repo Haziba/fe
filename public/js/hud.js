@@ -1,7 +1,17 @@
 var NewHUD = function(initData){
 	var _me = {};
 	
-	var _team = initData.players[socketId].team
+	var _team = initData.players[socketId].team;
+	var _activeTeam = initData.activeTeam;
+	var _enemyPlayerId = "";
+	var _enemyConnected;
+	
+	for(var player in initData.players)
+		if(player != socketId){
+			_enemyPlayerId = player;
+			_enemyConnected = initData.players[player].connected;
+		}
+	
 	var _gameState = initData.state;
 	
 	var _endTurnButton = NewButton("End Turn", {x: 675, y: 625}, function(){
@@ -19,10 +29,15 @@ var NewHUD = function(initData){
 	});
 	
 	window.bus.sub('turn end resolve', function(activeTeam){
+		_activeTeam = activeTeam;
 		if(_team == activeTeam)
 			_endTurnButton.Enable();
 		else
 			_endTurnButton.Disable();
+	});
+	
+	window.bus.sub('enemy connection', function(connected){
+		_enemyConnected = connected;
 	});
 	
 	_me.Update = function(){
@@ -35,9 +50,9 @@ var NewHUD = function(initData){
 	}
 	
 	_me.Draw = function(){
+		var context = SpriteHandler.GetContext();
+		
 		if(_gameState != 0){
-			var context = SpriteHandler.GetContext();
-			
 			context.fillStyle = 'white';
 			context.fillRect(200, 200, 400, 200);
 			context.lineWidth = 3;
@@ -56,7 +71,14 @@ var NewHUD = function(initData){
 			context.font = '14px Arial black';
 			context.fillText('Click anywhere to restart the game', 400, 320);
 		}
-			_endTurnButton.Draw();
+		
+		context.fillStyle = 'black';
+		context.font = '22px Arial black';
+		context.textAlign = 'left';
+		context.fillText("Current turn: " + (_activeTeam == _team ? socketId : _enemyPlayerId), 10, 625);
+		context.fillText(_enemyPlayerId + ": " + (_enemyConnected ? "Online" : "Offline"), 10, 655);
+		
+		_endTurnButton.Draw();
 	}
 	
 	return _me;
