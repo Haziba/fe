@@ -6,13 +6,23 @@ var NewHUD = function(initData){
 	
 	var _endTurnButton = NewButton("End Turn", {x: 20, y: 20}, function(){
 		window.bus.pub('turn end start');
-	})
+	});
+	
+	if(_team != initData.activeTeam)
+		_endTurnButton.Disable();
 	
 	window.bus.sub('game state change', function(gameState){
 		_gameState = gameState;
 		
 		if(_gameState != 0)
 			window.bus.pub('game end');
+	});
+	
+	window.bus.sub('turn end resolve', function(activeTeam){
+		if(_team == activeTeam)
+			_endTurnButton.Enable();
+		else
+			_endTurnButton.Disable();
 	});
 	
 	_me.Update = function(){
