@@ -16,6 +16,9 @@ var NewControl = function(initData){
 		_tileHighlight.x = Math.floor(InputHandler.MousePosition().x / Global.TileSize());
 		_tileHighlight.y = Math.floor(InputHandler.MousePosition().y / Global.TileSize());
 		
+		_tileHighlight.x = Math.max(Math.min(_tileHighlight.x, Global.ScreenSize().width-1), 0);
+		_tileHighlight.y = Math.max(Math.min(_tileHighlight.y, Global.ScreenSize().height-1), 0);
+		
 		if(InputHandler.MouseClicked())
 			window.bus.pub('cursor click', _tileHighlight);
 	}
