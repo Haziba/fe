@@ -4,7 +4,7 @@ var NewHUD = function(initData){
 	var _team = initData.players[socketId].team
 	var _gameState = initData.state;
 	
-	var _endTurnButton = NewButton("End Turn", {x: 20, y: 20}, function(){
+	var _endTurnButton = NewButton("End Turn", {x: 675, y: 625}, function(){
 		window.bus.pub('turn end start');
 	});
 	
