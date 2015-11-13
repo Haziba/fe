@@ -122,8 +122,8 @@ var InitGame = function(lastGame){
 			}
 		},
 		units: {
-			'Holmes': {
-				pos: {x: 3, y: 6},
+			'HarrySoldierOne': {
+				pos: {x: 2, y: 2},
 				type: 1, //todo: Make soldier types enum available here
 				team: 0,
 				waiting: true,
@@ -133,9 +133,53 @@ var InitGame = function(lastGame){
 					strength: 4
 				}
 			},
-			'Ace': {
-				pos: {x: 3, y: 8},
-				type: 0,
+			'HarrySoldierTwo': {
+				pos: {x: 2, y: 4},
+				type: 1, //todo: Make soldier types enum available here
+				team: 0,
+				waiting: true,
+				stats: {
+					health: 18,
+					maxHealth: 18,
+					strength: 4
+				}
+			},
+			'HarryCaptain': {
+				pos: {x: 2, y: 7},
+				type: 0, //todo: Make soldier types enum available here
+				team: 0,
+				waiting: true,
+				stats: {
+					health: 18,
+					maxHealth: 18,
+					strength: 4
+				}
+			},
+			'HarrySoldierThree': {
+				pos: {x: 2, y: 10},
+				type: 1, //todo: Make soldier types enum available here
+				team: 0,
+				waiting: true,
+				stats: {
+					health: 18,
+					maxHealth: 18,
+					strength: 4
+				}
+			},
+			'HarrySoldierFour': {
+				pos: {x: 2, y: 12},
+				type: 1, //todo: Make soldier types enum available here
+				team: 0,
+				waiting: true,
+				stats: {
+					health: 18,
+					maxHealth: 18,
+					strength: 4
+				}
+			},
+			'LaurieSoldierOne': {
+				pos: {x: 17, y: 2},
+				type: 1, //todo: Make soldier types enum available here
 				team: 1,
 				waiting: true,
 				stats: {
@@ -143,7 +187,51 @@ var InitGame = function(lastGame){
 					maxHealth: 18,
 					strength: 4
 				}
-			}
+			},
+			'LaurieSoldierTwo': {
+				pos: {x: 17, y: 4},
+				type: 1, //todo: Make soldier types enum available here
+				team: 1,
+				waiting: true,
+				stats: {
+					health: 18,
+					maxHealth: 18,
+					strength: 4
+				}
+			},
+			'LaurieCaptain': {
+				pos: {x: 17, y: 7},
+				type: 0, //todo: Make soldier types enum available here
+				team: 1,
+				waiting: true,
+				stats: {
+					health: 18,
+					maxHealth: 18,
+					strength: 4
+				}
+			},
+			'LaurieSoldierThree': {
+				pos: {x: 17, y: 10},
+				type: 1, //todo: Make soldier types enum available here
+				team: 1,
+				waiting: true,
+				stats: {
+					health: 18,
+					maxHealth: 18,
+					strength: 4
+				}
+			},
+			'LaurieSoldierFour': {
+				pos: {x: 17, y: 12},
+				type: 1, //todo: Make soldier types enum available here
+				team: 1,
+				waiting: true,
+				stats: {
+					health: 18,
+					maxHealth: 18,
+					strength: 4
+				}
+			},
 		},
 		map: [[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
 			  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
