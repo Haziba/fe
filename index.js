@@ -262,8 +262,10 @@ var ResolveFight = function(combatants){
 	
 	enemyUnit.stats.health = Math.max(enemyUnit.stats.health - myUnit.stats.strength, 0);
 	
-	if(enemyUnit.stats.health > 0)
-		myUnit.stats.health = Math.max(myUnit.stats.health - enemyUnit.stats.strength, 0);
+	//todo: De-meh this. Would help having the TileHelper in to be all "Are these tiles in a range of 1???"
+	if(enemyUnit.type != 2 && ((enemyUnit.pos.x == myUnit.pos.x && Math.abs(enemyUnit.pos.y - myUnit.pos.y) == 1) || (Math.abs(enemyUnit.pos.x - myUnit.pos.x) == 1 && enemyUnit.pos.y == myUnit.pos.y)))
+		if(enemyUnit.stats.health > 0)
+			myUnit.stats.health = Math.max(myUnit.stats.health - enemyUnit.stats.strength, 0);
 	
 	var units = {};
 	units[combatants.me.id] = myUnit;
