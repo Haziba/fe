@@ -5,7 +5,7 @@ var SpriteHandler = {
 	},
 	
 	Clear: function(){
-		this.context.clearRect(0, 0, 800, 600);
+		this.context.clearRect(0, 0, 800, 800);
 	},
 	
 	Draw: function(spriteId, location){
