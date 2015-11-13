@@ -83,11 +83,11 @@ var NextTurn = function(){
 	for(var unitId in game.units)
 		game.units[unitId].waiting = true;
 	
-	game.currentTeam = 1 - game.currentTeam;
+	game.activeTeam = 1 - game.activeTeam;
 	
 	for(var player in game.players){
 		if(game.players[player].connected)
-			sockets[player].emit('process', {event: 'turn end resolve'});
+			sockets[player].emit('process', {event: 'turn end resolve', data: game.activeTeam});
 	}
 }
 
@@ -102,7 +102,7 @@ var ResetGame = function(){
 var InitGame = function(lastGame){
 	return {
 		state: 0, //todo: Make game state enum available here
-		currentTeam: 0,
+		activeTeam: 0,
 		players: {
 			'Harry': {
 				connected: lastGame ? lastGame.players['Harry'].connected : false,
@@ -129,7 +129,7 @@ var InitGame = function(lastGame){
 				pos: {x: 3, y: 8},
 				type: 0,
 				team: 1,
-				waiting: false,
+				waiting: true,
 				stats: {
 					health: 18,
 					maxHealth: 18,

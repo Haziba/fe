@@ -1,4 +1,4 @@
-var NewSoldier = function(unitId, initUnit, teamNum)
+var NewSoldier = function(unitId, initUnit, teamNum, activeTeam)
 {
 	var _me = {id: unitId};
 	var _selected = false;
@@ -7,6 +7,7 @@ var NewSoldier = function(unitId, initUnit, teamNum)
 	var _position = initUnit.pos;
 	var _soldierType = initUnit.type;
 	var _team = initUnit.team == teamNum;
+	var _active = activeTeam == teamNum;
 	var _waiting = initUnit.waiting;
 	var _stats = initUnit.stats;
 	
@@ -118,7 +119,7 @@ var NewSoldier = function(unitId, initUnit, teamNum)
 	}
 	
 	_me.Selectable = function(){
-		return _team == Team.ME && _waiting;
+		return _team == Team.ME && _waiting && _active;
 	}
 	
 	_me.Team = function(){
@@ -165,8 +166,10 @@ var NewSoldier = function(unitId, initUnit, teamNum)
 			SpriteHandler.Draw(Sprite.RED, {x: _displayFights[i].x * Global.TileSize(), y: _displayFights[i].y * Global.TileSize()});
 	}
 	
-	window.bus.sub('turn end resolve', function(){
+	window.bus.sub('turn end resolve', function(activeTeam){
 		_waiting = true;
+		
+		_active = activeTeam == teamNum;
 		
 		_actionsAvailable = {move: true, fight: true}
 	});

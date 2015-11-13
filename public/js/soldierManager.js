@@ -1,10 +1,10 @@
-var NewSoldierManager = function(units, teamNum){
+var NewSoldierManager = function(units, teamNum, activeTeam){
 	var _me = {id: Global.NewId()};
 	
 	var _soldiers = {};
 	
 	for(var unitId in units)
-		_soldiers[unitId] = NewSoldier(unitId, units[unitId], teamNum);
+		_soldiers[unitId] = NewSoldier(unitId, units[unitId], teamNum, activeTeam);
 	
 	window.bus.sub('socket soldier move', function(data){
 		_soldiers[data.id].MoveTo(data.pos);

@@ -4,7 +4,7 @@ var StartGame = function(initData)
 	
 	var _tileManager = NewTileManager(initData);
 	// todo: Just pass through initData
-	var _soldierManager = NewSoldierManager(initData.units, initData.players[socketId].team);
+	var _soldierManager = NewSoldierManager(initData.units, initData.players[socketId].team, initData.activeTeam);
 	
 	var _control = NewControl(initData);
 	var _hud = NewHUD(initData);
