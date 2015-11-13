@@ -135,7 +135,7 @@ var InitGame = function(lastGame){
 			},
 			'HarrySoldierTwo': {
 				pos: {x: 2, y: 4},
-				type: 1, //todo: Make soldier types enum available here
+				type: 2, //todo: Make soldier types enum available here
 				team: 0,
 				waiting: true,
 				stats: {
@@ -157,7 +157,7 @@ var InitGame = function(lastGame){
 			},
 			'HarrySoldierThree': {
 				pos: {x: 2, y: 10},
-				type: 1, //todo: Make soldier types enum available here
+				type: 2, //todo: Make soldier types enum available here
 				team: 0,
 				waiting: true,
 				stats: {
@@ -190,7 +190,7 @@ var InitGame = function(lastGame){
 			},
 			'LaurieSoldierTwo': {
 				pos: {x: 17, y: 4},
-				type: 1, //todo: Make soldier types enum available here
+				type: 2, //todo: Make soldier types enum available here
 				team: 1,
 				waiting: true,
 				stats: {
@@ -212,7 +212,7 @@ var InitGame = function(lastGame){
 			},
 			'LaurieSoldierThree': {
 				pos: {x: 17, y: 10},
-				type: 1, //todo: Make soldier types enum available here
+				type: 2, //todo: Make soldier types enum available here
 				team: 1,
 				waiting: true,
 				stats: {

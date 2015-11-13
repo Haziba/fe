@@ -115,6 +115,8 @@ var NewSoldier = function(unitId, initUnit, teamNum, activeTeam)
 	}
 	
 	_me.AttackRange = function(){
+		if(_soldierType == 2)
+			return {min: 1.4, max: 2};
 		return {min: 1, max: 1};
 	}
 	
