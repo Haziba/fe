@@ -129,7 +129,15 @@ var InitGame = function(lastGame){
 					health: 18,
 					maxHealth: 18,
 					strength: 12,
-					armour: 8
+					armour: 8,
+					moves: {
+						remaining: 4,
+						max: 4
+					},
+					fights: {
+						remaining: 1,
+						max: 1
+					}
 				}
 			},
 			'HarrySoldierTwo': {
@@ -141,7 +149,15 @@ var InitGame = function(lastGame){
 					health: 18,
 					maxHealth: 18,
 					strength: 12,
-					armour: 8
+					armour: 8,
+					moves: {
+						remaining: 4,
+						max: 4
+					},
+					fights: {
+						remaining: 1,
+						max: 1
+					}
 				}
 			},
 			'HarryCaptain': {
@@ -153,7 +169,15 @@ var InitGame = function(lastGame){
 					health: 18,
 					maxHealth: 18,
 					strength: 12,
-					armour: 8
+					armour: 8,
+					moves: {
+						remaining: 4,
+						max: 4
+					},
+					fights: {
+						remaining: 1,
+						max: 1
+					}
 				}
 			},
 			'HarrySoldierThree': {
@@ -165,7 +189,15 @@ var InitGame = function(lastGame){
 					health: 18,
 					maxHealth: 18,
 					strength: 12,
-					armour: 8
+					armour: 8,
+					moves: {
+						remaining: 4,
+						max: 4
+					},
+					fights: {
+						remaining: 1,
+						max: 1
+					}
 				}
 			},
 			'HarrySoldierFour': {
@@ -177,7 +209,15 @@ var InitGame = function(lastGame){
 					health: 18,
 					maxHealth: 18,
 					strength: 12,
-					armour: 8
+					armour: 8,
+					moves: {
+						remaining: 4,
+						max: 4
+					},
+					fights: {
+						remaining: 1,
+						max: 1
+					}
 				}
 			},
 			'LaurieSoldierOne': {
@@ -189,7 +229,15 @@ var InitGame = function(lastGame){
 					health: 18,
 					maxHealth: 18,
 					strength: 12,
-					armour: 8
+					armour: 8,
+					moves: {
+						remaining: 4,
+						max: 4
+					},
+					fights: {
+						remaining: 1,
+						max: 1
+					}
 				}
 			},
 			'LaurieSoldierTwo': {
@@ -201,7 +249,15 @@ var InitGame = function(lastGame){
 					health: 18,
 					maxHealth: 18,
 					strength: 12,
-					armour: 8
+					armour: 8,
+					moves: {
+						remaining: 4,
+						max: 4
+					},
+					fights: {
+						remaining: 1,
+						max: 1
+					}
 				}
 			},
 			'LaurieCaptain': {
@@ -213,7 +269,15 @@ var InitGame = function(lastGame){
 					health: 18,
 					maxHealth: 18,
 					strength: 12,
-					armour: 8
+					armour: 8,
+					moves: {
+						remaining: 4,
+						max: 4
+					},
+					fights: {
+						remaining: 1,
+						max: 1
+					}
 				}
 			},
 			'LaurieSoldierThree': {
@@ -225,7 +289,15 @@ var InitGame = function(lastGame){
 					health: 18,
 					maxHealth: 18,
 					strength: 12,
-					armour: 8
+					armour: 8,
+					moves: {
+						remaining: 4,
+						max: 4
+					},
+					fights: {
+						remaining: 1,
+						max: 1
+					}
 				}
 			},
 			'LaurieSoldierFour': {
@@ -237,7 +309,15 @@ var InitGame = function(lastGame){
 					health: 18,
 					maxHealth: 18,
 					strength: 12,
-					armour: 8
+					armour: 8,
+					moves: {
+						remaining: 4,
+						max: 4
+					},
+					fights: {
+						remaining: 1,
+						max: 1
+					}
 				}
 			},
 		},
@@ -266,6 +346,8 @@ var InitGame = function(lastGame){
 
 var ResolveMove = function(data){
 	game.units[data.unitId].pos = data.pos;
+	
+	game.units[data.unitId].stats.moves.remaining -= data.steps;
 	
 	for(var player in game.players)
 		if(game.players[player].connected)

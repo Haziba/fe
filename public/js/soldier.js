@@ -13,8 +13,6 @@ var NewSoldier = function(unitId, initUnit, teamNum, activeTeam)
 	
 	var _displayMoves, _displayFights;
 	
-	var _actionsAvailable = {move: true, fight: true};
-	
 	var GetSprite = function(){
 		switch(_soldierType)
 		{
@@ -73,11 +71,11 @@ var NewSoldier = function(unitId, initUnit, teamNum, activeTeam)
 			if(_availableMoves[i].pos.x == position.x && _availableMoves[i].pos.y == position.y){
 				_me.MoveTo(position);
 
-				window.bus.pub('soldier move start', _me);
+				window.bus.pub('soldier move start', {unitId: _me.id, pos: _position, steps: _availableMoves[i].steps});
 				
-				if(!_actionsAvailable.fight)
+				_stats.moves.remaining -= _availableMoves[i].steps;
+				if(_stats.moves.remaining + _stats.fights.remaining == 0)
 					_waiting = false;
-				_actionsAvailable.move = false;
 			}
 		
 		_me.Deselect();
@@ -97,9 +95,9 @@ var NewSoldier = function(unitId, initUnit, teamNum, activeTeam)
 				}
 				window.bus.pub('soldier fight start', {me: _me, enemy: unit});
 				
-				if(!_actionsAvailable.move)
+				_stats.fights.remaining--;
+				if(_stats.moves.remaining + _stats.fights.remaining == 0)
 					_waiting = false;
-				_actionsAvailable.fight = false;
 			}
 		
 		_me.Deselect();
@@ -107,6 +105,8 @@ var NewSoldier = function(unitId, initUnit, teamNum, activeTeam)
 	
 	_me.MoveTo = function(position){
 		_position = {x: position.x, y: position.y};
+		
+		window.bus.pub('soldier move', _me);
 	}
 	
 	_me.ResolveCombat = function(unit){
@@ -118,7 +118,7 @@ var NewSoldier = function(unitId, initUnit, teamNum, activeTeam)
 	}
 	
 	_me.MovementRange = function(){
-		return 4;
+		return _stats.moves.remaining;
 	}
 	
 	_me.AttackRange = function(){
@@ -140,11 +140,11 @@ var NewSoldier = function(unitId, initUnit, teamNum, activeTeam)
 	}
 	
 	_me.CanMove = function(){
-		return _actionsAvailable.move;
+		return _stats.moves.remaining > 0;
 	}
 	
 	_me.CanFight = function(){
-		return _actionsAvailable.fight;
+		return _stats.fights.remaining > 0;
 	}
 	
 	_me.Stats = function(){
@@ -184,7 +184,8 @@ var NewSoldier = function(unitId, initUnit, teamNum, activeTeam)
 		
 		_active = activeTeam == teamNum;
 		
-		_actionsAvailable = {move: true, fight: true}
+		_stats.moves.remaining = _stats.moves.max;
+		_stats.fights.remaining = _stats.fights.max;
 	});
 	
 	window.bus.pub('soldier place', _me);

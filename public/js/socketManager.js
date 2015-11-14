@@ -16,8 +16,8 @@ var fireSocketUpdate = function(update){
 	socket.emit('update', update);
 }
 
-window.bus.sub('soldier move start', function(unit){
-	socket.emit('process', {event: 'soldier move start', data: {unitId: unit.id, pos: unit.GetPosition()}});
+window.bus.sub('soldier move start', function(data){
+	socket.emit('process', {event: 'soldier move start', data: data});
 });
 
 window.bus.sub('soldier fight start', function(combatants){
