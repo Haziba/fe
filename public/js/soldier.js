@@ -13,6 +13,8 @@ var NewSoldier = function(unitId, initUnit, teamNum, activeTeam)
 	
 	var _displayMoves, _displayFights;
 	
+	var _alive = initUnit.stats.health > 0;
+	
 	var GetSprite = function(){
 		switch(_soldierType)
 		{
@@ -91,7 +93,9 @@ var NewSoldier = function(unitId, initUnit, teamNum, activeTeam)
 			if(_availableFights[i].pos.x == position.x && _availableFights[i].pos.y == position.y){
 				if(!TileHelper.TilesInRange(_position, position, _me.AttackRange())){
 					_me.MoveTo(_availableFights[i].movePos.pos);
-					_actionsAvailable.move = false;
+					_stats.moves.remaining -= _availableFights[i].movePos.steps;
+	
+					window.bus.pub('soldier move start', {unitId: _me.id, pos: _position, steps: _availableFights[i].steps});
 				}
 				window.bus.pub('soldier fight start', {me: _me, enemy: unit});
 				
@@ -111,6 +115,17 @@ var NewSoldier = function(unitId, initUnit, teamNum, activeTeam)
 	
 	_me.ResolveCombat = function(unit){
 		_stats.health = unit.stats.health;
+		
+		if(_stats.health == 0){
+			_alive = false;
+			window.bus.pub('soldier remove', _me);
+		}
+	}
+	
+	_me.MovementBlocking = function(teamNum){
+		if(_team != teamNum)
+			return true;
+		return false;
 	}
 	
 	_me.Done = function(){
@@ -128,7 +143,7 @@ var NewSoldier = function(unitId, initUnit, teamNum, activeTeam)
 	}
 	
 	_me.Selectable = function(){
-		return _team == Team.ME && _waiting && _active;
+		return _team == teamNum && _waiting && _active;
 	}
 	
 	_me.Team = function(){
@@ -156,6 +171,10 @@ var NewSoldier = function(unitId, initUnit, teamNum, activeTeam)
 	}
 	
 	_me.Draw = function(){
+		if(!_alive)
+			// Show gravestone maybe?
+			return;
+		
 		SpriteHandler.Draw(GetSprite(), {x: _position.x * Global.TileSize(), y: _position.y * Global.TileSize()});
 		
 		if(!_waiting){
@@ -188,7 +207,8 @@ var NewSoldier = function(unitId, initUnit, teamNum, activeTeam)
 		_stats.fights.remaining = _stats.fights.max;
 	});
 	
-	window.bus.pub('soldier place', _me);
+	if(_alive)
+		window.bus.pub('soldier place', _me);
 	
 	return _me;
 }

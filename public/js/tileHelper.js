@@ -20,7 +20,7 @@ TileHelper = {
 				if(open[k].pos.x == newTile.pos.x && open[k].pos.y == newTile.pos.y)
 					return;
 			
-			if(!tiles[newTile.pos.x][newTile.pos.y])
+			if(!tiles[newTile.pos.x][newTile.pos.y] || (typeof(tiles[newTile.pos.x][newTile.pos.y]) == 'object' && !tiles[newTile.pos.x][newTile.pos.y].MovementBlocking(unit.Team())))
 				open.push(newTile);
 		}
 		
@@ -34,6 +34,10 @@ TileHelper = {
 			CheckTile(currentTile, {x: 0, y: -1});
 			CheckTile(currentTile, {x: 0, y: 1});
 		}
+		
+		for(var i = closed.length-1; i >= 0; i--)
+			if(!!tiles[closed[i].pos.x][closed[i].pos.y])
+				closed.splice(i, 1);
 		
 		return closed;
 	},

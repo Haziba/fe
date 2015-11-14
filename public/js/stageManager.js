@@ -54,6 +54,12 @@ var NewStageManager = function(initData) {
 		_oldSoldierPositions[soldier.id] = {x: newPosition.x, y: newPosition.y};
 	});
 	
+	window.bus.sub('soldier remove', function(soldier){
+		var position = soldier.GetPosition();
+		
+		_tiles[position.x][position.y] = undefined;
+	});
+	
 	window.bus.sub('cursor click', function(position){
 		if(typeof(_tiles[position.x][position.y]) == 'object')
 			SelectUnit(_tiles[position.x][position.y]);
