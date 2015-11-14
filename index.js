@@ -129,6 +129,7 @@ var InitGame = function(lastGame){
 			'HarryCaptain': unitFactory.NewAxe(0, {x: 2, y: 7}),
 			'HarrySoldierThree': unitFactory.NewArcher(0, {x: 2, y: 10}),
 			'HarrySoldierFour': unitFactory.NewSword(0, {x: 2, y: 12}),
+			'DebugArcher': unitFactory.NewArcher(1, {x: 4, y: 2}),
 			'LaurieSoldierOne': unitFactory.NewSword(1, {x: 17, y: 2}),
 			'LaurieSoldierTwo': unitFactory.NewArcher(1, {x: 17, y: 4}),
 			'LaurieCaptain': unitFactory.NewAxe(1, {x: 17, y: 7}),
@@ -175,7 +176,7 @@ var ResolveFight = function(combatants){
 	enemyUnit.stats.health = Math.max(enemyUnit.stats.health - Math.max(myUnit.stats.strength - enemyUnit.stats.armour, 0), 0);
 	
 	//todo: De-meh this. Would help having the TileHelper in to be all "Are these tiles in a range of 1???"
-	if(enemyUnit.type != 2 && ((enemyUnit.pos.x == myUnit.pos.x && Math.abs(enemyUnit.pos.y - myUnit.pos.y) == 1) || (Math.abs(enemyUnit.pos.x - myUnit.pos.x) == 1 && enemyUnit.pos.y == myUnit.pos.y)))
+	if(enemyUnit.combatRetaliation && InMeleeRange(myUnit, enemyUnit))
 		if(enemyUnit.stats.health > 0)
 			myUnit.stats.health = Math.max(myUnit.stats.health - Math.max(enemyUnit.stats.strength - myUnit.stats.armour, 0), 0);
 	
@@ -190,6 +191,10 @@ var ResolveFight = function(combatants){
 	
 	if(myUnit.stats.health == 0 || enemyUnit.stats.health == 0)
 		CheckForGameEnd();
+}
+
+var InMeleeRange = function(myUnit, enemyUnit){
+	return (enemyUnit.pos.x == myUnit.pos.x && Math.abs(enemyUnit.pos.y - myUnit.pos.y) == 1) || (Math.abs(enemyUnit.pos.x - myUnit.pos.x) == 1 && enemyUnit.pos.y == myUnit.pos.y);
 }
 
 var CheckForGameEnd = function(){
