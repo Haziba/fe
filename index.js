@@ -78,8 +78,11 @@ io.on('connection', function(socket){
 });
 
 var NextTurn = function(){
-	for(var unitId in game.units)
+	for(var unitId in game.units){
 		game.units[unitId].waiting = true;
+		game.units[unitId].stats.moves.remaining = game.units[unitId].stats.moves.max;
+		game.units[unitId].stats.fights.remaining = game.units[unitId].stats.fights.max;
+	}
 	
 	game.activeTeam = 1 - game.activeTeam;
 	
