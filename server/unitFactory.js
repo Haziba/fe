@@ -5,9 +5,12 @@ module.exports = function(enums){
 			
 			stats.health = stats.maxHealth = 12;
 			stats.strength = 8;
-			stats.combatRetaliation = false;
 			
-			return BaseUnit(enums.Soldier.ARCHER, pos, team, stats);
+			var unit = BaseUnit(enums.Soldier.ARCHER, pos, team, stats);
+			
+			unit.combatRetaliation = false;
+			
+			return unit;
 		},
 		
 		NewSword: function(team, pos){
@@ -51,8 +54,7 @@ var BaseStats = function(){
 		fights: {
 			remaining: 1,
 			max: 1
-		},
-		combatRetaliation: true
+		}
 	};
 }
 
@@ -62,7 +64,8 @@ var BaseUnit = function(type, pos, team, stats){
 		type: type,
 		team: team,
 		waiting: true,
-		stats: stats
+		stats: stats,
+		combatRetaliation: true
 	};
 }
 
