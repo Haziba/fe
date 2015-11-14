@@ -73,9 +73,11 @@ var NewSoldier = function(unitId, initUnit, teamNum, activeTeam)
 			if(_availableMoves[i].pos.x == position.x && _availableMoves[i].pos.y == position.y){
 				_me.MoveTo(position);
 
-				window.bus.pub('soldier move start', {unitId: _me.id, pos: _position, steps: _availableMoves[i].steps});
+				var steps = _availableMoves[i].steps+1;
 				
-				_stats.moves.remaining -= _availableMoves[i].steps;
+				window.bus.pub('soldier move start', {unitId: _me.id, pos: _position, steps: steps});
+				
+				_stats.moves.remaining -= steps;
 				if(_stats.moves.remaining + _stats.fights.remaining == 0)
 					_waiting = false;
 			}
@@ -93,9 +95,12 @@ var NewSoldier = function(unitId, initUnit, teamNum, activeTeam)
 			if(_availableFights[i].pos.x == position.x && _availableFights[i].pos.y == position.y){
 				if(!TileHelper.TilesInRange(_position, position, _me.AttackRange())){
 					_me.MoveTo(_availableFights[i].movePos.pos);
-					_stats.moves.remaining -= _availableFights[i].movePos.steps;
+					
+					var steps = _availableFights[i].movePos.steps + 1;
+					
+					_stats.moves.remaining -= steps;
 	
-					window.bus.pub('soldier move start', {unitId: _me.id, pos: _position, steps: _availableFights[i].steps});
+					window.bus.pub('soldier move start', {unitId: _me.id, pos: _position, steps: steps});
 				}
 				window.bus.pub('soldier fight start', {me: _me, enemy: unit});
 				
