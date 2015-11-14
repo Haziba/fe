@@ -13,9 +13,6 @@ module.exports = function(enums){
 		NewSword: function(team, pos){
 			var stats = BaseStats();
 			
-			stats.health = stats.maxHealth = 12;
-			stats.strength = 8;
-			
 			return BaseUnit(enums.Soldier.SWORD, pos, team, stats);
 		},
 		

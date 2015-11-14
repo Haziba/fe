@@ -36,7 +36,7 @@ TileHelper = {
 		}
 		
 		for(var i = closed.length-1; i >= 0; i--)
-			if(!!tiles[closed[i].pos.x][closed[i].pos.y])
+			if(!!tiles[closed[i].pos.x][closed[i].pos.y] && !(closed[i].pos.x == pos.x && closed[i].pos.y == pos.y))
 				closed.splice(i, 1);
 		
 		return closed;
