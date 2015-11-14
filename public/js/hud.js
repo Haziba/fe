@@ -16,7 +16,17 @@ var NewHUD = function(initData){
 	
 	var _gameState = initData.state;
 	
-	var _endTurnButton = NewButton("End Turn", {x: 675, y: 625}, function(){
+	var _unitDoneButton = NewButton("Unit Done", {x: 675, y: 615}, function(){
+		_selectedUnit.Done();
+		
+		window.bus.pub('soldier done start', _selectedUnit);
+		
+		_selectedUnit.Deselect();
+	});
+	
+	_unitDoneButton.Disable();
+	
+	var _endTurnButton = NewButton("End Turn", {x: 675, y: 670}, function(){
 		window.bus.pub('turn end start');
 	});
 	
@@ -44,10 +54,14 @@ var NewHUD = function(initData){
 	
 	window.bus.sub('select', function(unit){
 		_selectedUnit = unit;
+		
+		_unitDoneButton.Enable();
 	});
 	
 	window.bus.sub('deselect', function(){
 		_selectedUnit = undefined;
+		
+		_unitDoneButton.Disable();
 	});
 	
 	_me.Update = function(){
@@ -56,6 +70,7 @@ var NewHUD = function(initData){
 				window.bus.pub('game reset start');
 		} else {
 			_endTurnButton.Update();
+			_unitDoneButton.Update();
 		}
 	}
 	
@@ -97,6 +112,7 @@ var NewHUD = function(initData){
 			context.fillText("Armour: " + stats.armour, 310, 715);
 		}
 		
+		_unitDoneButton.Draw();
 		_endTurnButton.Draw();
 	}
 	

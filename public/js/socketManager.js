@@ -16,9 +16,8 @@ var fireSocketUpdate = function(update){
 	socket.emit('update', update);
 }
 
-window.bus.sub('soldier move', function(soldier){
-	if(soldier.Team() == Team.ME)
-		socket.emit('update', {event: 'soldier move', data: {id: soldier.id, pos: soldier.GetPosition()}});
+window.bus.sub('soldier move start', function(unit){
+	socket.emit('process', {event: 'soldier move start', data: {unitId: unit.id, pos: unit.GetPosition()}});
 });
 
 window.bus.sub('soldier fight start', function(combatants){
@@ -33,8 +32,8 @@ window.bus.sub('turn end start', function(){
 	socket.emit('process', {event: 'turn end start'});
 });
 
-socket.on('update', function(message){
-	window.bus.pub(message.event, message.data);
+window.bus.sub('soldier done start', function(unit){
+	socket.emit('process', {event: 'soldier done start', data: unit});
 });
 
 socket.on('process', function(message){

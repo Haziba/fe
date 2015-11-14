@@ -71,6 +71,8 @@ var NewSoldier = function(unitId, initUnit, teamNum, activeTeam)
 		for(var i = 0; i < _availableMoves.length; i++)
 			if(_availableMoves[i].pos.x == position.x && _availableMoves[i].pos.y == position.y){
 				_me.MoveTo(position);
+
+				window.bus.pub('soldier move start', _me);
 				
 				if(!_actionsAvailable.fight)
 					_waiting = false;
@@ -104,12 +106,14 @@ var NewSoldier = function(unitId, initUnit, teamNum, activeTeam)
 	
 	_me.MoveTo = function(position){
 		_position = {x: position.x, y: position.y};
-
-		window.bus.pub('soldier move', _me);
 	}
 	
 	_me.ResolveCombat = function(unit){
 		_stats.health = unit.stats.health;
+	}
+	
+	_me.Done = function(){
+		_waiting = false;
 	}
 	
 	_me.MovementRange = function(){

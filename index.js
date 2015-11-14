@@ -54,26 +54,12 @@ io.on('connection', function(socket){
 				sockets[player].emit('update', {event: 'enemy connection', data: true});
 	});
 	
-	socket.on('update', function(message){
-		console.log(message);
-		switch(message.event){
-			case 'soldier move':
-				game.units[message.data.id].pos = message.data.pos;
-				break;
-		}
-		
-		message.event = 'socket ' + message.event;
-		
-		for(var player in game.players)
-			if(player !== userId && game.players[player].connected){
-				console.log("Send to", player, message);
-				sockets[player].emit('update', message);
-			}
-	});
-	
 	socket.on('process', function(message){
 		console.log(message);
 		switch(message.event){
+			case 'soldier move start':
+				ResolveMove(message.data);
+				break;
 			case 'soldier fight start':
 				ResolveFight(message.data);
 				break;
@@ -82,6 +68,9 @@ io.on('connection', function(socket){
 				break;
 			case 'turn end start':
 				NextTurn();
+				break;
+			case 'soldier done start':
+				SoldierDone(message.data);
 				break;
 		}
 	});
@@ -97,6 +86,14 @@ var NextTurn = function(){
 		if(game.players[player].connected)
 			sockets[player].emit('process', {event: 'turn end resolve', data: game.activeTeam});
 	}
+}
+
+var SoldierDone = function(unit){
+	game.units[unit.id].waiting = false;
+	
+	for(var player in game.players)
+		if(game.players[player].connected)
+			sockets[player].emit('process', {event: 'soldier done resolve', data: unit.id});
 }
 
 var ResetGame = function(){
@@ -264,6 +261,14 @@ var InitGame = function(lastGame){
 			  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
 			  [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]]
 	};
+}
+
+var ResolveMove = function(data){
+	game.units[data.unitId].pos = data.pos;
+	
+	for(var player in game.players)
+		if(game.players[player].connected)
+			sockets[player].emit('process', {event: 'soldier move resolve', data: {unitId: data.unitId, pos: data.pos}});
 }
 
 var ResolveFight = function(combatants){	
