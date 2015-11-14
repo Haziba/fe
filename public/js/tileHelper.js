@@ -50,8 +50,9 @@ TileHelper = {
 				{
 					var fightPos = {x: availableMoves[i].pos.x + j, y: availableMoves[i].pos.y + k};
 					
-					if(this.TilesInRange({x: 0, y: 0}, {x: j, y: k}, range) && !(pos.x == fightPos.x && pos.y == fightPos.y))
-						availableFights.push({pos: fightPos, movePos: availableMoves[i]});
+					if(this.TileOnScreen(fightPos))
+						if(this.TilesInRange({x: 0, y: 0}, {x: j, y: k}, range) && !(pos.x == fightPos.x && pos.y == fightPos.y))
+							availableFights.push({pos: fightPos, movePos: availableMoves[i]});
 				}
 		}
 		
@@ -83,5 +84,9 @@ TileHelper = {
 		var maxRangeSq = Math.pow(range.max, 2);
 		
 		return distanceSq >= minRangeSq && distanceSq <= maxRangeSq;
+	},
+	
+	TileOnScreen: function(tilePos){
+		return tilePos.x >= 0 && tilePos.x < Global.ScreenSize().width && tilePos.y >= 0 && tilePos.y < Global.ScreenSize().height;
 	}
 }
