@@ -29,7 +29,7 @@ var Sprite = {
 	SWORD: {x: 0, y: 1},
 	AXE: {x: 1, y: 1},
 	SPEAR: {x: 2, y: 1},
-	BOW: {x: 0, y: 2},
+	ARCHER: {x: 0, y: 2},
 	YOUR_UNIT: {x: 1, y: 2},
 	THEIR_UNIT: {x: 2, y: 2},
 	FADE_OUT: {x: 0, y: 3},

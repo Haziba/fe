@@ -2,6 +2,7 @@ var app = require('express')();
 var http = require('http');
 var path = require('path');
 var express = require('express');
+var enums = require('./public/js/enums.js');
 
 app.get('/', function(req, res){
 	res.sendfile('index.html');
@@ -121,7 +122,7 @@ var InitGame = function(lastGame){
 		units: {
 			'HarrySoldierOne': {
 				pos: {x: 2, y: 2},
-				type: 1, //todo: Make soldier types enum available here
+				type: enums.Soldier.AXE,
 				team: 0,
 				waiting: true,
 				stats: {
@@ -133,7 +134,7 @@ var InitGame = function(lastGame){
 			},
 			'HarrySoldierTwo': {
 				pos: {x: 2, y: 4},
-				type: 2, //todo: Make soldier types enum available here
+				type: enums.Soldier.ARCHER,
 				team: 0,
 				waiting: true,
 				stats: {
@@ -145,7 +146,7 @@ var InitGame = function(lastGame){
 			},
 			'HarryCaptain': {
 				pos: {x: 2, y: 7},
-				type: 0, //todo: Make soldier types enum available here
+				type: enums.Soldier.SWORD,
 				team: 0,
 				waiting: true,
 				stats: {
@@ -157,7 +158,7 @@ var InitGame = function(lastGame){
 			},
 			'HarrySoldierThree': {
 				pos: {x: 2, y: 10},
-				type: 2, //todo: Make soldier types enum available here
+				type: enums.Soldier.ARCHER,
 				team: 0,
 				waiting: true,
 				stats: {
@@ -169,7 +170,7 @@ var InitGame = function(lastGame){
 			},
 			'HarrySoldierFour': {
 				pos: {x: 2, y: 12},
-				type: 1, //todo: Make soldier types enum available here
+				type: enums.Soldier.AXE,
 				team: 0,
 				waiting: true,
 				stats: {
@@ -181,7 +182,7 @@ var InitGame = function(lastGame){
 			},
 			'LaurieSoldierOne': {
 				pos: {x: 17, y: 2},
-				type: 1, //todo: Make soldier types enum available here
+				type: enums.Soldier.AXE,
 				team: 1,
 				waiting: true,
 				stats: {
@@ -193,7 +194,7 @@ var InitGame = function(lastGame){
 			},
 			'LaurieSoldierTwo': {
 				pos: {x: 17, y: 4},
-				type: 2, //todo: Make soldier types enum available here
+				type: enums.Soldier.ARCHER,
 				team: 1,
 				waiting: true,
 				stats: {
@@ -205,7 +206,7 @@ var InitGame = function(lastGame){
 			},
 			'LaurieCaptain': {
 				pos: {x: 17, y: 7},
-				type: 0, //todo: Make soldier types enum available here
+				type: enums.Soldier.SWORD,
 				team: 1,
 				waiting: true,
 				stats: {
@@ -217,7 +218,7 @@ var InitGame = function(lastGame){
 			},
 			'LaurieSoldierThree': {
 				pos: {x: 17, y: 10},
-				type: 2, //todo: Make soldier types enum available here
+				type: enums.Soldier.ARCHER,
 				team: 1,
 				waiting: true,
 				stats: {
@@ -229,7 +230,7 @@ var InitGame = function(lastGame){
 			},
 			'LaurieSoldierFour': {
 				pos: {x: 17, y: 12},
-				type: 1, //todo: Make soldier types enum available here
+				type: enums.Soldier.AXE,
 				team: 1,
 				waiting: true,
 				stats: {

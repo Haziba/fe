@@ -1,6 +1,5 @@
 var NewSoldier = function(unitId, initUnit, teamNum, activeTeam)
 {
-	console.log(unitId, initUnit.team, teamNum);
 	var _me = {id: unitId};
 	var _selected = false;
 	var _availableFights, _availableMoves;
@@ -25,6 +24,8 @@ var NewSoldier = function(unitId, initUnit, teamNum, activeTeam)
 				return Sprite.AXE;
 			case Soldier.SPEAR:
 				return Sprite.SPEAR;
+			case Soldier.ARCHER:
+				return Sprite.ARCHER;
 		}
 	}
 	
@@ -161,7 +162,7 @@ var NewSoldier = function(unitId, initUnit, teamNum, activeTeam)
 			SpriteHandler.Draw(Sprite.FADE_OUT, {x: _position.x * Global.TileSize(), y: _position.y * Global.TileSize()});
 		}
 		
-		SpriteHandler.Draw(_team == Team.ME ? Sprite.YOUR_UNIT : Sprite.THEIR_UNIT, {x: _position.x * Global.TileSize(), y: _position.y * Global.TileSize()});
+		SpriteHandler.Draw(_team == teamNum ? Sprite.YOUR_UNIT : Sprite.THEIR_UNIT, {x: _position.x * Global.TileSize(), y: _position.y * Global.TileSize()});
 		
 		SpriteHandler.Draw(Sprite.HEALTH_EMPTY, {x: _position.x * Global.TileSize(), y: _position.y * Global.TileSize()});
 		SpriteHandler.DrawInRect(Sprite.HEALTH_FULL, {x: _position.x * Global.TileSize(), y: _position.y * Global.TileSize()}, {x: 0, y: 0, width: Global.TileSize() * (_stats.health / _stats.maxHealth), height: Global.TileSize()});
@@ -189,15 +190,4 @@ var NewSoldier = function(unitId, initUnit, teamNum, activeTeam)
 	window.bus.pub('soldier place', _me);
 	
 	return _me;
-}
-
-var Soldier = {
-	SWORD: 0,
-	AXE: 1,
-	SPEAR: 2
-}
-
-var Team = {
-	ME: 0,
-	ENEMY: 1
 }
