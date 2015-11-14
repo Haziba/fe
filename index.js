@@ -129,7 +129,6 @@ var InitGame = function(lastGame){
 			'HarryCaptain': unitFactory.NewAxe(0, {x: 2, y: 7}),
 			'HarrySoldierThree': unitFactory.NewArcher(0, {x: 2, y: 10}),
 			'HarrySoldierFour': unitFactory.NewSword(0, {x: 2, y: 12}),
-			'DebugArcher': unitFactory.NewArcher(1, {x: 4, y: 2}),
 			'LaurieSoldierOne': unitFactory.NewSword(1, {x: 17, y: 2}),
 			'LaurieSoldierTwo': unitFactory.NewArcher(1, {x: 17, y: 4}),
 			'LaurieCaptain': unitFactory.NewAxe(1, {x: 17, y: 7}),
