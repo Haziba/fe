@@ -1,12 +1,13 @@
 var NewSoldier = function(unitId, initUnit, teamNum, activeTeam)
 {
+	console.log(unitId, initUnit.team, teamNum);
 	var _me = {id: unitId};
 	var _selected = false;
 	var _availableFights, _availableMoves;
 	
 	var _position = initUnit.pos;
 	var _soldierType = initUnit.type;
-	var _team = initUnit.team == teamNum;
+	var _team = initUnit.team;
 	var _active = activeTeam == teamNum;
 	var _waiting = initUnit.waiting;
 	var _stats = initUnit.stats;
@@ -59,7 +60,8 @@ var NewSoldier = function(unitId, initUnit, teamNum, activeTeam)
 			if(displayFight)
 				_displayFights.push(fightPos);
 		}
-		console.log(_displayFights);
+		
+		window.bus.pub('select', _me);
 	}
 	
 	_me.SelectGround = function(position){
@@ -138,6 +140,10 @@ var NewSoldier = function(unitId, initUnit, teamNum, activeTeam)
 	
 	_me.CanFight = function(){
 		return _actionsAvailable.fight;
+	}
+	
+	_me.Stats = function(){
+		return _stats;
 	}
 	
 	_me.Update = function(){

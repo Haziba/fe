@@ -6,6 +6,8 @@ var NewHUD = function(initData){
 	var _enemyPlayerId = "";
 	var _enemyConnected;
 	
+	var _selectedUnit;
+	
 	for(var player in initData.players)
 		if(player != socketId){
 			_enemyPlayerId = player;
@@ -38,6 +40,14 @@ var NewHUD = function(initData){
 	
 	window.bus.sub('enemy connection', function(connected){
 		_enemyConnected = connected;
+	});
+	
+	window.bus.sub('select', function(unit){
+		_selectedUnit = unit;
+	});
+	
+	window.bus.sub('deselect', function(){
+		_selectedUnit = undefined;
 	});
 	
 	_me.Update = function(){
@@ -77,6 +87,15 @@ var NewHUD = function(initData){
 		context.textAlign = 'left';
 		context.fillText("Current turn: " + (_activeTeam == _team ? socketId : _enemyPlayerId), 10, 625);
 		context.fillText(_enemyPlayerId + ": " + (_enemyConnected ? "Online" : "Offline"), 10, 655);
+		
+		if(_selectedUnit){
+			var stats = _selectedUnit.Stats();
+			
+			context.fillText("Name: " + _selectedUnit.id, 310, 625);
+			context.fillText("Health: " + stats.health + "/" + stats.maxHealth, 310, 655);
+			context.fillText("Strength: " + stats.strength, 310, 685);
+			context.fillText("Armour: " + stats.armour, 310, 715);
+		}
 		
 		_endTurnButton.Draw();
 	}
