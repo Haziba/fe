@@ -3,6 +3,7 @@ var http = require('http');
 var path = require('path');
 var express = require('express');
 var enums = require('./public/js/enums.js');
+var unitFactory = require('./server/unitFactory.js')(enums);
 
 app.get('/', function(req, res){
 	res.sendfile('index.html');
@@ -123,206 +124,16 @@ var InitGame = function(lastGame){
 			}
 		},
 		units: {
-			'HarrySoldierOne': {
-				pos: {x: 2, y: 2},
-				type: enums.Soldier.AXE,
-				team: 0,
-				waiting: true,
-				stats: {
-					health: 18,
-					maxHealth: 18,
-					strength: 12,
-					armour: 8,
-					moves: {
-						remaining: 4,
-						max: 4
-					},
-					fights: {
-						remaining: 1,
-						max: 1
-					}
-				}
-			},
-			'HarrySoldierTwo': {
-				pos: {x: 2, y: 4},
-				type: enums.Soldier.ARCHER,
-				team: 0,
-				waiting: true,
-				stats: {
-					health: 18,
-					maxHealth: 18,
-					strength: 12,
-					armour: 8,
-					moves: {
-						remaining: 4,
-						max: 4
-					},
-					fights: {
-						remaining: 1,
-						max: 1
-					}
-				}
-			},
-			'HarryCaptain': {
-				pos: {x: 2, y: 7},
-				type: enums.Soldier.SWORD,
-				team: 0,
-				waiting: true,
-				stats: {
-					health: 18,
-					maxHealth: 18,
-					strength: 12,
-					armour: 8,
-					moves: {
-						remaining: 4,
-						max: 4
-					},
-					fights: {
-						remaining: 1,
-						max: 1
-					}
-				}
-			},
-			'HarrySoldierThree': {
-				pos: {x: 2, y: 10},
-				type: enums.Soldier.ARCHER,
-				team: 0,
-				waiting: true,
-				stats: {
-					health: 18,
-					maxHealth: 18,
-					strength: 12,
-					armour: 8,
-					moves: {
-						remaining: 4,
-						max: 4
-					},
-					fights: {
-						remaining: 1,
-						max: 1
-					}
-				}
-			},
-			'HarrySoldierFour': {
-				pos: {x: 2, y: 12},
-				type: enums.Soldier.AXE,
-				team: 0,
-				waiting: true,
-				stats: {
-					health: 18,
-					maxHealth: 18,
-					strength: 12,
-					armour: 8,
-					moves: {
-						remaining: 4,
-						max: 4
-					},
-					fights: {
-						remaining: 1,
-						max: 1
-					}
-				}
-			},
-			'LaurieSoldierOne': {
-				pos: {x: 17, y: 2},
-				type: enums.Soldier.AXE,
-				team: 1,
-				waiting: true,
-				stats: {
-					health: 18,
-					maxHealth: 18,
-					strength: 12,
-					armour: 8,
-					moves: {
-						remaining: 4,
-						max: 4
-					},
-					fights: {
-						remaining: 1,
-						max: 1
-					}
-				}
-			},
-			'LaurieSoldierTwo': {
-				pos: {x: 17, y: 4},
-				type: enums.Soldier.ARCHER,
-				team: 1,
-				waiting: true,
-				stats: {
-					health: 18,
-					maxHealth: 18,
-					strength: 12,
-					armour: 8,
-					moves: {
-						remaining: 4,
-						max: 4
-					},
-					fights: {
-						remaining: 1,
-						max: 1
-					}
-				}
-			},
-			'LaurieCaptain': {
-				pos: {x: 17, y: 7},
-				type: enums.Soldier.SWORD,
-				team: 1,
-				waiting: true,
-				stats: {
-					health: 18,
-					maxHealth: 18,
-					strength: 12,
-					armour: 8,
-					moves: {
-						remaining: 4,
-						max: 4
-					},
-					fights: {
-						remaining: 1,
-						max: 1
-					}
-				}
-			},
-			'LaurieSoldierThree': {
-				pos: {x: 17, y: 10},
-				type: enums.Soldier.ARCHER,
-				team: 1,
-				waiting: true,
-				stats: {
-					health: 18,
-					maxHealth: 18,
-					strength: 12,
-					armour: 8,
-					moves: {
-						remaining: 4,
-						max: 4
-					},
-					fights: {
-						remaining: 1,
-						max: 1
-					}
-				}
-			},
-			'LaurieSoldierFour': {
-				pos: {x: 17, y: 12},
-				type: enums.Soldier.AXE,
-				team: 1,
-				waiting: true,
-				stats: {
-					health: 18,
-					maxHealth: 18,
-					strength: 12,
-					armour: 8,
-					moves: {
-						remaining: 4,
-						max: 4
-					},
-					fights: {
-						remaining: 1,
-						max: 1
-					}
-				}
-			},
+			'HarrySoldierOne': unitFactory.NewSword(0, {x: 2, y: 2}),
+			'HarrySoldierTwo': unitFactory.NewArcher(0, {x: 2, y: 4}),
+			'HarryCaptain': unitFactory.NewAxe(0, {x: 2, y: 7}),
+			'HarrySoldierThree': unitFactory.NewArcher(0, {x: 2, y: 10}),
+			'HarrySoldierFour': unitFactory.NewSword(0, {x: 2, y: 12}),
+			'LaurieSoldierOne': unitFactory.NewSword(1, {x: 17, y: 2}),
+			'LaurieSoldierTwo': unitFactory.NewArcher(1, {x: 17, y: 4}),
+			'LaurieCaptain': unitFactory.NewAxe(1, {x: 17, y: 7}),
+			'LaurieSoldierThree': unitFactory.NewArcher(1, {x: 17, y: 10}),
+			'LaurieSoldierFour': unitFactory.NewSword(1, {x: 17, y: 12}),
 		},
 		map: [[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
 			  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
