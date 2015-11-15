@@ -63,8 +63,10 @@ TileHelper = {
 						if(this.TilesInRange({x: 0, y: 0}, {x: j, y: k}, range) && !(pos.x == fightPos.x && pos.y == fightPos.y)){
 							availableFights.push({pos: fightPos, movePos: availableMoves[i]});
 							
-							if(typeof(tiles[fightPos.x][fightPos.y]) === 'object' && tiles[fightPos.x][fightPos.y].Team() != unit.team)
+							if(typeof(tiles[fightPos.x][fightPos.y]) === 'object' && tiles[fightPos.x][fightPos.y].Team() != unit.Team()){
+								debugger;
 								availableMoves[i].fightable = true;
+							}
 						}
 				}
 		}
