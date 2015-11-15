@@ -147,7 +147,7 @@ var NewSoldier = function(unitId, initUnit, teamNum, activeTeam)
 		return {min: 1, max: 1};
 	}
 	
-	_me.Selectable = function(){
+	_me.Controlable = function(){
 		return _team == teamNum && _waiting && _active;
 	}
 	

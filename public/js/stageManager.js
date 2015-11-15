@@ -14,10 +14,9 @@ var NewStageManager = function(initData) {
 	}
 	
 	var SelectUnit = function(unit){
-		if(!unit.Selectable()){
+		if(!unit.Controlable()){
 			if(_currentSelection)
 				_currentSelection.SelectUnit(unit);
-			return;
 		}
 		
 		if(_currentSelection)
@@ -25,10 +24,14 @@ var NewStageManager = function(initData) {
 		
 		_currentSelection = unit;
 		
-		var availableMoves = unit.CanMove() ? TileHelper.GetAvailableMoves(_tiles, unit) : [{pos: unit.GetPosition()}];
-		var availableFights = unit.CanFight() ? TileHelper.GetAvailableFights(unit, availableMoves) : [];
-		
-		_currentSelection.Select(availableFights, availableMoves);
+		if(unit.Controlable()){
+			var availableMoves = unit.CanMove() ? TileHelper.GetAvailableMoves(_tiles, unit) : [{pos: unit.GetPosition()}];
+			var availableFights = unit.CanFight() ? TileHelper.GetAvailableFights(unit, availableMoves) : [];
+			
+			_currentSelection.Select(availableFights, availableMoves);
+		}else{
+			_currentSelection.Select([], []);
+		}
 	}
 	
 	var SelectGround = function(position){
