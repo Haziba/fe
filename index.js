@@ -4,6 +4,7 @@ var path = require('path');
 var express = require('express');
 var enums = require('./public/js/enums.js');
 var unitFactory = require('./server/unitFactory.js')(enums);
+var worlds = require('./server/worlds.js')();
 
 app.get('/', function(req, res){
 	res.sendfile('index.html');
@@ -124,37 +125,39 @@ var InitGame = function(lastGame){
 			}
 		},
 		units: {
-			'HarrySoldierOne': unitFactory.NewSword(0, {x: 2, y: 2}),
-			'HarrySoldierTwo': unitFactory.NewArcher(0, {x: 2, y: 4}),
-			'HarryCaptain': unitFactory.NewAxe(0, {x: 2, y: 7}),
-			'HarrySoldierThree': unitFactory.NewArcher(0, {x: 2, y: 10}),
-			'HarrySoldierFour': unitFactory.NewSword(0, {x: 2, y: 12}),
-			'LaurieSoldierOne': unitFactory.NewSword(1, {x: 17, y: 2}),
-			'LaurieSoldierTwo': unitFactory.NewArcher(1, {x: 17, y: 4}),
-			'LaurieCaptain': unitFactory.NewAxe(1, {x: 17, y: 7}),
-			'LaurieSoldierThree': unitFactory.NewArcher(1, {x: 17, y: 10}),
-			'LaurieSoldierFour': unitFactory.NewSword(1, {x: 17, y: 12}),
+			'HarrySoldierOne': unitFactory.NewAxe(0, {x: 2, y: 2}),
+			'HarrySoldierTwo': unitFactory.NewArcher(0, {x: 1, y: 3}),
+			'HarryCaptain': unitFactory.NewSword(0, {x: 2, y: 4}),
+			'HarrySoldierThree': unitFactory.NewArcher(0, {x: 1, y: 5}),
+			'HarrySoldierFour': unitFactory.NewSword(0, {x: 2, y: 6}),
+			'HarrySoldierFive': unitFactory.NewArcher(0, {x: 1, y: 7}),
+			'HarrySoldierSix': unitFactory.NewSpear(0, {x: 2, y: 8}),
+			
+			'LaurieSoldierOne': unitFactory.NewSpear(1, {x: 12, y: 2}),
+			'LaurieSoldierTwo': unitFactory.NewArcher(1, {x: 13, y: 3}),
+			'LaurieCaptain': unitFactory.NewSword(1, {x: 12, y: 4}),
+			'LaurieSoldierThree': unitFactory.NewArcher(1, {x: 13, y: 5}),
+			'LaurieSoldierFour': unitFactory.NewSword(1, {x: 12, y: 6}),
+			'LaurieSoldierFive': unitFactory.NewArcher(1, {x: 13, y: 7}),
+			'LaurieSoldierSix': unitFactory.NewAxe(1, {x: 12, y: 8}),
 		},
-		map: [[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-			  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-			  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-			  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-			  [1,0,0,1,1,1,1,0,1,1,1,1,0,0,1],
-			  [1,0,1,0,0,0,0,0,0,0,0,0,1,0,1],
-			  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-			  [1,0,0,0,0,0,1,0,1,0,0,0,0,0,1],
-			  [1,0,0,1,1,1,1,0,1,1,1,1,0,0,1],
-			  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-			  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-			  [1,0,0,1,1,1,1,0,1,1,1,1,0,0,1],
-			  [1,0,0,0,0,0,1,0,1,0,0,0,0,0,1],
-			  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-			  [1,0,1,0,0,0,0,0,0,0,0,0,1,0,1],
-			  [1,0,0,1,1,1,1,0,1,1,1,1,0,0,1],
-			  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-			  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-			  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-			  [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]]
+		ships: [
+			{
+				team: 0,
+				pos: {
+					x: 0,
+					y: 5
+				}
+			},
+			{
+				team: 1,
+				pos: {
+					x: 14,
+					y: 5
+				}
+			}
+		],
+		map: worlds.GetFor(15, 12)
 	};
 }
 
@@ -166,6 +169,8 @@ var ResolveMove = function(data){
 	for(var player in game.players)
 		if(game.players[player].connected)
 			sockets[player].emit('process', {event: 'soldier move resolve', data: {unitId: data.unitId, pos: data.pos}});
+	
+	CheckForGameEnd();
 }
 
 var ResolveFight = function(combatants){	
@@ -187,9 +192,6 @@ var ResolveFight = function(combatants){
 		if(game.players[player].connected){
 			sockets[player].emit('process', {event: 'soldier fight resolve', data: units});
 		}
-	
-	if(myUnit.stats.health == 0 || enemyUnit.stats.health == 0)
-		CheckForGameEnd();
 }
 
 var InMeleeRange = function(myUnit, enemyUnit){
@@ -197,20 +199,24 @@ var InMeleeRange = function(myUnit, enemyUnit){
 }
 
 var CheckForGameEnd = function(){
-	var remainingZero = RemainingLivingUnitsFor(0);
-	var remainingOne = RemainingLivingUnitsFor(1);
+	for(var i = 0; i < game.ships.length; i++){
+		var ship = game.ships[i];
+		
+		for(var unitId in game.units){
+			var unit = game.units[unitId];
+			
+			if(ship.pos.x == unit.pos.x && ship.pos.y == unit.pos.y && ship.team != unit.team){
+				game.state = 1 + unit.team;
+			}
+		}
+	}
 	
-	if(remainingZero == 0 && remainingOne == 0)
-		game.state = 3;
-	else if(remainingZero == 0)
-		game.state = 2;
-	else if(remainingOne == 0)
-		game.state = 1;
-	
-	if(game.state != 0)
+	if(game.state != 0){
 		for(var player in game.players)
-			if(game.players[player].connected)
-				sockets[player].emit('update', {event: 'game state change', data: game.state});
+			if(game.players[player].connected){
+				sockets[player].emit('process', {event: 'state change resolve', data: game.state});
+			}
+	}
 }
 
 var RemainingLivingUnitsFor = function(team){

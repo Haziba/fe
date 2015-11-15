@@ -1,4 +1,5 @@
 var Global = {
+	screenSize: {width: 20, height: 15},
 	LastId: 0,
 	NewId: function(forDebugging)
 	{
@@ -16,8 +17,11 @@ var Global = {
 	TileSize: function(){
 		return 40;
 	},
+	SetScreenSize: function(screenSize){
+		this.screenSize = screenSize;
+	},
 	ScreenSize: function(){
-		return {width: 20, height: 15}
+		return this.screenSize;
 	}
 };
 

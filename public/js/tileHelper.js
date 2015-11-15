@@ -1,5 +1,7 @@
 TileHelper = {
 	GetAvailableMoves: function(tiles, unit){
+		var me = this;
+		
 		var open = [{pos: unit.GetPosition(), steps: 0}];
 		var closed = [];
 		
@@ -9,7 +11,10 @@ TileHelper = {
 		var CheckTile = function(currentTile, shift){
 			var newTile = {pos: {x: currentTile.pos.x + shift.x, y: currentTile.pos.y + shift.y}, steps: currentTile.steps + 1};
 			
-			if(newTile.steps >= range || newTile.pos.x < 1 || newTile.pos.x >= tiles.length-1 || newTile.pos.y < 1 || newTile.pos.y >= tiles[0].length-1)
+			if(newTile.steps >= range)
+				return;
+			
+			if(!me.TileOnScreen(newTile.pos))
 				return;
 			
 			for(var k = 0; k < closed.length; k++)

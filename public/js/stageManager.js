@@ -5,6 +5,8 @@ var NewStageManager = function(initData) {
 	var _tiles = [];
 	var _currentSelection;
 	
+	Global.SetScreenSize({width: initData.map.length, height: initData.map[0].length})
+	
 	for(var i = 0; i < Global.ScreenSize().width; i++) {
 		_tiles[i] = [];
 		for(var j = 0; j < Global.ScreenSize().height; j++)

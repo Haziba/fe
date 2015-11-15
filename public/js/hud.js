@@ -33,7 +33,7 @@ var NewHUD = function(initData){
 	if(_team != initData.activeTeam)
 		_endTurnButton.Disable();
 	
-	window.bus.sub('game state change', function(gameState){
+	window.bus.sub('state change resolve', function(gameState){
 		_gameState = gameState;
 		
 		if(_gameState != 0)

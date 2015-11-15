@@ -25,7 +25,7 @@ var SpriteHandler = {
 var Sprite = {
 	GRASS: {x: 0, y: 0},
 	BRICK: {x: 1, y: 0},
-	KING: {x: 2, y: 0},
+	SHIP: {x: 2, y: 0},
 	SWORD: {x: 0, y: 1},
 	AXE: {x: 1, y: 1},
 	SPEAR: {x: 2, y: 1},

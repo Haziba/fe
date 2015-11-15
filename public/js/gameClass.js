@@ -2,9 +2,12 @@ var StartGame = function(initData)
 {
 	var _stageManager = NewStageManager(initData);
 	
+	var _teamNum = initData.players[socketId].team;
+	
 	var _tileManager = NewTileManager(initData);
 	// todo: Just pass through initData
-	var _soldierManager = NewSoldierManager(initData.units, initData.players[socketId].team, initData.activeTeam);
+	var _soldierManager = NewSoldierManager(initData.units, _teamNum, initData.activeTeam);
+	var _shipManager = NewShipManager(initData, _teamNum);
 	
 	var _control = NewControl(initData);
 	var _hud = NewHUD(initData);
@@ -17,6 +20,7 @@ var StartGame = function(initData)
 		
 		_tileManager = NewTileManager(data);
 		_soldierManager = NewSoldierManager(data.units, data.players[socketId].team);
+		_shipManager = NewShipManager(data, _teamNum);
 
 		_control = NewControl(data);
 		_hud = NewHUD(data);
@@ -30,6 +34,7 @@ var StartGame = function(initData)
 		
 		_tileManager.Update();
 		_soldierManager.Update();
+		_shipManager.Update();
 		
 		_control.Update();
 		_hud.Update();
@@ -43,6 +48,7 @@ var StartGame = function(initData)
 		SpriteHandler.Clear();
 		
 		_tileManager.Draw();
+		_shipManager.Draw();
 		_soldierManager.Draw();
 		_stageManager.Draw();
 		_control.Draw();
