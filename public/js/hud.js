@@ -1,4 +1,4 @@
-var NewHUD = function(initData){
+var NewHUD = function($controls, initData){
 	var _me = {};
 	
 	var _team = initData.players[socketId].team;
@@ -8,6 +8,9 @@ var NewHUD = function(initData){
 	
 	var _selectedUnit;
 	
+	var $unitDone = $controls.find('#unitDone');
+	var $endTurn = $controls.find('#endTurn');
+	
 	for(var player in initData.players)
 		if(player != socketId){
 			_enemyPlayerId = player;
@@ -16,7 +19,7 @@ var NewHUD = function(initData){
 	
 	var _gameState = initData.state;
 	
-	var _unitDoneButton = NewButton("Unit Done", {x: 675, y: 615}, function(){
+	$unitDone.click(function(){
 		_selectedUnit.Done();
 		
 		window.bus.pub('soldier done start', _selectedUnit);
@@ -24,14 +27,14 @@ var NewHUD = function(initData){
 		_selectedUnit.Deselect();
 	});
 	
-	_unitDoneButton.Disable();
+	$unitDone.attr("disabled", true);
 	
-	var _endTurnButton = NewButton("End Turn", {x: 675, y: 670}, function(){
+	$endTurn.click(function(){
 		window.bus.pub('turn end start');
 	});
 	
 	if(_team != initData.activeTeam)
-		_endTurnButton.Disable();
+		$endTurn.attr("disabled", true);;
 	
 	window.bus.sub('state change resolve', function(gameState){
 		_gameState = gameState;
@@ -43,9 +46,9 @@ var NewHUD = function(initData){
 	window.bus.sub('turn end resolve', function(activeTeam){
 		_activeTeam = activeTeam;
 		if(_team == activeTeam)
-			_endTurnButton.Enable();
+			$endTurn.removeAttr('disabled');
 		else
-			_endTurnButton.Disable();
+			$endTurn.attr('disabled', true);
 	});
 	
 	window.bus.sub('enemy connection resolve', function(connected){
@@ -55,22 +58,19 @@ var NewHUD = function(initData){
 	window.bus.sub('select', function(unit){
 		_selectedUnit = unit;
 		
-		_unitDoneButton.Enable();
+		$unitDone.removeAttr('disabled');
 	});
 	
 	window.bus.sub('deselect', function(){
 		_selectedUnit = undefined;
 		
-		_unitDoneButton.Disable();
+		$unitDone.attr('disabled', true);
 	});
 	
 	_me.Update = function(){
 		if(_gameState != 0){
 			if(InputHandler.MouseClicked())
 				window.bus.pub('game reset start');
-		} else {
-			_endTurnButton.Update();
-			_unitDoneButton.Update();
 		}
 	}
 	
@@ -111,9 +111,6 @@ var NewHUD = function(initData){
 			context.fillText("Strength: " + stats.strength, 310, 685);
 			context.fillText("Armour: " + stats.armour, 310, 715);
 		}
-		
-		_unitDoneButton.Draw();
-		_endTurnButton.Draw();
 	}
 	
 	return _me;

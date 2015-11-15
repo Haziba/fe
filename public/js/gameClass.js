@@ -1,4 +1,4 @@
-var StartGame = function(initData)
+var StartGame = function($controls, initData)
 {
 	var _stageManager = NewStageManager(initData);
 	
@@ -10,7 +10,7 @@ var StartGame = function(initData)
 	var _shipManager = NewShipManager(initData, _teamNum);
 	
 	var _control = NewControl(initData);
-	var _hud = NewHUD(initData);
+	var _hud = NewHUD($controls, initData);
 	
 	// update mutex
 	var _updateRunning = false;
