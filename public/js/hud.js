@@ -53,6 +53,8 @@ var NewHUD = function($controls, initData){
 		$currentTurn.text(team == _team ? socketId : _enemyPlayerId);
 		
 		_activeTeam = team;
+		
+		window.document.title = 'FE | ' + (team == _team ? 'Your' : 'Enemy') + ' Turn';
 	}
 	
 	UpdateCurrentTurn(initData.activeTeam);
@@ -65,7 +67,7 @@ var NewHUD = function($controls, initData){
 	});
 	
 	window.bus.sub('turn end resolve', function(activeTeam){
-		UpdateCurrentTurn();
+		UpdateCurrentTurn(activeTeam);
 		
 		if(_team == activeTeam)
 			$endTurn.removeAttr('disabled');
