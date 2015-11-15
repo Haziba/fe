@@ -10,12 +10,25 @@ var NewHUD = function($controls, initData){
 	
 	var $unitDone = $controls.find('#unitDone');
 	var $endTurn = $controls.find('#endTurn');
+	var $currentTurn = $controls.find('#currentTurn');
+	var $enemyName = $controls.find('#enemyName');
+	var $enemyOnline = $controls.find('#enemyOnline');
+	
+	var $unitSelection = $controls.find('#unitSelection');
+	var $unitName = $controls.find('#unitName');
+	var $unitHealth = $controls.find('#unitHealth');
+	var $unitStrength = $controls.find('#unitStrength');
+	var $unitArmour = $controls.find('#unitArmour');
+	
 	
 	for(var player in initData.players)
 		if(player != socketId){
 			_enemyPlayerId = player;
 			_enemyConnected = initData.players[player].connected;
 		}
+	
+	$enemyName.text(_enemyPlayerId);
+	$enemyOnline.text(_enemyConnected ? "Online" : "Offline");
 	
 	var _gameState = initData.state;
 	
@@ -34,7 +47,15 @@ var NewHUD = function($controls, initData){
 	});
 	
 	if(_team != initData.activeTeam)
-		$endTurn.attr("disabled", true);;
+		$endTurn.attr("disabled", true);
+	
+	var UpdateCurrentTurn = function(team){
+		$currentTurn.text(team == _team ? socketId : _enemyPlayerId);
+		
+		_activeTeam = team;
+	}
+	
+	UpdateCurrentTurn(initData.activeTeam);
 	
 	window.bus.sub('state change resolve', function(gameState){
 		_gameState = gameState;
@@ -44,7 +65,8 @@ var NewHUD = function($controls, initData){
 	});
 	
 	window.bus.sub('turn end resolve', function(activeTeam){
-		_activeTeam = activeTeam;
+		UpdateCurrentTurn();
+		
 		if(_team == activeTeam)
 			$endTurn.removeAttr('disabled');
 		else
@@ -52,17 +74,29 @@ var NewHUD = function($controls, initData){
 	});
 	
 	window.bus.sub('enemy connection resolve', function(connected){
-		_enemyConnected = connected;
+		$enemyOnline.text(connected ? "Online" : "Offline");
 	});
 	
 	window.bus.sub('select', function(unit){
 		_selectedUnit = unit;
 		
-		$unitDone.removeAttr('disabled');
+		$unitSelection.show();
+		
+		var stats = unit.Stats();
+		
+		$unitName.text(unit.id);
+		$unitHealth.text(stats.health + "/" + stats.maxHealth);
+		$unitStrength.text(stats.strength);
+		$unitArmour.text(stats.armour);
+		
+		if(unit.Team() == _team && _activeTeam == _team)
+			$unitDone.removeAttr('disabled');
 	});
 	
 	window.bus.sub('deselect', function(){
 		_selectedUnit = undefined;
+		
+		$unitSelection.hide();
 		
 		$unitDone.attr('disabled', true);
 	});
@@ -96,12 +130,6 @@ var NewHUD = function($controls, initData){
 			context.font = '14px Arial black';
 			context.fillText('Click anywhere to restart the game', 400, 320);
 		}
-		
-		context.fillStyle = 'black';
-		context.font = '22px Arial black';
-		context.textAlign = 'left';
-		context.fillText("Current turn: " + (_activeTeam == _team ? socketId : _enemyPlayerId), 10, 625);
-		context.fillText(_enemyPlayerId + ": " + (_enemyConnected ? "Online" : "Offline"), 10, 655);
 		
 		if(_selectedUnit){
 			var stats = _selectedUnit.Stats();

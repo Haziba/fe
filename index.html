@@ -54,6 +54,11 @@
 	button span{
 		font-size: 22px;
 	}
+	p{
+		margin: 0;
+		font-size: 18px;
+		font-family: verdana;
+	}
 </style>
 <body style="background-color: #4d2600">
 	<div id="gameWrapper" style="border: 1px solid #000; width: 800px; height: 800px; position: absolute; left: 50%; margin-left: -400px">
@@ -62,6 +67,28 @@
 			</canvas>
 		</div>
 		<div id="gameControls" style="width: 750px; height: 125px; border: 1px solid #000; margin: auto; top: 50px; position: relative; background-color: #fff">
+			<div style="width: 250px; margin: 20px; float: left">
+				<p>
+					Current Turn: <span id='currentTurn'></span>
+				</p>
+				<p>
+					<span id='enemyName'></span>: <span id='enemyOnline'></span>
+				</p>
+			</div>
+			<div id='unitSelection' style="width: 250px; margin: 20px; float: left; display: none">
+				<p>
+					Name: <span id='unitName'></span>
+				</p>
+				<p>
+					Health: <span id='unitHealth'></span>
+				</p>
+				<p>
+					Strength: <span id='unitStrength'></span>
+				</p>
+				<p>
+					Armour: <span id='unitArmour'></span>
+				</p>
+			</div>
 			<button id="unitDone" style="position: absolute; right: 25px; top: 25px;">
 				<span>Unit Done</span>
 			</button>
