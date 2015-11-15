@@ -48,7 +48,7 @@ var NewHUD = function(initData){
 			_endTurnButton.Disable();
 	});
 	
-	window.bus.sub('enemy connection', function(connected){
+	window.bus.sub('enemy connection resolve', function(connected){
 		_enemyConnected = connected;
 	});
 	

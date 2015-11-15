@@ -39,7 +39,7 @@ io.on('connection', function(socket){
 		
 		for(var player in game.players)
 			if(game.players[player].connected)
-				sockets[player].emit('update', {event: 'enemy connection', data: false});
+				sockets[player].emit('process', {event: 'enemy connection resolve', data: false});
 	});
 	
 	socket.on('init', function(msg){
@@ -54,7 +54,7 @@ io.on('connection', function(socket){
 		
 		for(var player in game.players)
 			if(player != userId && game.players[player].connected)
-				sockets[player].emit('update', {event: 'enemy connection', data: true});
+				sockets[player].emit('process', {event: 'enemy connection resolve', data: true});
 	});
 	
 	socket.on('process', function(message){
