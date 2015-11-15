@@ -21,19 +21,14 @@
 <script src="js/ship.js"></script>
 <script>
 	$(function(){
-		var canvas = $("#gameCanvas")[0];
-		var context = canvas.getContext("2d");
-		
-		canvas.width = 800;
-		canvas.height = 800;
-		context.width = 800;
-		context.height = 800;
+		Global.canvas = $("#gameCanvas")[0];
+		var context = Global.canvas.getContext("2d");
 		
 		var spritesInitialised, initData;
 		
 		var sprite = new Image();
 		sprite.onload = function(){
-			InputHandler.Initialise(canvas);
+			InputHandler.Initialise(Global.canvas);
 			SpriteHandler.Initialise(context, sprite);
 			
 			spritesInitialised = true;
@@ -52,5 +47,15 @@
 		sprite.src = "img/spritesheet.png";
 	});
 </script>
-<canvas id="gameCanvas" style="border: 1px solid #000; width: 800px; height: 800px">
-</canvas>
+<body style="background-color: #4d2600">
+	<div id="gameWrapper" style="border: 1px solid #000; width: 800px; height: 800px; position: absolute; left: 50%; margin-left: -400px">
+		<div style="width: 750px; height: 600px; border: 1px solid #000; margin: auto; top: 25px; position: relative; background-image: url(img/backdrop.png)">
+			<canvas id="gameCanvas" style="border: 1px solid #000; width: 800px; height: 800px; position: relative; top: 50%; left: 50%">
+			</canvas>
+		</div>
+		<div id="gameControls" style="width: 750px; height: 125px; border: 1px solid #000; margin: auto; top: 50px; position: relative; background-color: #fff">
+		</div>
+		<div style="width: 100%; height: 100%; position: absolute; top: 0px; left: 0px; background-image: url(img/Overlay.png)">
+		</div>
+	</div>
+</body>
