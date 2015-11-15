@@ -80,6 +80,9 @@ var NewSoldier = function(unitId, initUnit, teamNum, activeTeam)
 				_stats.moves.remaining -= steps;
 				if(_stats.moves.remaining + _stats.fights.remaining == 0)
 					_waiting = false;
+				
+				if(!_availableMoves[i].fightable)
+					_waiting = false;
 			}
 		
 		_me.Deselect();

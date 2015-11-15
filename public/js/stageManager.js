@@ -15,8 +15,10 @@ var NewStageManager = function(initData) {
 	
 	var SelectUnit = function(unit){
 		if(!unit.Controlable()){
-			if(_currentSelection)
+			if(_currentSelection){
 				_currentSelection.SelectUnit(unit);
+				return;
+			}
 		}
 		
 		if(_currentSelection)
@@ -26,7 +28,7 @@ var NewStageManager = function(initData) {
 		
 		if(unit.Controlable()){
 			var availableMoves = unit.CanMove() ? TileHelper.GetAvailableMoves(_tiles, unit) : [{pos: unit.GetPosition()}];
-			var availableFights = unit.CanFight() ? TileHelper.GetAvailableFights(unit, availableMoves) : [];
+			var availableFights = unit.CanFight() ? TileHelper.GetAvailableFights(_tiles, unit, availableMoves) : [];
 			
 			_currentSelection.Select(availableFights, availableMoves);
 		}else{

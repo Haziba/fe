@@ -9,7 +9,7 @@ TileHelper = {
 		var pos = unit.GetPosition();
 		
 		var CheckTile = function(currentTile, shift){
-			var newTile = {pos: {x: currentTile.pos.x + shift.x, y: currentTile.pos.y + shift.y}, steps: currentTile.steps + 1};
+			var newTile = {pos: {x: currentTile.pos.x + shift.x, y: currentTile.pos.y + shift.y}, steps: currentTile.steps + 1, fightable: false};
 			
 			if(newTile.steps >= range)
 				return;
@@ -47,7 +47,7 @@ TileHelper = {
 		return closed;
 	},
 	
-	GetAvailableFights: function(unit, availableMoves){
+	GetAvailableFights: function(tiles, unit, availableMoves){
 		var availableFights = [];
 		var range = unit.AttackRange();
 		var pos = unit.GetPosition();
@@ -60,8 +60,12 @@ TileHelper = {
 					var fightPos = {x: availableMoves[i].pos.x + j, y: availableMoves[i].pos.y + k};
 					
 					if(this.TileOnScreen(fightPos))
-						if(this.TilesInRange({x: 0, y: 0}, {x: j, y: k}, range) && !(pos.x == fightPos.x && pos.y == fightPos.y))
+						if(this.TilesInRange({x: 0, y: 0}, {x: j, y: k}, range) && !(pos.x == fightPos.x && pos.y == fightPos.y)){
 							availableFights.push({pos: fightPos, movePos: availableMoves[i]});
+							
+							if(typeof(tiles[fightPos.x][fightPos.y]) === 'object' && tiles[fightPos.x][fightPos.y].Team() != unit.team)
+								availableMoves[i].fightable = true;
+						}
 				}
 		}
 		
