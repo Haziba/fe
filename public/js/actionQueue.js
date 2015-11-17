@@ -5,12 +5,14 @@ var NewActionQueue = function(_soldierManager, _stageManager){
 		action.Process(_soldierManager, _stageManager);
 	}
 	
-	window.bus.sub('action new', function(action){
+	/*window.bus.sub('action new', function(action){
 		window.bus.pub('action queue', action);
-	});
+	});*/
 	
 	window.bus.sub('action queue', function(action){
 		_queue.push(NewAction(action.action, action.data));
+		
+		console.log("New action", action, _queue);
 		
 		if(_queue.length == 1)
 			Process(_queue[0]);

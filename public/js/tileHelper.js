@@ -64,7 +64,6 @@ TileHelper = {
 							availableFights.push({pos: fightPos, movePos: availableMoves[i]});
 							
 							if(typeof(tiles[fightPos.x][fightPos.y]) === 'object' && tiles[fightPos.x][fightPos.y].Team() != unit.Team()){
-								debugger;
 								availableMoves[i].fightable = true;
 							}
 						}

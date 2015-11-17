@@ -86,19 +86,9 @@ var NewSoldier = function(unitId, initUnit, teamNum, activeTeam)
 		for(var i = 0; i < _availableFights.length; i++)
 			if(_availableFights[i].pos.x == position.x && _availableFights[i].pos.y == position.y){
 				if(!TileHelper.TilesInRange(_position, position, _me.AttackRange())){
-					_me.MoveTo(_availableFights[i].movePos.pos);
-					
-					var steps = _availableFights[i].movePos.steps + 1;
-					
-					_stats.moves.remaining -= steps;
-	
-					window.bus.pub('soldier move start', {unitId: _me.id, pos: _position, steps: steps});
+					window.bus.pub('action new', {action: 'soldier move', data: {unitId: _me.id, move: _availableFights[i].movePos}});
 				}
-				window.bus.pub('soldier fight start', {me: _me, enemy: unit});
-				
-				_stats.fights.remaining--;
-				if(_stats.moves.remaining + _stats.fights.remaining == 0)
-					_waiting = false;
+				window.bus.pub('action new', {action: 'soldier fight', data: {unitId: _me.id, enemyUnitId: unit.id}});
 			}
 		
 		_me.Deselect();
@@ -116,8 +106,21 @@ var NewSoldier = function(unitId, initUnit, teamNum, activeTeam)
 		_position = {x: move.pos.x, y: move.pos.y};
 	}
 	
-	_me.ResolveCombat = function(unit){
-		_stats.health = unit.stats.health;
+	_me.Fight = function(fight){
+		_stats.fights.remaining--;
+		
+		if(_stats.moves.remaining + _stats.fights.remaining == 0)
+			_waiting = false;
+		
+		ResolveCombat(fight.health);
+	}
+	
+	_me.GetFought = function(fight){
+		ResolveCombat(fight.enemyHealth);
+	}
+	
+	var ResolveCombat = function(health){
+		_stats.health = health;
 		
 		if(_stats.health == 0){
 			_alive = false;

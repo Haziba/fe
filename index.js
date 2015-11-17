@@ -57,23 +57,20 @@ io.on('connection', function(socket){
 				sockets[player].emit('process', {event: 'enemy connection resolve', data: true});
 	});
 	socket.on('action', function(action){
-		console.log(userId);
-		ProcessAction(action);
+		console.log("----" + userId + "----");
+		var response = ProcessAction(action);
+		console.log("----RESPONSE----");
+		console.log(response);
 		
 		for(var player in game.players){
-			if(player != userId && game.players[player].connected)
-				sockets[player].emit('action', action);
+			if(game.players[player].connected)
+				sockets[player].emit('action', {action: action.action, data: response});
 		}
 	});
+	//todo: Move the rest of these to the action queue
 	socket.on('process', function(message){
 		console.log(message);
 		switch(message.event){
-			case 'soldier move start':
-				ResolveMove(message.data);
-				break;
-			case 'soldier fight start':
-				ResolveFight(message.data);
-				break;
 			case 'game reset start':
 				ResetGame();
 				break;
@@ -92,13 +89,38 @@ var ProcessAction = function(action){
 	
 	switch(action.action){
 		case 'soldier move':
-			MoveSoldier(action.data);
-			break;
+			return MoveSoldier(action.data);
+		case 'soldier fight':
+			return ResolveFight(action.data);
 	}
 }
 
 var MoveSoldier = function(data){
-	game.units[data.unitId].pos = data.pos;
+	var myUnit = game.units[data.unitId];
+	
+	myUnit.pos = data.move.pos;
+	myUnit.stats.moves.remaining -= data.move.steps;
+	
+	return data;
+}
+
+var ResolveFight = function(fight){
+	var myUnit = game.units[fight.unitId];
+	var enemyUnit = game.units[fight.enemyUnitId];
+	
+	enemyUnit.stats.health = Math.max(enemyUnit.stats.health - Math.max(myUnit.stats.strength - enemyUnit.stats.armour, 0), 0);
+	
+	//todo: De-meh this. Would help having the TileHelper in to be all "Are these tiles in a range of 1???"
+	if(enemyUnit.combatRetaliation && InMeleeRange(myUnit, enemyUnit))
+		if(enemyUnit.stats.health > 0)
+			myUnit.stats.health = Math.max(myUnit.stats.health - Math.max(enemyUnit.stats.strength - myUnit.stats.armour, 0), 0);
+	
+	fight.health = myUnit.stats.health;
+	fight.enemyHealth = enemyUnit.stats.health;
+	
+	myUnit.stats.fights.remaining--;
+	
+	return fight;
 }
 
 var NextTurn = function(){
@@ -149,7 +171,7 @@ var InitGame = function(lastGame){
 		units: {
 			'HarrySoldierOne': unitFactory.NewAxe(0, {x: 2, y: 2}),
 			'HarrySoldierTwo': unitFactory.NewArcher(0, {x: 1, y: 3}),
-			'HarryCaptain': unitFactory.NewSword(0, {x: 2, y: 4}),
+			'HarryCaptain': unitFactory.NewSword(1, {x: 2, y: 4}),
 			'HarrySoldierThree': unitFactory.NewArcher(0, {x: 1, y: 5}),
 			'HarrySoldierFour': unitFactory.NewSword(0, {x: 2, y: 6}),
 			'HarrySoldierFive': unitFactory.NewArcher(0, {x: 1, y: 7}),
@@ -181,39 +203,6 @@ var InitGame = function(lastGame){
 		],
 		map: worlds.GetFor(15, 12)
 	};
-}
-
-var ResolveMove = function(data){
-	game.units[data.unitId].pos = data.pos;
-	
-	game.units[data.unitId].stats.moves.remaining -= data.steps;
-	
-	for(var player in game.players)
-		if(game.players[player].connected)
-			sockets[player].emit('process', {event: 'soldier move resolve', data: {unitId: data.unitId, pos: data.pos}});
-	
-	CheckForGameEnd();
-}
-
-var ResolveFight = function(combatants){	
-	var myUnit = game.units[combatants.me.id]
-	var enemyUnit = game.units[combatants.enemy.id];
-	
-	enemyUnit.stats.health = Math.max(enemyUnit.stats.health - Math.max(myUnit.stats.strength - enemyUnit.stats.armour, 0), 0);
-	
-	//todo: De-meh this. Would help having the TileHelper in to be all "Are these tiles in a range of 1???"
-	if(enemyUnit.combatRetaliation && InMeleeRange(myUnit, enemyUnit))
-		if(enemyUnit.stats.health > 0)
-			myUnit.stats.health = Math.max(myUnit.stats.health - Math.max(enemyUnit.stats.strength - myUnit.stats.armour, 0), 0);
-	
-	var units = {};
-	units[combatants.me.id] = myUnit;
-	units[combatants.enemy.id] = enemyUnit;
-	
-	for(var player in game.players)
-		if(game.players[player].connected){
-			sockets[player].emit('process', {event: 'soldier fight resolve', data: units});
-		}
 }
 
 var InMeleeRange = function(myUnit, enemyUnit){
