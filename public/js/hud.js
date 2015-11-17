@@ -43,7 +43,9 @@ var NewHUD = function($controls, initData){
 	$unitDone.attr("disabled", true);
 	
 	$endTurn.click(function(){
-		window.bus.pub('turn end start');
+		window.bus.pub('action new', {action: 'turn end'});
+	
+		$endTurn.attr('disabled', true);
 	});
 	
 	if(_team != initData.activeTeam)
@@ -66,14 +68,12 @@ var NewHUD = function($controls, initData){
 			window.bus.pub('game end');
 	});
 	
-	window.bus.sub('turn end resolve', function(activeTeam){
+	_me.TurnEnd = function(activeTeam){
 		UpdateCurrentTurn(activeTeam);
 		
 		if(_team == activeTeam)
 			$endTurn.removeAttr('disabled');
-		else
-			$endTurn.attr('disabled', true);
-	});
+	}
 	
 	window.bus.sub('enemy connection resolve', function(connected){
 		$enemyOnline.text(connected ? "Online" : "Offline");

@@ -74,9 +74,6 @@ io.on('connection', function(socket){
 			case 'game reset start':
 				ResetGame();
 				break;
-			case 'turn end start':
-				NextTurn();
-				break;
 			case 'soldier done start':
 				SoldierDone(message.data);
 				break;
@@ -92,6 +89,8 @@ var ProcessAction = function(action){
 			return MoveSoldier(action.data);
 		case 'soldier fight':
 			return ResolveFight(action.data);
+		case 'turn end':
+			return TurnEnd(action.data);
 	}
 }
 
@@ -123,7 +122,7 @@ var ResolveFight = function(fight){
 	return fight;
 }
 
-var NextTurn = function(){
+var TurnEnd = function(){
 	for(var unitId in game.units){
 		game.units[unitId].waiting = true;
 		game.units[unitId].stats.moves.remaining = game.units[unitId].stats.moves.max;
@@ -132,10 +131,7 @@ var NextTurn = function(){
 	
 	game.activeTeam = 1 - game.activeTeam;
 	
-	for(var player in game.players){
-		if(game.players[player].connected)
-			sockets[player].emit('process', {event: 'turn end resolve', data: game.activeTeam});
-	}
+	return game.activeTeam;
 }
 
 var SoldierDone = function(unit){

@@ -1,8 +1,8 @@
-var NewActionQueue = function(_soldierManager, _stageManager){
+var NewActionQueue = function(_soldierManager, _stageManager, _hud){
 	var _queue = [];
 	
 	var Process = function(action){
-		action.Process(_soldierManager, _stageManager);
+		action.Process(_soldierManager, _stageManager, _hud);
 	}
 	
 	/*window.bus.sub('action new', function(action){

@@ -128,6 +128,15 @@ var NewSoldier = function(unitId, initUnit, teamNum, activeTeam)
 		}
 	}
 	
+	_me.TurnEnd = function(activeTeam){
+		_waiting = true;
+		
+		_active = activeTeam == teamNum;
+		
+		_stats.moves.remaining = _stats.moves.max;
+		_stats.fights.remaining = _stats.fights.max;
+	}
+	
 	_me.MovementBlocking = function(teamNum){
 		if(_team != teamNum)
 			return true;
@@ -203,15 +212,6 @@ var NewSoldier = function(unitId, initUnit, teamNum, activeTeam)
 		for(var i = 0; i < _displayFights.length; i++)
 			SpriteHandler.Draw(Sprite.RED, {x: _displayFights[i].x * Global.TileSize(), y: _displayFights[i].y * Global.TileSize()});
 	}
-	
-	window.bus.sub('turn end resolve', function(activeTeam){
-		_waiting = true;
-		
-		_active = activeTeam == teamNum;
-		
-		_stats.moves.remaining = _stats.moves.max;
-		_stats.fights.remaining = _stats.fights.max;
-	});
 	
 	if(_alive)
 		window.bus.pub('soldier place', _me);

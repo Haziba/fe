@@ -12,7 +12,7 @@ var StartGame = function($controls, initData)
 	var _control = NewControl(initData);
 	var _hud = NewHUD($controls, initData);
 	
-	NewActionQueue(_soldierManager, _stageManager);
+	NewActionQueue(_soldierManager, _stageManager, _hud);
 	
 	// update mutex
 	var _updateRunning = false;
