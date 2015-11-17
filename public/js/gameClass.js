@@ -12,6 +12,8 @@ var StartGame = function($controls, initData)
 	var _control = NewControl(initData);
 	var _hud = NewHUD($controls, initData);
 	
+	NewActionQueue(_soldierManager);
+	
 	// update mutex
 	var _updateRunning = false;
 	
