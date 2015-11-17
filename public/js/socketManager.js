@@ -11,12 +11,20 @@ socket.on('init', function(data){
 	window.bus.pub('socket init', data);
 });
 
-var fireSocketUpdate = function(update){
+/*var fireSocketUpdate = function(update){
 	console.log(update);
 	socket.emit('update', update);
-}
+}*/
 
-window.bus.sub('soldier move start', function(data){
+window.bus.sub('action new', function(action){
+	socket.emit('action', action);
+});
+
+socket.on('action', function(action){
+	window.bus.pub('action queue', action);
+})
+
+/*window.bus.sub('soldier move start', function(data){
 	socket.emit('process', {event: 'soldier move start', data: data});
 });
 
@@ -38,4 +46,4 @@ window.bus.sub('soldier done start', function(unit){
 
 socket.on('process', function(message){
 	window.bus.pub(message.event, message.data);
-});
+});*/

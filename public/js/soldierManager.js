@@ -19,6 +19,14 @@ var NewSoldierManager = function(units, teamNum, activeTeam){
 		_soldiers[unitId].Done();
 	});
 	
+	_me.Get = function(unitId){
+		return _soldiers[unitId];
+	}
+	
+	_me.Move = function(unitId, move){
+		_soldiers[unitId].Move(move);
+	}
+	
 	_me.Update = function(){
 		for(var unitId in _soldiers)
 			_soldiers[unitId].Update();

@@ -56,7 +56,15 @@ io.on('connection', function(socket){
 			if(player != userId && game.players[player].connected)
 				sockets[player].emit('process', {event: 'enemy connection resolve', data: true});
 	});
-	
+	socket.on('action', function(action){
+		console.log(userId);
+		ProcessAction(action);
+		
+		for(var player in game.players){
+			if(player != userId && game.players[player].connected)
+				sockets[player].emit('action', action);
+		}
+	});
 	socket.on('process', function(message){
 		console.log(message);
 		switch(message.event){
@@ -78,6 +86,20 @@ io.on('connection', function(socket){
 		}
 	});
 });
+
+var ProcessAction = function(action){
+	console.log(action);
+	
+	switch(action.action){
+		case 'soldier move':
+			MoveSoldier(action.data);
+			break;
+	}
+}
+
+var MoveSoldier = function(data){
+	game.units[data.unitId].pos = data.pos;
+}
 
 var NextTurn = function(){
 	for(var unitId in game.units){

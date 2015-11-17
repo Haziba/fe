@@ -43,16 +43,6 @@ var NewStageManager = function(initData) {
 		_currentSelection.SelectGround(position);
 	}
 	
-	window.bus.sub('soldier move', function(soldier){
-		var oldPosition = _oldSoldierPositions[soldier.id];
-		var newPosition = soldier.GetPosition();
-		
-		_tiles[oldPosition.x][oldPosition.y] = undefined;
-		_tiles[newPosition.x][newPosition.y] = soldier;
-		
-		_oldSoldierPositions[soldier.id] = {x: newPosition.x, y: newPosition.y};
-	});
-	
 	window.bus.sub('soldier place', function(soldier){
 		var newPosition = soldier.GetPosition();
 		
@@ -77,6 +67,16 @@ var NewStageManager = function(initData) {
 	window.bus.sub('deselect', function(){
 		_currentSelection = undefined;
 	});
+	
+	_me.MoveUnit = function(unit, move){
+		var oldPosition = _oldSoldierPositions[unit.id];
+		var newPosition = move.pos;
+		
+		_tiles[oldPosition.x][oldPosition.y] = undefined;
+		_tiles[newPosition.x][newPosition.y] = unit;
+		
+		_oldSoldierPositions[unit.id] = {x: newPosition.x, y: newPosition.y};
+	}
 	
 	_me.Draw = function(){
 		if(!_currentSelection)

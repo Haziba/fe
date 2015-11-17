@@ -71,18 +71,7 @@ var NewSoldier = function(unitId, initUnit, teamNum, activeTeam)
 		
 		for(var i = 0; i < _availableMoves.length; i++)
 			if(_availableMoves[i].pos.x == position.x && _availableMoves[i].pos.y == position.y){
-				_me.MoveTo(position);
-
-				var steps = _availableMoves[i].steps+1;
-				
-				window.bus.pub('soldier move start', {unitId: _me.id, pos: _position, steps: steps});
-				
-				_stats.moves.remaining -= steps;
-				if(_stats.moves.remaining + _stats.fights.remaining == 0)
-					_waiting = false;
-				
-				if(!_availableMoves[i].fightable)
-					_waiting = false;
+				window.bus.pub('action new', {action: 'soldier move', data: {unitId: _me.id, move: _availableMoves[i]}});
 			}
 		
 		_me.Deselect();
@@ -115,10 +104,16 @@ var NewSoldier = function(unitId, initUnit, teamNum, activeTeam)
 		_me.Deselect();
 	}
 	
-	_me.MoveTo = function(position){
-		_position = {x: position.x, y: position.y};
+	_me.Move = function(move){
+		var steps = move.steps;
+
+		_stats.moves.remaining -= steps;
 		
-		window.bus.pub('soldier move', _me);
+		if(_stats.moves.remaining == 1)
+			if(_stats.fights.remaining == 0 || !move.fightable)
+				_waiting = false;
+		
+		_position = {x: move.pos.x, y: move.pos.y};
 	}
 	
 	_me.ResolveCombat = function(unit){
