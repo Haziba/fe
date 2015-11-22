@@ -54,7 +54,7 @@ var NewHUD = function($controls, initData){
 	$unitDone.click(function(){
 		_selectedUnit.Done();
 		
-		window.bus.pub('soldier done start', _selectedUnit);
+		window.bus.pub('action new', {action: 'soldier done', data: _selectedUnit.id});
 		
 		_selectedUnit.Deselect();
 	});

@@ -144,6 +144,9 @@ var NewSoldier = function(unitId, initUnit, teamNum, activeTeam)
 	}
 	
 	_me.Done = function(){
+		_stats.moves.remaining = 0;
+		_stats.fights.remaining = 0;
+		
 		_waiting = false;
 	}
 	

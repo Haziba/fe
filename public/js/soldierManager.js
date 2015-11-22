@@ -38,6 +38,10 @@ var NewSoldierManager = function(_units, _teamNum, _activeTeam){
 		_soldiers[data.enemyUnitId].GetFought(data);
 	}
 	
+	_me.SoldierDone = function(unitId){
+		_soldiers[unitId].Done();
+	}
+	
 	_me.TurnEnd = function(_activeTeam){
 		for(var unit in _soldiers)
 			_soldiers[unit].TurnEnd(_activeTeam);

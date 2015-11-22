@@ -75,16 +75,6 @@ io.on('connection', function(socket){
 			}
 		}
 	});
-	
-	//todo: Move the rest of these to the action queue
-	socket.on('process', function(message){
-		console.log(message);
-		switch(message.event){
-			case 'soldier done start':
-				SoldierDone(message.data);
-				break;
-		}
-	});
 });
 
 var ProcessAction = function(action){
@@ -95,6 +85,8 @@ var ProcessAction = function(action){
 			return MoveSoldier(action.data);
 		case 'soldier fight':
 			return ResolveFight(action.data);
+		case 'soldier done':
+			return SoldierDone(action.data);
 		case 'turn end':
 			return TurnEnd(action.data);
 		case 'game reset':
@@ -136,6 +128,16 @@ var ResolveFight = function(fight){
 	return fight;
 }
 
+var SoldierDone = function(unitId){
+	var myUnit = game.units[unitId];
+	
+	myUnit.stats.moves.remaining = 0;
+	myUnit.stats.fights.remaining = 0;
+	myUnit.waiting = false;
+	
+	return unitId;
+}
+
 var TurnEnd = function(){
 	for(var unitId in game.units){
 		game.units[unitId].waiting = true;
@@ -146,14 +148,6 @@ var TurnEnd = function(){
 	game.activeTeam = 1 - game.activeTeam;
 	
 	return game.activeTeam;
-}
-
-var SoldierDone = function(unit){
-	game.units[unit.id].waiting = false;
-	
-	for(var player in game.players)
-		if(game.players[player].connected)
-			sockets[player].emit('process', {event: 'soldier done resolve', data: unit.id});
 }
 
 var InitGame = function(lastGame){
@@ -172,21 +166,20 @@ var InitGame = function(lastGame){
 		},
 		units: {
 			'HarrySoldierOne': unitFactory.NewAxe(0, {x: 2, y: 2}),
-			'DebugSoldier': unitFactory.NewAxe(1, {x: 1, y: 6}),
-			//'HarrySoldierTwo': unitFactory.NewArcher(0, {x: 1, y: 3}),
-			//'HarryCaptain': unitFactory.NewSword(0, {x: 2, y: 4}),
-			//'HarrySoldierThree': unitFactory.NewArcher(0, {x: 1, y: 5}),
-			//'HarrySoldierFour': unitFactory.NewSword(0, {x: 2, y: 6}),
-			//'HarrySoldierFive': unitFactory.NewArcher(0, {x: 1, y: 7}),
-			//'HarrySoldierSix': unitFactory.NewSpear(0, {x: 2, y: 8}),
+			'HarrySoldierTwo': unitFactory.NewArcher(0, {x: 1, y: 3}),
+			'HarryCaptain': unitFactory.NewSword(0, {x: 2, y: 4}),
+			'HarrySoldierThree': unitFactory.NewArcher(0, {x: 1, y: 5}),
+			'HarrySoldierFour': unitFactory.NewSword(0, {x: 2, y: 6}),
+			'HarrySoldierFive': unitFactory.NewArcher(0, {x: 1, y: 7}),
+			'HarrySoldierSix': unitFactory.NewSpear(0, {x: 2, y: 8}),
 			
-			//'LaurieSoldierOne': unitFactory.NewSpear(1, {x: 12, y: 2}),
-			//'LaurieSoldierTwo': unitFactory.NewArcher(1, {x: 13, y: 3}),
-			//'LaurieCaptain': unitFactory.NewSword(1, {x: 12, y: 4}),
-			//'LaurieSoldierThree': unitFactory.NewArcher(1, {x: 13, y: 5}),
-			//'LaurieSoldierFour': unitFactory.NewSword(1, {x: 12, y: 6}),
-			//'LaurieSoldierFive': unitFactory.NewArcher(1, {x: 13, y: 7}),
-			//'LaurieSoldierSix': unitFactory.NewAxe(1, {x: 12, y: 8}),
+			'LaurieSoldierOne': unitFactory.NewSpear(1, {x: 12, y: 2}),
+			'LaurieSoldierTwo': unitFactory.NewArcher(1, {x: 13, y: 3}),
+			'LaurieCaptain': unitFactory.NewSword(1, {x: 12, y: 4}),
+			'LaurieSoldierThree': unitFactory.NewArcher(1, {x: 13, y: 5}),
+			'LaurieSoldierFour': unitFactory.NewSword(1, {x: 12, y: 6}),
+			'LaurieSoldierFive': unitFactory.NewArcher(1, {x: 13, y: 7}),
+			'LaurieSoldierSix': unitFactory.NewAxe(1, {x: 12, y: 8}),
 		},
 		ships: [
 			{
