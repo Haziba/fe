@@ -11,6 +11,10 @@ var NewControl = function(initData){
 		_gameRunning = false;
 	});
 	
+	window.bus.sub('game start', function(){
+		_gameRunning = true;
+	})
+	
 	_me.Update = function(){
 		if(!_gameRunning)
 			return;

@@ -1,10 +1,16 @@
-var NewSoldierManager = function(units, teamNum, activeTeam){
+var NewSoldierManager = function(_units, _teamNum, _activeTeam){
 	var _me = {id: Global.NewId()};
 	
 	var _soldiers = {};
 	
-	for(var unitId in units)
-		_soldiers[unitId] = NewSoldier(unitId, units[unitId], teamNum, activeTeam);
+	var init = function(units, activeTeam){
+		_soldiers = {};
+	
+		for(var unitId in units)
+			_soldiers[unitId] = NewSoldier(unitId, units[unitId], _teamNum, activeTeam);
+	}
+	
+	init(_units, _activeTeam);
 	
 	window.bus.sub('soldier move resolve', function(data){
 		_soldiers[data.unitId].MoveTo(data.pos);
@@ -32,9 +38,13 @@ var NewSoldierManager = function(units, teamNum, activeTeam){
 		_soldiers[data.enemyUnitId].GetFought(data);
 	}
 	
-	_me.TurnEnd = function(activeTeam){
+	_me.TurnEnd = function(_activeTeam){
 		for(var unit in _soldiers)
-			_soldiers[unit].TurnEnd();
+			_soldiers[unit].TurnEnd(_activeTeam);
+	}
+	
+	_me.ResetGame = function(game){
+		init(game.units, game.activeTeam);
 	}
 	
 	_me.Update = function(){

@@ -1,8 +1,8 @@
 var NewHUD = function($controls, initData){
 	var _me = {};
 	
-	var _team = initData.players[socketId].team;
-	var _activeTeam = initData.activeTeam;
+	var _team, _activeTeam, _gameState;
+	
 	var _enemyPlayerId = "";
 	var _enemyConnected;
 	
@@ -30,7 +30,26 @@ var NewHUD = function($controls, initData){
 	$enemyName.text(_enemyPlayerId);
 	$enemyOnline.text(_enemyConnected ? "Online" : "Offline");
 	
-	var _gameState = initData.state;
+	var init = function(game){
+		_team = game.players[socketId].team;
+		_activeTeam = game.activeTeam;
+		
+		_gameState = game.state;
+		
+		window.bus.pub('game start');
+		
+		UpdateCurrentTurn(_activeTeam);
+	}
+	
+	var UpdateCurrentTurn = function(team){
+		$currentTurn.text(team == _team ? socketId : _enemyPlayerId);
+		
+		window.document.title = 'FE | ' + (team == _team ? 'Your' : 'Enemy') + ' Turn';
+		
+		$endTurn.attr('disabled', team != _team);
+	}
+	
+	init(initData);
 	
 	$unitDone.click(function(){
 		_selectedUnit.Done();
@@ -51,28 +70,24 @@ var NewHUD = function($controls, initData){
 	if(_team != initData.activeTeam)
 		$endTurn.attr("disabled", true);
 	
-	var UpdateCurrentTurn = function(team){
-		$currentTurn.text(team == _team ? socketId : _enemyPlayerId);
-		
-		_activeTeam = team;
-		
-		window.document.title = 'FE | ' + (team == _team ? 'Your' : 'Enemy') + ' Turn';
-	}
-	
 	UpdateCurrentTurn(initData.activeTeam);
 	
-	window.bus.sub('state change resolve', function(gameState){
+	_me.StateChange = function(gameState){
 		_gameState = gameState;
 		
 		if(_gameState != 0)
 			window.bus.pub('game end');
-	});
+	};
 	
 	_me.TurnEnd = function(activeTeam){
 		UpdateCurrentTurn(activeTeam);
 		
 		if(_team == activeTeam)
 			$endTurn.removeAttr('disabled');
+	}
+	
+	_me.ResetGame = function(game){
+		init(game);
 	}
 	
 	window.bus.sub('enemy connection resolve', function(connected){
@@ -106,7 +121,7 @@ var NewHUD = function($controls, initData){
 	_me.Update = function(){
 		if(_gameState != 0){
 			if(InputHandler.MouseClicked())
-				window.bus.pub('game reset start');
+				window.bus.pub('action new', {action: 'game reset'});
 		}
 	}
 	

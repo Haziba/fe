@@ -56,24 +56,30 @@ io.on('connection', function(socket){
 			if(player != userId && game.players[player].connected)
 				sockets[player].emit('process', {event: 'enemy connection resolve', data: true});
 	});
+	
 	socket.on('action', function(action){
 		console.log("----" + userId + "----");
 		var response = ProcessAction(action);
 		console.log("----RESPONSE----");
 		console.log(response);
 		
+		CheckForGameEnd();
+		
 		for(var player in game.players){
-			if(game.players[player].connected)
+			if(game.players[player].connected){
 				sockets[player].emit('action', {action: action.action, data: response});
+				
+				if(game.state != 0){
+					sockets[player].emit('action', {action: 'state change', data: game.state});
+				}
+			}
 		}
 	});
+	
 	//todo: Move the rest of these to the action queue
 	socket.on('process', function(message){
 		console.log(message);
 		switch(message.event){
-			case 'game reset start':
-				ResetGame();
-				break;
 			case 'soldier done start':
 				SoldierDone(message.data);
 				break;
@@ -91,7 +97,15 @@ var ProcessAction = function(action){
 			return ResolveFight(action.data);
 		case 'turn end':
 			return TurnEnd(action.data);
+		case 'game reset':
+			return GameReset();
 	}
+}
+
+var GameReset = function(){
+	game = InitGame(game);
+	
+	return game;
 }
 
 var MoveSoldier = function(data){
@@ -142,14 +156,6 @@ var SoldierDone = function(unit){
 			sockets[player].emit('process', {event: 'soldier done resolve', data: unit.id});
 }
 
-var ResetGame = function(){
-	game = InitGame(game);
-	
-	for(var player in game.players)
-		if(game.players[player].connected)
-			sockets[player].emit('process', {event: 'game reset resolve', data: game});
-}
-
 var InitGame = function(lastGame){
 	return {
 		state: 0, //todo: Make game state enum available here
@@ -166,20 +172,21 @@ var InitGame = function(lastGame){
 		},
 		units: {
 			'HarrySoldierOne': unitFactory.NewAxe(0, {x: 2, y: 2}),
-			'HarrySoldierTwo': unitFactory.NewArcher(0, {x: 1, y: 3}),
-			'HarryCaptain': unitFactory.NewSword(1, {x: 2, y: 4}),
-			'HarrySoldierThree': unitFactory.NewArcher(0, {x: 1, y: 5}),
-			'HarrySoldierFour': unitFactory.NewSword(0, {x: 2, y: 6}),
-			'HarrySoldierFive': unitFactory.NewArcher(0, {x: 1, y: 7}),
-			'HarrySoldierSix': unitFactory.NewSpear(0, {x: 2, y: 8}),
+			'DebugSoldier': unitFactory.NewAxe(1, {x: 1, y: 6}),
+			//'HarrySoldierTwo': unitFactory.NewArcher(0, {x: 1, y: 3}),
+			//'HarryCaptain': unitFactory.NewSword(0, {x: 2, y: 4}),
+			//'HarrySoldierThree': unitFactory.NewArcher(0, {x: 1, y: 5}),
+			//'HarrySoldierFour': unitFactory.NewSword(0, {x: 2, y: 6}),
+			//'HarrySoldierFive': unitFactory.NewArcher(0, {x: 1, y: 7}),
+			//'HarrySoldierSix': unitFactory.NewSpear(0, {x: 2, y: 8}),
 			
-			'LaurieSoldierOne': unitFactory.NewSpear(1, {x: 12, y: 2}),
-			'LaurieSoldierTwo': unitFactory.NewArcher(1, {x: 13, y: 3}),
-			'LaurieCaptain': unitFactory.NewSword(1, {x: 12, y: 4}),
-			'LaurieSoldierThree': unitFactory.NewArcher(1, {x: 13, y: 5}),
-			'LaurieSoldierFour': unitFactory.NewSword(1, {x: 12, y: 6}),
-			'LaurieSoldierFive': unitFactory.NewArcher(1, {x: 13, y: 7}),
-			'LaurieSoldierSix': unitFactory.NewAxe(1, {x: 12, y: 8}),
+			//'LaurieSoldierOne': unitFactory.NewSpear(1, {x: 12, y: 2}),
+			//'LaurieSoldierTwo': unitFactory.NewArcher(1, {x: 13, y: 3}),
+			//'LaurieCaptain': unitFactory.NewSword(1, {x: 12, y: 4}),
+			//'LaurieSoldierThree': unitFactory.NewArcher(1, {x: 13, y: 5}),
+			//'LaurieSoldierFour': unitFactory.NewSword(1, {x: 12, y: 6}),
+			//'LaurieSoldierFive': unitFactory.NewArcher(1, {x: 13, y: 7}),
+			//'LaurieSoldierSix': unitFactory.NewAxe(1, {x: 12, y: 8}),
 		},
 		ships: [
 			{
@@ -216,13 +223,6 @@ var CheckForGameEnd = function(){
 				game.state = 1 + unit.team;
 			}
 		}
-	}
-	
-	if(game.state != 0){
-		for(var player in game.players)
-			if(game.players[player].connected){
-				sockets[player].emit('process', {event: 'state change resolve', data: game.state});
-			}
 	}
 }
 

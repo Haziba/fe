@@ -11,6 +11,13 @@ var NewAction = function(_action, _data){
 				break;
 			case 'turn end':
 				TurnEnd(soldierManager, hud);
+				break;
+			case 'state change':
+				StateChange(hud);
+				break;
+			case 'game reset':
+				ResetGame(soldierManager, stageManager, hud);
+				break;
 		}
 	}
 	
@@ -30,6 +37,20 @@ var NewAction = function(_action, _data){
 	var TurnEnd = function(soldierManager, hud){
 		soldierManager.TurnEnd(_data);
 		hud.TurnEnd(_data);
+		
+		window.bus.pub('action complete');
+	}
+	
+	var StateChange = function(hud){
+		hud.StateChange(_data);
+		
+		window.bus.pub('action complete');
+	}
+	
+	var ResetGame = function(soldierManager, stageManager, hud){
+		stageManager.ResetGame(_data);
+		soldierManager.ResetGame(_data);
+		hud.ResetGame(_data);
 		
 		window.bus.pub('action complete');
 	}

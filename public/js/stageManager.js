@@ -1,17 +1,23 @@
 var NewStageManager = function(initData) {
 	var _me = {id: Global.NewId()};
 
-	var _oldSoldierPositions = {};
-	var _tiles = [];
-	var _currentSelection;
+	var _oldSoldierPositions, _tiles, _currentSelection;
 	
-	Global.SetScreenSize({width: initData.map.length, height: initData.map[0].length})
-	
-	for(var i = 0; i < Global.ScreenSize().width; i++) {
-		_tiles[i] = [];
-		for(var j = 0; j < Global.ScreenSize().height; j++)
-			_tiles[i][j] = initData.map[i][j] == 1 ? true : undefined;
+	var init = function(game){
+		_tiles = [];
+		_oldSoldierPositions = {};
+		_currentSelection = undefined;
+		
+		Global.SetScreenSize({width: game.map.length, height: game.map[0].length})
+		
+		for(var i = 0; i < Global.ScreenSize().width; i++) {
+			_tiles[i] = [];
+			for(var j = 0; j < Global.ScreenSize().height; j++)
+				_tiles[i][j] = game.map[i][j] == 1 ? true : undefined;
+		}
 	}
+	
+	init(initData);
 	
 	var SelectUnit = function(unit){
 		if(!unit.Controlable()){
@@ -76,6 +82,10 @@ var NewStageManager = function(initData) {
 		_tiles[newPosition.x][newPosition.y] = unit;
 		
 		_oldSoldierPositions[unit.id] = {x: newPosition.x, y: newPosition.y};
+	}
+	
+	_me.ResetGame = function(game){
+		init(game);
 	}
 	
 	_me.Draw = function(){
