@@ -65,12 +65,20 @@ io.on('connection', function(socket){
 		
 		CheckForGameEnd();
 		
+		var autoTurnEnd = AutoTurnEnd();
+		
+		if(autoTurnEnd){
+			TurnEnd();
+		}
+		
 		for(var player in game.players){
 			if(game.players[player].connected){
 				sockets[player].emit('action', {action: action.action, data: response});
 				
 				if(game.state != 0){
 					sockets[player].emit('action', {action: 'state change', data: game.state});
+				}else if(autoTurnEnd){
+					sockets[player].emit('action', {action: 'turn end', data: game.activeTeam});
 				}
 			}
 		}
@@ -88,7 +96,7 @@ var ProcessAction = function(action){
 		case 'soldier done':
 			return SoldierDone(action.data);
 		case 'turn end':
-			return TurnEnd(action.data);
+			return TurnEnd();
 		case 'game reset':
 			return GameReset();
 	}
@@ -105,6 +113,9 @@ var MoveSoldier = function(data){
 	
 	myUnit.pos = data.move.pos;
 	myUnit.stats.moves.remaining -= data.move.steps;
+	
+	if(myUnit.stats.moves.remaining == 1 && (myUnit.stats.fights.remaining == 0 || !data.move.fightable))
+		myUnit.waiting = false;
 	
 	return data;
 }
@@ -124,6 +135,9 @@ var ResolveFight = function(fight){
 	fight.enemyHealth = enemyUnit.stats.health;
 	
 	myUnit.stats.fights.remaining--;
+	
+	if(myUnit.stats.fights.remaining == 0 && myUnit.stats.moves.remaining == 1)
+		myUnit.waiting = false;
 	
 	return fight;
 }
@@ -217,6 +231,15 @@ var CheckForGameEnd = function(){
 			}
 		}
 	}
+}
+
+var AutoTurnEnd = function(){
+	for(var unitId in game.units){
+		if(game.units[unitId].stats.health > 0 && game.units[unitId].team == game.activeTeam && game.units[unitId].waiting)
+			return false;
+	}
+	
+	return true;
 }
 
 var RemainingLivingUnitsFor = function(team){
