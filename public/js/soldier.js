@@ -5,6 +5,7 @@ var NewSoldier = function(unitId, initUnit, teamNum, activeTeam)
 	var _availableFights, _availableMoves;
 	
 	var _position = initUnit.pos;
+	var _location = {x: _position.x * Global.TileSize(), y: _position.y * Global.TileSize()};
 	var _soldierType = initUnit.type;
 	var _team = initUnit.team;
 	var _active = activeTeam == teamNum;
@@ -14,6 +15,10 @@ var NewSoldier = function(unitId, initUnit, teamNum, activeTeam)
 	var _displayMoves, _displayFights;
 	
 	var _alive = initUnit.stats.health > 0;
+	
+	var _queuedMovementSteps = [];
+	var _speed = 2.5;
+	var _doneAfterMoving = false;
 	
 	var GetSprite = function(){
 		switch(_soldierType)
@@ -99,11 +104,14 @@ var NewSoldier = function(unitId, initUnit, teamNum, activeTeam)
 
 		_stats.moves.remaining -= steps;
 		
+		_doneAfterMoving = false;
 		if(_stats.moves.remaining == 1)
 			if(_stats.fights.remaining == 0 || !move.fightable)
-				_waiting = false;
+				_doneAfterMoving = true;
 		
-		_position = {x: move.pos.x, y: move.pos.y};
+		_queuedMovementSteps = move.path;
+		
+		_position = move.pos;
 	}
 	
 	_me.Fight = function(fight){
@@ -185,7 +193,29 @@ var NewSoldier = function(unitId, initUnit, teamNum, activeTeam)
 	}
 	
 	_me.Update = function(){
-		// not currently needed
+		if(_queuedMovementSteps.length > 0){
+			var nextLoc = {x: _queuedMovementSteps[0].x * Global.TileSize(), y: _queuedMovementSteps[0].y * Global.TileSize()};
+			
+			if(nextLoc.x > _location.x)
+				_location.x = Math.min(nextLoc.x, _location.x + _speed);
+			if(nextLoc.x < _location.x)
+				_location.x = Math.max(nextLoc.x, _location.x - _speed);
+			if(nextLoc.y > _location.y)
+				_location.y = Math.min(nextLoc.y, _location.y + _speed);
+			if(nextLoc.y < _location.y)
+				_location.y = Math.max(nextLoc.y, _location.y - _speed);
+			
+			if(nextLoc.x == _location.x && nextLoc.y == _location.y){
+				_queuedMovementSteps.splice(0, 1);
+				
+				if(_queuedMovementSteps.length == 0){
+					if(_doneAfterMoving)
+						_waiting = false;
+					
+					window.bus.pub('anim complete');
+				}
+			}
+		}
 	}
 	
 	_me.Draw = function(){
@@ -193,16 +223,16 @@ var NewSoldier = function(unitId, initUnit, teamNum, activeTeam)
 			// Show gravestone maybe?
 			return;
 		
-		SpriteHandler.Draw(GetSprite(), {x: _position.x * Global.TileSize(), y: _position.y * Global.TileSize()});
+		SpriteHandler.Draw(GetSprite(), _location);
 		
 		if(!_waiting){
-			SpriteHandler.Draw(Sprite.FADE_OUT, {x: _position.x * Global.TileSize(), y: _position.y * Global.TileSize()});
+			SpriteHandler.Draw(Sprite.FADE_OUT, _location);
 		}
 		
-		SpriteHandler.Draw(_team == teamNum ? Sprite.YOUR_UNIT : Sprite.THEIR_UNIT, {x: _position.x * Global.TileSize(), y: _position.y * Global.TileSize()});
+		SpriteHandler.Draw(_team == teamNum ? Sprite.YOUR_UNIT : Sprite.THEIR_UNIT, _location);
 		
-		SpriteHandler.Draw(Sprite.HEALTH_EMPTY, {x: _position.x * Global.TileSize(), y: _position.y * Global.TileSize()});
-		SpriteHandler.DrawInRect(Sprite.HEALTH_FULL, {x: _position.x * Global.TileSize(), y: _position.y * Global.TileSize()}, {x: 0, y: 0, width: Global.TileSize() * (_stats.health / _stats.maxHealth), height: Global.TileSize()});
+		SpriteHandler.Draw(Sprite.HEALTH_EMPTY, _location);
+		SpriteHandler.DrawInRect(Sprite.HEALTH_FULL, _location, {x: 0, y: 0, width: Global.TileSize() * (_stats.health / _stats.maxHealth), height: Global.TileSize()});
 		
 		if(!_selected)
 			return;

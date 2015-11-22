@@ -28,7 +28,9 @@ var NewAction = function(_action, _data){
 		soldierManager.Move(_data.unitId, _data.move);
 		stageManager.MoveUnit(soldierManager.Get(_data.unitId), _data.move);
 		
-		window.bus.pub('action complete');
+		window.bus.subOnce('anim complete', function(){
+			window.bus.pub('action complete');
+		});
 	}
 	
 	var SoldierFight = function(soldierManager){

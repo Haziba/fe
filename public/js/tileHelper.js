@@ -2,14 +2,18 @@ TileHelper = {
 	GetAvailableMoves: function(tiles, unit){
 		var me = this;
 		
-		var open = [{pos: unit.GetPosition(), steps: 0}];
+		var open = [{pos: unit.GetPosition(), steps: 0, path: [unit.GetPosition()]}];
 		var closed = [];
 		
 		var range = unit.MovementRange();
 		var pos = unit.GetPosition();
 		
 		var CheckTile = function(currentTile, shift){
-			var newTile = {pos: {x: currentTile.pos.x + shift.x, y: currentTile.pos.y + shift.y}, steps: currentTile.steps + 1, fightable: false};
+			var newTile = {pos: {x: currentTile.pos.x + shift.x, y: currentTile.pos.y + shift.y}, steps: currentTile.steps + 1, fightable: false, path: []};
+			
+			for(var i = 0; i < currentTile.path.length; i++)
+				newTile.path.push(currentTile.path[i]);
+			newTile.path.push(newTile.pos);
 			
 			if(newTile.steps >= range)
 				return;
