@@ -1,5 +1,12 @@
 var Collisions = {
 	PointInRectangle: function(point, x, y, width, height){
+		if(arguments.length == 2){
+			y = x.y;
+			width = x.width;
+			height = x.height;
+			x = x.x;
+		}
+		
 		if(point.x < x)
 			return false;
 		if(point.x > x + width)

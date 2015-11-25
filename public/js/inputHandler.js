@@ -1,6 +1,12 @@
 var InputHandler = {
+	canvas: undefined,
+	
+	clickableArea: [],
+	
 	Initialise: function(canvas){
 		var me = this;
+		
+		this.canvas = canvas;
 		
 		this.mousePosition = {x: 0, y: 0};
 		
@@ -37,9 +43,25 @@ var InputHandler = {
 		});
 	},
     
-    Update: function(){
-        this.prevMouseDown = this.mouseDown;
+    StartUpdate: function(){
+		this.clickableArea = [];
     },
+	
+	EndUpdate: function(){
+        this.prevMouseDown = this.mouseDown;
+		
+		for(var i = 0; i < this.clickableArea.length; i++)
+			if(Collisions.PointInRectangle(this.mousePosition, this.clickableArea[i])){
+				this.SetMouseClickable(true);
+				return;
+			}
+		
+		this.SetMouseClickable(false);
+	},
+	
+	AddClickableArea: function(clickableArea){
+		this.clickableArea.push(clickableArea);
+	},
  
     MouseDown: function(){
         return this.mouseDown;
@@ -55,5 +77,9 @@ var InputHandler = {
      
     MousePosition: function(){
         return this.mousePosition;
-    }
+    },
+	
+	SetMouseClickable: function(clickable){
+		$(this.canvas).css('cursor', clickable ? 'pointer' : 'inherit');
+	}
 }

@@ -31,6 +31,8 @@ var StartGame = function($controls, initData)
 	setInterval(function(){
 		if(_updateRunning)
 			return;
+		
+		InputHandler.StartUpdate();
 			
 		_updateRunning = true;
 		
@@ -41,7 +43,7 @@ var StartGame = function($controls, initData)
 		_control.Update();
 		_hud.Update();
 		
-		InputHandler.Update();
+		InputHandler.EndUpdate();
 		
 		_updateRunning = false;
 	}, 1 / 30);

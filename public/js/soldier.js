@@ -192,30 +192,35 @@ var NewSoldier = function(unitId, initUnit, teamNum, activeTeam)
 		return _stats;
 	}
 	
-	_me.Update = function(){
-		if(_queuedMovementSteps.length > 0){
-			var nextLoc = {x: _queuedMovementSteps[0].x * Global.TileSize(), y: _queuedMovementSteps[0].y * Global.TileSize()};
+	var animateMovement = function(){
+		var nextLoc = {x: _queuedMovementSteps[0].x * Global.TileSize(), y: _queuedMovementSteps[0].y * Global.TileSize()};
+		
+		if(nextLoc.x > _location.x)
+			_location.x = Math.min(nextLoc.x, _location.x + _speed);
+		if(nextLoc.x < _location.x)
+			_location.x = Math.max(nextLoc.x, _location.x - _speed);
+		if(nextLoc.y > _location.y)
+			_location.y = Math.min(nextLoc.y, _location.y + _speed);
+		if(nextLoc.y < _location.y)
+			_location.y = Math.max(nextLoc.y, _location.y - _speed);
+		
+		if(nextLoc.x == _location.x && nextLoc.y == _location.y){
+			_queuedMovementSteps.splice(0, 1);
 			
-			if(nextLoc.x > _location.x)
-				_location.x = Math.min(nextLoc.x, _location.x + _speed);
-			if(nextLoc.x < _location.x)
-				_location.x = Math.max(nextLoc.x, _location.x - _speed);
-			if(nextLoc.y > _location.y)
-				_location.y = Math.min(nextLoc.y, _location.y + _speed);
-			if(nextLoc.y < _location.y)
-				_location.y = Math.max(nextLoc.y, _location.y - _speed);
-			
-			if(nextLoc.x == _location.x && nextLoc.y == _location.y){
-				_queuedMovementSteps.splice(0, 1);
+			if(_queuedMovementSteps.length == 0){
+				if(_doneAfterMoving)
+					_waiting = false;
 				
-				if(_queuedMovementSteps.length == 0){
-					if(_doneAfterMoving)
-						_waiting = false;
-					
-					window.bus.pub('anim complete');
-				}
+				window.bus.pub('anim complete');
 			}
 		}
+	}
+	
+	_me.Update = function(){
+		if(_queuedMovementSteps.length > 0)
+			animateMovement();
+		
+		InputHandler.AddClickableArea({x: _location.x, y: _location.y, width: Global.TileSize(), height: Global.TileSize()});
 	}
 	
 	_me.Draw = function(){
