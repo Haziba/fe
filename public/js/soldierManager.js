@@ -34,8 +34,12 @@ var NewSoldierManager = function(_units, _teamNum, _activeTeam){
 	}
 	
 	_me.ResolveFight = function(data){
-		_soldiers[data.unitId].Fight(data);
-		_soldiers[data.enemyUnitId].GetFought(data);
+		window.bus.pub('fight start', _soldiers[data.unitId], _soldiers[data.enemyUnitId]);
+		
+		window.bus.subOnce('anim complete', function(){			
+			_soldiers[data.unitId].Fight(data);
+			_soldiers[data.enemyUnitId].GetFought(data);
+		});
 	}
 	
 	_me.SoldierDone = function(unitId){

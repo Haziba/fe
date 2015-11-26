@@ -36,7 +36,9 @@ var NewAction = function(_action, _data){
 	var SoldierFight = function(soldierManager){
 		soldierManager.ResolveFight(_data);
 		
-		window.bus.pub('action complete');
+		window.bus.subOnce('anim complete', function(){
+			window.bus.pub('action complete');
+		});
 	}
 	
 	var SoldierDone = function(soldierManager){

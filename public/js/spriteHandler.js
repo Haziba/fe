@@ -1,7 +1,9 @@
 var SpriteHandler = {
-	Initialise: function(context, spriteSheet){
+	Initialise: function(context, spriteSheet, battleBackground){
 		this.context = context;
 		this.spriteSheet = spriteSheet;
+		//todo: Not good implementation, but doesn't suit the spritesheet
+		this.battleBackground = battleBackground;
 	},
 	
 	Clear: function(){
@@ -10,6 +12,10 @@ var SpriteHandler = {
 	
 	Draw: function(spriteId, location){
 		this.context.drawImage(this.spriteSheet, spriteId.x * 40, spriteId.y * 40, 40, 40, location.x, location.y, Global.TileSize(), Global.TileSize());
+	},
+	
+	DrawBattleBackground: function(location){
+		this.context.drawImage(this.battleBackground, location.x - this.battleBackground.width/2, location.y - this.battleBackground.height/2);
 	},
 	
 	DrawInRect: function(spriteId, location, rect){

@@ -9,6 +9,8 @@ var StartGame = function($controls, initData)
 	var _soldierManager = NewSoldierManager(initData.units, _teamNum, initData.activeTeam);
 	var _shipManager = NewShipManager(initData, _teamNum);
 	
+	var _fightManager = NewFightManager();
+	
 	var _control = NewControl(initData);
 	var _hud = NewHUD($controls, initData);
 	
@@ -39,6 +41,7 @@ var StartGame = function($controls, initData)
 		_tileManager.Update();
 		_soldierManager.Update();
 		_shipManager.Update();
+		_fightManager.Update();
 		
 		_control.Update();
 		_hud.Update();
@@ -56,6 +59,7 @@ var StartGame = function($controls, initData)
 		_soldierManager.Draw();
 		_stageManager.Draw();
 		_control.Draw();
+		_fightManager.Draw();
 		_hud.Draw();
 		
 		window.requestAnimationFrame(Draw);

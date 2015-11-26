@@ -21,6 +21,7 @@
 <script src="js/ship.js"></script>
 <script src="js/action.js"></script>
 <script src="js/actionQueue.js"></script>
+<script src="js/fightManager.js"></script>
 <script>
 	$(function(){
 		Global.canvas = $("#gameCanvas")[0];
@@ -29,15 +30,20 @@
 		var spritesInitialised, initData;
 		
 		var sprite = new Image();
-		sprite.onload = function(){
+		sprite.src = "img/spritesheet.png";
+		
+		var battleBackground = new Image();
+		battleBackground.src = "img/FightBackground.png";
+		
+		Promise.all([sprite, battleBackground]).then(function(){
 			InputHandler.Initialise(Global.canvas);
-			SpriteHandler.Initialise(context, sprite);
+			SpriteHandler.Initialise(context, sprite, battleBackground);
 			
 			spritesInitialised = true;
 			
 			if(initData)
 				StartGame($("#gameControls"), initData);
-		};
+		});
 		
 		window.bus.sub('socket init', function(data){
 			initData = data;
@@ -46,7 +52,6 @@
 				StartGame($("#gameControls"), initData);
 		});
 		
-		sprite.src = "img/spritesheet.png";
 	});
 </script>
 <style>

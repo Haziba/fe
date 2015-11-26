@@ -180,6 +180,10 @@ var NewSoldier = function(unitId, initUnit, teamNum, activeTeam)
 		return {x: _position.x, y: _position.y};
 	}
 	
+	_me.GetCentralLocation = function(){
+		return {x: _location.x + Global.TileSize() / 2, y: _location.y + Global.TileSize() / 2};
+	}
+	
 	_me.CanMove = function(){
 		return _stats.moves.remaining > 0;
 	}
@@ -190,6 +194,10 @@ var NewSoldier = function(unitId, initUnit, teamNum, activeTeam)
 	
 	_me.Stats = function(){
 		return _stats;
+	}
+	
+	_me.SpriteType = function(){
+		return GetSprite();
 	}
 	
 	var animateMovement = function(){
