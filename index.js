@@ -161,11 +161,29 @@ var TurnEnd = function(){
 	
 	game.activeTeam = 1 - game.activeTeam;
 	
+	clearTimeout(turnTimer);
+	turnTimer = setTimeout(TimeRunOut, game.turnTime * 1000);
+	
 	return game.activeTeam;
 }
 
+var TimeRunOut = function(){
+	var response = TurnEnd();
+	
+	for(var player in game.players){
+		if(game.players[player].connected){
+			sockets[player].emit('action', {action: 'turn end', data: response});
+		}
+	}
+}
+
 var InitGame = function(lastGame){
+	var turnTime = 3;
+	
+	turnTimer = setTimeout(TimeRunOut, turnTime * 1000);
+	
 	return {
+		turnTime: turnTime,
 		state: 0, //todo: Make game state enum available here
 		activeTeam: 0,
 		players: {
@@ -187,13 +205,13 @@ var InitGame = function(lastGame){
 			'HarrySoldierFive': unitFactory.NewArcher(0, {x: 1, y: 7}),
 			'HarrySoldierSix': unitFactory.NewSpear(0, {x: 2, y: 8}),
 			
-			'LaurieSoldierOne': unitFactory.NewSpear(1, {x: 12, y: 2}),
-			'LaurieSoldierTwo': unitFactory.NewArcher(1, {x: 13, y: 3}),
-			'LaurieCaptain': unitFactory.NewSword(1, {x: 12, y: 4}),
-			'LaurieSoldierThree': unitFactory.NewArcher(1, {x: 13, y: 5}),
-			'LaurieSoldierFour': unitFactory.NewSword(1, {x: 12, y: 6}),
-			'LaurieSoldierFive': unitFactory.NewArcher(1, {x: 13, y: 7}),
-			'LaurieSoldierSix': unitFactory.NewAxe(1, {x: 12, y: 8}),
+			'LaurieSoldierOne': unitFactory.NewSpear(1, {x: 4, y: 2}),
+			'LaurieSoldierTwo': unitFactory.NewArcher(1, {x: 3, y: 3}),
+			'LaurieCaptain': unitFactory.NewSword(1, {x: 4, y: 4}),
+			'LaurieSoldierThree': unitFactory.NewArcher(1, {x: 3, y: 5}),
+			'LaurieSoldierFour': unitFactory.NewSword(1, {x: 4, y: 6}),
+			'LaurieSoldierFive': unitFactory.NewArcher(1, {x: 3, y: 7}),
+			'LaurieSoldierSix': unitFactory.NewAxe(1, {x: 4, y: 8}),
 		},
 		ships: [
 			{
@@ -252,4 +270,6 @@ var RemainingLivingUnitsFor = function(team){
 	return remaining;
 }
 
+//todo: This is bad, and only done because otherwise socketJs tries to send over a complex object for the timeout
+var turnTimer = 0;
 var game = InitGame();
