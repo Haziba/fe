@@ -70,10 +70,11 @@
 <body style="background-color: #4d2600">
 	<div id="gameWrapper" style="border: 1px solid #000; width: 800px; height: 800px; position: absolute; left: 50%; margin-left: -400px">
 		<div style="width: 750px; height: 600px; border: 1px solid #000; margin: auto; top: 25px; position: relative; background-image: url(img/Backdrop.png)">
-			<canvas id="gameCanvas" style="border: 1px solid #000; width: 800px; height: 800px; position: relative; top: 50%; left: 50%">
+			<canvas id="gameCanvas" style="border: 1px solid #000; width: 800px; height: 800px; position: absolute; top: 50%; left: 50%">
 			</canvas>
 		</div>
 		<div id="gameControls" style="width: 750px; height: 125px; border: 1px solid #000; margin: auto; top: 50px; position: relative; background-color: #fff">
+			<div id="turnTimer" style="border: 1px solid #000; width: 50px; height: 30px; position: absolute; left: 50%; margin-left: -25px; background-color: #fff; top: 10px; font-size: 25px; font-family: Verdana; text-align: center; top: -610px">10</div>
 			<div style="width: 250px; margin: 20px; float: left">
 				<p>
 					Current Turn: <span id='currentTurn'></span>

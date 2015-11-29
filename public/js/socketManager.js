@@ -4,11 +4,16 @@ if(!socketId)
 	socketId =  window.location = '/?id=Harry';
 
 var socket = io();
+var serverTimeOffset;
 
 socket.emit('init', {id: socketId});
 
 socket.on('init', function(data){
-	window.bus.pub('socket init', data);
+	serverTime = (new Date()).getTime() - data.serverTime;
+	
+	console.log(serverTime);
+	
+	window.bus.pub('socket init', data.game);
 });
 
 window.bus.sub('action new', function(action){

@@ -8,6 +8,8 @@ var NewHUD = function($controls, initData){
 	
 	var _selectedUnit;
 	
+	var $turnTimer = $controls.find('#turnTimer');
+	
 	var $unitDone = $controls.find('#unitDone');
 	var $endTurn = $controls.find('#endTurn');
 	var $currentTurn = $controls.find('#currentTurn');
@@ -19,6 +21,8 @@ var NewHUD = function($controls, initData){
 	var $unitHealth = $controls.find('#unitHealth');
 	var $unitStrength = $controls.find('#unitStrength');
 	var $unitArmour = $controls.find('#unitArmour');
+	
+	var _nextTurn = initData.lastTurnStart + initData.turnTime * 1000;
 	
 	
 	for(var player in initData.players)
@@ -82,6 +86,8 @@ var NewHUD = function($controls, initData){
 	_me.TurnEnd = function(activeTeam){
 		UpdateCurrentTurn(activeTeam);
 		
+		_nextTurn = (new Date()).getTime() + initData.turnTime * 1000;
+		
 		if(_team == activeTeam)
 			$endTurn.removeAttr('disabled');
 	}
@@ -123,6 +129,8 @@ var NewHUD = function($controls, initData){
 			if(InputHandler.MouseClicked())
 				window.bus.pub('action new', {action: 'game reset'});
 		}
+		
+		$turnTimer.text(Math.floor((_nextTurn - (new Date()).getTime()) / 1000) + 1);
 	}
 	
 	_me.Draw = function(){

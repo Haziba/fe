@@ -50,7 +50,7 @@ io.on('connection', function(socket){
 		game.players[userId].connected = true;
 		sockets[userId] = this;
 		
-		socket.emit('init', game);
+		socket.emit('init', {serverTime: (new Date()).getTime(), game: game});
 		
 		for(var player in game.players)
 			if(player != userId && game.players[player].connected)
@@ -163,6 +163,7 @@ var TurnEnd = function(){
 	
 	clearTimeout(turnTimer);
 	turnTimer = setTimeout(TimeRunOut, game.turnTime * 1000);
+	game.lastTurnStart = (new Date()).getTime();
 	
 	return game.activeTeam;
 }
@@ -178,12 +179,13 @@ var TimeRunOut = function(){
 }
 
 var InitGame = function(lastGame){
-	var turnTime = 3;
+	var turnTime = 30;
 	
 	turnTimer = setTimeout(TimeRunOut, turnTime * 1000);
 	
 	return {
 		turnTime: turnTime,
+		lastTurnStart: (new Date()).getTime(),
 		state: 0, //todo: Make game state enum available here
 		activeTeam: 0,
 		players: {
