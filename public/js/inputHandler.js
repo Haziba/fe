@@ -21,6 +21,14 @@ var InputHandler = {
 		canvas.addEventListener("mousemove", function(e){
 			me.mousePosition = {x: e.offsetX, y: e.offsetY};
 		});
+		
+		canvas.addEventListener("mouseover", function(e){
+			me.mouseOver = true;
+		});
+		
+		canvas.addEventListener("mouseout", function(e){
+			me.mouseOver = false;
+		});
 	 
 		canvas.addEventListener("touchstart", function(e){
 			me.mouseDown = true;
@@ -61,6 +69,10 @@ var InputHandler = {
 	
 	AddClickableArea: function(clickableArea){
 		this.clickableArea.push(clickableArea);
+	},
+	
+	MouseOver: function(){
+		return this.mouseOver;
 	},
  
     MouseDown: function(){

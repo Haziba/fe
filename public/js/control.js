@@ -18,6 +18,9 @@ var NewControl = function(initData){
 	_me.Update = function(){
 		if(!_gameRunning)
 			return;
+		
+		if(!InputHandler.MouseOver())
+			_active = false;
 	
 		_tileHighlight.x = Math.floor(InputHandler.MousePosition().x / Global.TileSize());
 		_tileHighlight.y = Math.floor(InputHandler.MousePosition().y / Global.TileSize());
