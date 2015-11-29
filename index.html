@@ -22,6 +22,7 @@
 <script src="js/action.js"></script>
 <script src="js/actionQueue.js"></script>
 <script src="js/fightManager.js"></script>
+<script src="js/lobbyClass.js"></script>
 <script>
 	$(function(){
 		Global.canvas = $("#gameCanvas")[0];
@@ -35,6 +36,9 @@
 		var battleBackground = new Image();
 		battleBackground.src = "img/FightBackground.png";
 		
+		var $lobbyWrapper = $("#lobbyWrapper");
+		var $gameWrapper = $("#gameWrapper");
+		
 		Promise.all([sprite, battleBackground]).then(function(){
 			InputHandler.Initialise(Global.canvas);
 			SpriteHandler.Initialise(context, sprite, battleBackground);
@@ -45,7 +49,14 @@
 				StartGame($("#gameControls"), initData);
 		});
 		
-		window.bus.sub('socket init', function(data){
+		window.bus.sub('lobby init', function(data){
+			StartLobby($lobbyWrapper, data);
+		});
+		
+		window.bus.sub('game init', function(data){
+			$lobbyWrapper.hide();
+			$gameWrapper.show();
+		
 			initData = data;
 			
 			if(spritesInitialised)
@@ -68,7 +79,19 @@
 	}
 </style>
 <body style="background-color: #4d2600">
-	<div id="gameWrapper" style="border: 1px solid #000; width: 800px; height: 800px; position: absolute; left: 50%; margin-left: -400px">
+	<div id="lobbyWrapper">
+		<table id="onlinePlayers">
+			<thead>
+				<tr>
+					<td>User ID</td>
+					<td></td>
+				</tr>
+			</thead>
+			<tr>
+			</tr>
+		</table>
+	</div>
+	<div id="gameWrapper" style="display: none; border: 1px solid #000; width: 800px; height: 800px; position: absolute; left: 50%; margin-left: -400px">
 		<div style="width: 750px; height: 600px; border: 1px solid #000; margin: auto; top: 25px; position: relative; background-image: url(img/Backdrop.png)">
 			<canvas id="gameCanvas" style="border: 1px solid #000; width: 800px; height: 800px; position: absolute; top: 50%; left: 50%">
 			</canvas>

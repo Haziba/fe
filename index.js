@@ -10,33 +10,6 @@ app.get('/', function(req, res){
 	res.sendfile('index.html');
 });
 
-app.get('/newGame', function(req, res){
-	var queryString = req.url.substr(req.url.indexOf('?')+1);
-	
-	var splitString = queryString.split('&');
-	
-	var qsVal = {};
-	
-	for(var i = 0; i < splitString.length; i++){
-		var val = splitString[i].split('=');
-		qsVal[val[0]] = val[1];
-	}
-	
-	if(!qsVal.id1 || !qsVal.id2){
-		res.sendStatus(400);
-		return;
-	}
-	
-	if(inGamePlayers[qsVal.id1] || inGamePlayers[qsVal.id2]){
-		res.sendStatus(400);
-		return;
-	}
-	
-	StartNewGame(qsVal.id1, qsVal.id2);
-	
-	res.sendStatus(200);
-});
-
 app.use(express.static('public'));
 
 var sockets = {};
@@ -59,11 +32,17 @@ io.on('connection', function(socket){
 	socket.on('disconnect', function(){
 		if(!userId)
 			return;
+		
+		delete sockets[userId];
 	
 		console.log("disconnected", userId);
 		
+		if(!game){
+			RemoveOnlinePlayer(userId);
+			return;
+		}
+		
 		game.data.players[userId].connected = false;
-		delete sockets[userId];
 		
 		for(var player in game.data.players)
 			if(game.data.players[player].connected)
@@ -73,19 +52,20 @@ io.on('connection', function(socket){
 	socket.on('init', function(msg){
 		userId = msg.id;
 		
-		console.log("connected", msg.id);
-		
-		game = inGamePlayers[userId];
-		console.log(game);
-		
-		game.data.players[userId].connected = true;
 		sockets[userId] = this;
 		
-		socket.emit('init', {serverTime: (new Date()).getTime(), game: game.data});
+		console.log("connected", msg.id);
 		
-		for(var player in game.data.players)
-			if(player != userId && game.data.players[player].connected)
-				sockets[player].emit('process', {event: 'enemy connection resolve', data: true});
+		if(!inGamePlayers[userId]){
+			AddOnlinePlayer(userId, socket, function(newGame){ game = newGame; });
+			
+			socket.emit('init', {inGame: false, serverTime: (new Date()).getTime(), onlinePlayers: Object.keys(onlinePlayers)});
+			return;
+		}
+	
+		game = inGamePlayers[userId];
+		
+		SendGameInit(userId, game);
 	});
 	
 	socket.on('action', function(action){
@@ -112,6 +92,16 @@ io.on('connection', function(socket){
 					sockets[player].emit('action', {action: 'turn end', data: game.data.activeTeam});
 				}
 			}
+		}
+	});
+	
+	socket.on('lobby', function(action){
+		console.log('lobby', action);
+		
+		switch(action.action){
+			case 'challenge':
+				StartNewGame(userId, action.data);
+				break;
 		}
 	});
 });
@@ -159,7 +149,6 @@ var ResolveFight = function(game, fight){
 	
 	enemyUnit.stats.health = Math.max(enemyUnit.stats.health - Math.max(myUnit.stats.strength - enemyUnit.stats.armour, 0), 0);
 	
-	//todo: De-meh this. Would help having the TileHelper in to be all "Are these tiles in a range of 1???"
 	if(enemyUnit.combatRetaliation && InMeleeRange(myUnit, enemyUnit))
 		if(enemyUnit.stats.health > 0)
 			myUnit.stats.health = Math.max(myUnit.stats.health - Math.max(enemyUnit.stats.strength - myUnit.stats.armour, 0), 0);
@@ -202,7 +191,7 @@ var TurnEnd = function(game){
 }
 
 var TimeRunOut = function(game){
-	var response = TurnEnd();
+	var response = TurnEnd(game);
 	
 	for(var player in game.data.players){
 		if(game.data.players[player].connected){
@@ -310,6 +299,7 @@ var InitGame = function(id1, id2, lastGame){
 	return game;
 }
 
+var onlinePlayers = {};
 var inGamePlayers = {};
 var games = [];
 
@@ -320,4 +310,42 @@ var StartNewGame = function(id1, id2){
 	
 	inGamePlayers[id1] = game;
 	inGamePlayers[id2] = game;
+	
+	SendGameInit(id1, game);
+	SendGameInit(id2, game);
+	
+	onlinePlayers[id1].startGame(game);
+	onlinePlayers[id2].startGame(game);
+	
+	delete onlinePlayers[id1];
+	delete onlinePlayers[id2];
+}
+
+var AddOnlinePlayer = function(userId, s, startGame){
+	for(var player in onlinePlayers){
+		onlinePlayers[player].socket.emit('lobby', {action: 'logged-on', data: userId});
+	}
+	
+	onlinePlayers[userId] = {socket: s, startGame: startGame};
+}
+
+var RemoveOnlinePlayer = function(userId){
+	delete onlinePlayers[userId];
+	
+	for(var player in onlinePlayers){
+		onlinePlayers[player].socket.emit('lobby', {action: 'logged-out', data: userId});
+	}
+}
+
+var SendGameInit = function(userId, game){
+	game = inGamePlayers[userId];
+	
+	game.data.players[userId].connected = true;
+	
+	sockets[userId].emit('init', {inGame: true, serverTime: (new Date()).getTime(), game: game.data});
+	
+	for(var player in game.data.players)
+		if(player != userId && game.data.players[player].connected){
+			sockets[player].emit('process', {event: 'enemy connection resolve', data: true});
+		}
 }

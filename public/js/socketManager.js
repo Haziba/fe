@@ -11,9 +11,10 @@ socket.emit('init', {id: socketId});
 socket.on('init', function(data){
 	serverTime = (new Date()).getTime() - data.serverTime;
 	
-	console.log(serverTime);
-	
-	window.bus.pub('socket init', data.game);
+	if(data.inGame)
+		window.bus.pub('game init', data.game);
+	else
+		window.bus.pub('lobby init', data.onlinePlayers);
 });
 
 window.bus.sub('action new', function(action){
@@ -22,4 +23,12 @@ window.bus.sub('action new', function(action){
 
 socket.on('action', function(action){
 	window.bus.pub('action queue', action);
+});
+
+window.bus.sub('lobby', function(action){
+	socket.emit('lobby', action);
+});
+
+socket.on('lobby', function(action){
+	window.bus.pub('lobby', action);
 });
