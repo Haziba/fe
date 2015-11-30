@@ -228,7 +228,8 @@ var NewSoldier = function(unitId, initUnit, teamNum, activeTeam)
 		if(_queuedMovementSteps.length > 0)
 			animateMovement();
 		
-		InputHandler.AddClickableArea({x: _location.x, y: _location.y, width: Global.TileSize(), height: Global.TileSize()});
+		if(_alive)
+			InputHandler.AddClickableArea({x: _location.x, y: _location.y, width: Global.TileSize(), height: Global.TileSize()});
 	}
 	
 	_me.Draw = function(){
