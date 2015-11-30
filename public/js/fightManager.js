@@ -1,17 +1,18 @@
 var NewFightManager = function(){
 	var _me = {};
 	
-	var _stage = FightStage.NONE;
+	var _stage = 0;
 	var _location = {x: 0, y: 0};
 	
 	var _unitOne, _unitTwo;
 	var _timerCountdown = 10;
 	
 	window.bus.sub('fight start', function(unitOne, unitTwo){
+		console.log("Fight start");
 		var centre1 = unitOne.GetCentralLocation();
 		var centre2 = unitTwo.GetCentralLocation();
 		
-		_stage = FightStage.UNIT_ONE_FORWARDS;
+		_stage = 1;
 		_location = {x: (centre1.x + centre2.x) / 2, y: (centre1.y + centre2.y) / 2};
 		
 		_unitOne = {location: {x: _location.x - 40, y: _location.y - 20}, shift: 0, spriteType: unitOne.SpriteType()};
@@ -19,10 +20,7 @@ var NewFightManager = function(){
 	});
 	
 	_me.Update = function(){
-		if(_stage == FightStage.NONE)
-			return;
-		
-		switch(_stage){
+		switch(fightStages[_stage]){
 			case FightStage.UNIT_ONE_FORWARDS:
 				_unitOne.shift+=0.2;
 				if(_unitOne.shift >= 10)
@@ -41,21 +39,20 @@ var NewFightManager = function(){
 			case FightStage.UNIT_TWO_BACKWARDS:
 				_unitTwo.shift+=0.2;
 				if(_unitTwo.shift >= 0)
-					_stage = FightStage.NONE;
+					_stage++;
 				break;
-			default:
+			case FightStage.PAUSE:
 				_timerCountdown -= 0.2;
 				
 				if(_timerCountdown <= 0){
 					_timerCountdown = 10;
+					_stage++;
 					
-					if(_stage == 7){
+					if(_stage == fightStages.length){
 						_stage = 0;
 						
 						window.bus.pub('anim complete');
 					}
-					else
-						_stage++;
 				}
 		}
 	}
@@ -77,8 +74,17 @@ var FightStage = {
 	PAUSE: 1,
 	UNIT_ONE_FORWARDS: 2,
 	UNIT_ONE_BACKWARDS: 3,
-	PAUSE: 4,
-	UNIT_TWO_FORWARDS: 5,
-	UNIT_TWO_BACKWARDS: 6,
-	PAUSE: 7,
+	UNIT_TWO_FORWARDS: 4,
+	UNIT_TWO_BACKWARDS: 5,
 }
+
+var fightStages = [
+	FightStage.NONE,
+	FightStage.PAUSE,
+	FightStage.UNIT_ONE_FORWARDS,
+	FightStage.UNIT_ONE_BACKWARDS,
+	FightStage.PAUSE,
+	FightStage.UNIT_TWO_FORWARDS,
+	FightStage.UNIT_TWO_BACKWARDS,
+	FightStage.PAUSE,
+]
