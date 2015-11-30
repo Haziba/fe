@@ -14,8 +14,11 @@ app.use(express.static('public'));
 
 var sockets = {};
 
+var ip = process.env.OPENSHIFT_NODEJS_IP || "127.0.0.1";
+var debugEnv = ip == "127.0.0.1";
+
 app.set('port', process.env.OPENSHIFT_NODEJS_PORT || process.env.PORT || 3000);
-app.set('ip', process.env.OPENSHIFT_NODEJS_IP || "127.0.0.1");
+app.set('ip', ip);
 
 var server = http.Server(app);
 
@@ -240,6 +243,44 @@ var RemainingLivingUnitsFor = function(game, team){
 var InitGame = function(id1, id2, lastGame){
 	var turnTime = 30;
 	
+	var units = {
+		'HarrySoldierOne': unitFactory.NewAxe(0, {x: 2, y: 2}),
+		'HarrySoldierTwo': unitFactory.NewArcher(0, {x: 1, y: 3}),
+		'HarryCaptain': unitFactory.NewSword(0, {x: 2, y: 4}),
+		'HarrySoldierThree': unitFactory.NewArcher(0, {x: 1, y: 5}),
+		'HarrySoldierFour': unitFactory.NewSword(0, {x: 2, y: 6}),
+		'HarrySoldierFive': unitFactory.NewArcher(0, {x: 1, y: 7}),
+		'HarrySoldierSix': unitFactory.NewSpear(0, {x: 2, y: 8}),
+		
+		'LaurieSoldierOne': unitFactory.NewSpear(1, {x: 12, y: 2}),
+		'LaurieSoldierTwo': unitFactory.NewArcher(1, {x: 13, y: 3}),
+		'LaurieCaptain': unitFactory.NewSword(1, {x: 12, y: 4}),
+		'LaurieSoldierThree': unitFactory.NewArcher(1, {x: 13, y: 5}),
+		'LaurieSoldierFour': unitFactory.NewSword(1, {x: 12, y: 6}),
+		'LaurieSoldierFive': unitFactory.NewArcher(1, {x: 13, y: 7}),
+		'LaurieSoldierSix': unitFactory.NewAxe(1, {x: 12, y: 8}),
+	};
+	
+	if(debugEnv){
+		units = {
+			'HarrySoldierOne': unitFactory.NewAxe(0, {x: 2, y: 2}),
+			'HarrySoldierTwo': unitFactory.NewArcher(0, {x: 1, y: 3}),
+			'HarryCaptain': unitFactory.NewSword(0, {x: 2, y: 4}),
+			'HarrySoldierThree': unitFactory.NewArcher(0, {x: 1, y: 5}),
+			'HarrySoldierFour': unitFactory.NewSword(0, {x: 2, y: 6}),
+			'HarrySoldierFive': unitFactory.NewArcher(0, {x: 1, y: 7}),
+			'HarrySoldierSix': unitFactory.NewSpear(0, {x: 2, y: 8}),
+			
+			'LaurieSoldierOne': unitFactory.NewSpear(1, {x: 3, y: 2}),
+			'LaurieSoldierTwo': unitFactory.NewArcher(1, {x: 3, y: 3}),
+			'LaurieCaptain': unitFactory.NewSword(1, {x: 3, y: 4}),
+			'LaurieSoldierThree': unitFactory.NewArcher(1, {x: 3, y: 5}),
+			'LaurieSoldierFour': unitFactory.NewSword(1, {x: 3, y: 6}),
+			'LaurieSoldierFive': unitFactory.NewArcher(1, {x: 3, y: 7}),
+			'LaurieSoldierSix': unitFactory.NewAxe(1, {x: 3, y: 8}),
+		};
+	}
+	
 	var game = {
 		turnTimer: setTimeout(function(){ TimeRunOut(game); }, turnTime * 1000),
 		data: {
@@ -249,23 +290,7 @@ var InitGame = function(id1, id2, lastGame){
 			activeTeam: 0,
 			players: {
 			},
-			units: {
-				'HarrySoldierOne': unitFactory.NewAxe(0, {x: 2, y: 2}),
-				'HarrySoldierTwo': unitFactory.NewArcher(0, {x: 1, y: 3}),
-				'HarryCaptain': unitFactory.NewSword(0, {x: 2, y: 4}),
-				'HarrySoldierThree': unitFactory.NewArcher(0, {x: 1, y: 5}),
-				'HarrySoldierFour': unitFactory.NewSword(0, {x: 2, y: 6}),
-				'HarrySoldierFive': unitFactory.NewArcher(0, {x: 1, y: 7}),
-				'HarrySoldierSix': unitFactory.NewSpear(0, {x: 2, y: 8}),
-				
-				'LaurieSoldierOne': unitFactory.NewSpear(1, {x: 4, y: 2}),
-				'LaurieSoldierTwo': unitFactory.NewArcher(1, {x: 3, y: 3}),
-				'LaurieCaptain': unitFactory.NewSword(1, {x: 4, y: 4}),
-				'LaurieSoldierThree': unitFactory.NewArcher(1, {x: 3, y: 5}),
-				'LaurieSoldierFour': unitFactory.NewSword(1, {x: 4, y: 6}),
-				'LaurieSoldierFive': unitFactory.NewArcher(1, {x: 3, y: 7}),
-				'LaurieSoldierSix': unitFactory.NewAxe(1, {x: 4, y: 8}),
-			},
+			units: units,
 			ships: [
 				{
 					team: 0,
