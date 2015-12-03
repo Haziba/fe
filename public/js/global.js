@@ -1,6 +1,7 @@
 var Global = {
 	canvas: undefined,
 	screenSize: {width: 20, height: 15},
+	canvasSize: {width: 800, height: 600},
 	LastId: 0,
 	NewId: function(forDebugging)
 	{
@@ -23,8 +24,10 @@ var Global = {
 		
 		var context = this.canvas.getContext("2d");
 		
-		context.width = this.canvas.width = this.TileSize() * this.ScreenSize().width;
-		context.height = this.canvas.height = this.TileSize() * this.ScreenSize().height;
+		this.canvasSize = {width: this.TileSize() * this.ScreenSize().width, height: this.TileSize() * this.ScreenSize().height};
+		
+		context.width = this.canvas.width = this.canvasSize.width;
+		context.height = this.canvas.height = this.canvasSize.height;
 		
 		$(this.canvas).css({
 			width: this.TileSize() * this.ScreenSize().width,

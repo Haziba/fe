@@ -241,7 +241,7 @@ var RemainingLivingUnitsFor = function(game, team){
 }
 
 var InitGame = function(id1, id2, lastGame){
-	var turnTime = 30;
+	var turnTime = 60;
 	
 	var units = {
 		'HarrySoldierOne': unitFactory.NewAxe(0, {x: 2, y: 2}),

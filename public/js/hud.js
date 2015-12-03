@@ -24,6 +24,8 @@ var NewHUD = function($controls, initData){
 	
 	var _nextTurn = initData.lastTurnStart + initData.turnTime * 1000;
 	
+	var _turnEndPopupTimer = 0;
+	
 	
 	for(var player in initData.players)
 		if(player != socketId){
@@ -88,6 +90,8 @@ var NewHUD = function($controls, initData){
 		
 		_nextTurn = (new Date()).getTime() + initData.turnTime * 1000;
 		
+		_turnEndPopupTimer = 120;
+		
 		if(_team == activeTeam)
 			$endTurn.removeAttr('disabled');
 	}
@@ -131,6 +135,9 @@ var NewHUD = function($controls, initData){
 		}
 		
 		$turnTimer.text(Math.floor((_nextTurn - (new Date()).getTime()) / 1000) + 1);
+		
+		if(_turnEndPopupTimer > 0)
+			_turnEndPopupTimer--;
 	}
 	
 	_me.Draw = function(){
@@ -163,6 +170,23 @@ var NewHUD = function($controls, initData){
 			context.fillText("Health: " + stats.health + "/" + stats.maxHealth, 310, 655);
 			context.fillText("Strength: " + stats.strength, 310, 685);
 			context.fillText("Armour: " + stats.armour, 310, 715);
+		}
+		
+		if(_turnEndPopupTimer > 0){
+			context.globalAlpha = Math.min(1, _turnEndPopupTimer / 30);
+			
+			context.fillStyle = 'white';
+			context.fillRect(Global.canvasSize.width / 2 - 100, Global.canvasSize.height / 2 - 50, 200, 100);
+			context.lineWidth = 3;
+			context.strokeStyle = 'black';
+			context.stroke();
+			
+			context.fillStyle = 'black';
+			context.font = '30px Arial black';
+			context.textAlign = 'center';
+			context.fillText(_activeTeam == _team ? 'Your turn' : 'Enemy turn', Global.canvasSize.width / 2, Global.canvasSize.height / 2);
+			
+			context.globalAlpha = 1;
 		}
 	}
 	
