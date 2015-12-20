@@ -312,11 +312,13 @@ var InitGame = function(id1, id2, lastGame){
 	};
 
 	game.data.players[id1] = {
+		name: onlinePlayers[id1].name,
 		connected: lastGame ? lastGame.players[id1].connected : false,
 		team: 0
 	};
 	
 	game.data.players[id2] = {
+		name: onlinePlayers[id2].name,
 		connected: lastGame ? lastGame.players[id2].connected : false,
 		team: 1
 	};
@@ -351,7 +353,7 @@ var AddOnlinePlayer = function(user, s, startGame){
 		onlinePlayers[player].socket.emit('lobby', {action: 'logged-on', data: user});
 	}
 	
-	onlinePlayers[user.id] = {obj: user, socket: s, startGame: startGame};
+	onlinePlayers[user.id] = {name: user.name, socket: s, startGame: startGame};
 }
 
 var RemoveOnlinePlayer = function(user){
@@ -379,7 +381,7 @@ var OnlinePlayerObjects = function(){
 	var players = [];
 	
 	for(var userId in onlinePlayers){
-		players.push(onlinePlayers[userId].obj);
+		players.push({id: userId, name: onlinePlayers[userId].name});
 	}
 	
 	return players;

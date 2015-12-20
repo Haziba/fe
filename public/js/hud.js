@@ -3,8 +3,7 @@ var NewHUD = function($controls, initData){
 	
 	var _team, _activeTeam, _gameState;
 	
-	var _enemyPlayerId = "";
-	var _enemyConnected;
+	var _enemyPlayer = undefined;
 	
 	var _selectedUnit;
 	
@@ -25,16 +24,15 @@ var NewHUD = function($controls, initData){
 	var _nextTurn = initData.lastTurnStart + initData.turnTime * 1000;
 	
 	var _turnEndPopupTimer = 0;
+	console.log(initData.players);
 	
-	
-	for(var player in initData.players)
-		if(player != Global.player.id){
-			_enemyPlayerId = player;
-			_enemyConnected = initData.players[player].connected;
+	for(var playerId in initData.players)
+		if(playerId != Global.player.id){
+			_enemyPlayer = initData.players[playerId];
 		}
 	
-	$enemyName.text(_enemyPlayerId);
-	$enemyOnline.text(_enemyConnected ? "Online" : "Offline");
+	$enemyName.text(_enemyPlayer.name);
+	$enemyOnline.text(_enemyPlayer.connected ? "Online" : "Offline");
 	
 	var init = function(game){
 		_team = game.players[Global.player.id].team;
@@ -48,7 +46,7 @@ var NewHUD = function($controls, initData){
 	}
 	
 	var UpdateCurrentTurn = function(team){
-		$currentTurn.text(team == _team ? Global.player.id : _enemyPlayerId);
+		$currentTurn.text(team == _team ? Global.player.name : _enemyPlayer.name);
 		
 		window.document.title = 'FE | ' + (team == _team ? 'Your' : 'Enemy') + ' Turn';
 		
