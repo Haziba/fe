@@ -2,7 +2,7 @@ var StartGame = function($controls, initData)
 {
 	var _stageManager = NewStageManager(initData);
 	
-	var _teamNum = initData.players[socketId].team;
+	var _teamNum = initData.players[Global.player.id].team;
 	
 	var _tileManager = NewTileManager(initData);
 	// todo: Just pass through initData
@@ -23,7 +23,7 @@ var StartGame = function($controls, initData)
 		_stageManager = NewStageManager(data);
 		
 		_tileManager = NewTileManager(data);
-		_soldierManager = NewSoldierManager(data.units, data.players[socketId].team);
+		_soldierManager = NewSoldierManager(data.units, data.players[Global.player.id].team);
 		_shipManager = NewShipManager(data, _teamNum);
 
 		_control = NewControl(data);

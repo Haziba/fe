@@ -4,25 +4,33 @@ var StartLobby = function($lobbyWrapper, data){
 	var onlinePlayers = {};
 	
 	var ChallengePlayer = function(){
-		var userId = $(this).closest("tr").find(".userId").text();
+		var userId = $(this).closest("tr").data("id");
 		
 		window.bus.pub('lobby', {action: 'challenge', data: userId});
 	}
 	
-	var AddPlayer = function(userId){
-		onlinePlayers[userId] = $("<tr/>").append($("<td/>").text(userId).addClass("userId")).append($("<td/>").append($("<a/>").text("Challenge").click(ChallengePlayer)));
+	var AddPlayer = function(user){
+		onlinePlayers[user.id] = $("<tr/>")
+			.data("id", user.id)
+			.append($("<td/>")
+				.text(user.name)
+				.addClass("userId"))
+			.append($("<td/>")
+				.append($("<a/>")
+				.text("Challenge")
+				.click(ChallengePlayer)));
 		
-		$tableBody.append(onlinePlayers[userId]);
+		$tableBody.append(onlinePlayers[user.id]);
 	}
 	
-	var RemovePlayer = function(userId){
-		onlinePlayers[userId].remove();
+	var RemovePlayer = function(user){
+		onlinePlayers[user.id].remove();
 		
-		delete onlinePlayers[userId];
+		delete onlinePlayers[user.id];
 	}
 	
 	for(var i = 0; i < data.length; i++){
-		if(data[i] != socketId)
+		if(data[i].id != Global.player.id)
 			AddPlayer(data[i]);
 	}
 	

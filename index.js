@@ -29,23 +29,23 @@ server.listen(app.get('port') ,app.get('ip'), function () {
 var io = require('socket.io')(server);
 
 io.on('connection', function(socket){
-	var userId;
+	var user;
 	var game;
 	
 	socket.on('disconnect', function(){
-		if(!userId)
+		if(!user)
 			return;
 		
-		delete sockets[userId];
+		delete sockets[user.id];
 	
-		console.log("disconnected", userId);
+		console.log("disconnected", user.name);
 		
 		if(!game){
-			RemoveOnlinePlayer(userId);
+			RemoveOnlinePlayer(user.id);
 			return;
 		}
 		
-		game.data.players[userId].connected = false;
+		game.data.players[user.id].connected = false;
 		
 		for(var player in game.data.players)
 			if(game.data.players[player].connected)
@@ -53,26 +53,26 @@ io.on('connection', function(socket){
 	});
 	
 	socket.on('init', function(msg){
-		userId = msg.id;
+		user = msg;
 		
-		sockets[userId] = this;
+		sockets[user.id] = this;
 		
-		console.log("connected", msg.id);
+		console.log("connected", user.name);
 		
-		if(!inGamePlayers[userId]){
-			AddOnlinePlayer(userId, socket, function(newGame){ game = newGame; });
+		if(!inGamePlayers[user.id]){
+			AddOnlinePlayer(user, socket, function(newGame){ game = newGame; });
 			
-			socket.emit('init', {inGame: false, serverTime: (new Date()).getTime(), onlinePlayers: Object.keys(onlinePlayers)});
+			socket.emit('init', {inGame: false, serverTime: (new Date()).getTime(), onlinePlayers: OnlinePlayerObjects()});
 			return;
 		}
 	
-		game = inGamePlayers[userId];
+		game = inGamePlayers[user.id];
 		
-		SendGameInit(userId, game);
+		SendGameInit(user.id, game);
 	});
 	
 	socket.on('action', function(action){
-		console.log("----" + userId + "----");
+		console.log("----" + user.name + "----");
 		var response = ProcessAction(game, action);
 		console.log("----RESPONSE----");
 		console.log(response);
@@ -103,7 +103,7 @@ io.on('connection', function(socket){
 		
 		switch(action.action){
 			case 'challenge':
-				StartNewGame(userId, action.data);
+				StartNewGame(user.id, action.data);
 				break;
 		}
 	});
@@ -346,19 +346,19 @@ var StartNewGame = function(id1, id2){
 	delete onlinePlayers[id2];
 }
 
-var AddOnlinePlayer = function(userId, s, startGame){
+var AddOnlinePlayer = function(user, s, startGame){
 	for(var player in onlinePlayers){
-		onlinePlayers[player].socket.emit('lobby', {action: 'logged-on', data: userId});
+		onlinePlayers[player].socket.emit('lobby', {action: 'logged-on', data: user});
 	}
 	
-	onlinePlayers[userId] = {socket: s, startGame: startGame};
+	onlinePlayers[user.id] = {obj: user, socket: s, startGame: startGame};
 }
 
-var RemoveOnlinePlayer = function(userId){
-	delete onlinePlayers[userId];
+var RemoveOnlinePlayer = function(user){
+	delete onlinePlayers[user.id];
 	
 	for(var player in onlinePlayers){
-		onlinePlayers[player].socket.emit('lobby', {action: 'logged-out', data: userId});
+		onlinePlayers[player].socket.emit('lobby', {action: 'logged-out', data: user});
 	}
 }
 
@@ -373,4 +373,14 @@ var SendGameInit = function(userId, game){
 		if(player != userId && game.data.players[player].connected){
 			sockets[player].emit('process', {event: 'enemy connection resolve', data: true});
 		}
+}
+
+var OnlinePlayerObjects = function(){
+	var players = [];
+	
+	for(var userId in onlinePlayers){
+		players.push(onlinePlayers[userId].obj);
+	}
+	
+	return players;
 }

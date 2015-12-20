@@ -2,6 +2,7 @@ var Global = {
 	canvas: undefined,
 	screenSize: {width: 20, height: 15},
 	canvasSize: {width: 800, height: 600},
+	player: undefined,
 	LastId: 0,
 	NewId: function(forDebugging)
 	{

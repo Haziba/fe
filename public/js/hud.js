@@ -28,7 +28,7 @@ var NewHUD = function($controls, initData){
 	
 	
 	for(var player in initData.players)
-		if(player != socketId){
+		if(player != Global.player.id){
 			_enemyPlayerId = player;
 			_enemyConnected = initData.players[player].connected;
 		}
@@ -37,7 +37,7 @@ var NewHUD = function($controls, initData){
 	$enemyOnline.text(_enemyConnected ? "Online" : "Offline");
 	
 	var init = function(game){
-		_team = game.players[socketId].team;
+		_team = game.players[Global.player.id].team;
 		_activeTeam = game.activeTeam;
 		
 		_gameState = game.state;
@@ -48,7 +48,7 @@ var NewHUD = function($controls, initData){
 	}
 	
 	var UpdateCurrentTurn = function(team){
-		$currentTurn.text(team == _team ? socketId : _enemyPlayerId);
+		$currentTurn.text(team == _team ? Global.player.id : _enemyPlayerId);
 		
 		window.document.title = 'FE | ' + (team == _team ? 'Your' : 'Enemy') + ' Turn';
 		
