@@ -69,20 +69,8 @@
 		$lobbyWrapper.show();
 	};
 </script>
-<style>
-	button{
-		width: 150px;
-	}
-	button span{
-		font-size: 22px;
-	}
-	p{
-		margin: 0;
-		font-size: 18px;
-		font-family: verdana;
-	}
-</style>
-<body style="background-color: #4d2600">
+<link rel="stylesheet" type="text/css" href="css/main.css">
+<body>
 	<div id="fbLoginWrapper">
 		<fb:login-button scope="public_profile,email" onlogin="checkLoginState();">
 		</fb:login-button>
@@ -91,16 +79,18 @@
 		</div>
 	</div>
 	<div id="lobbyWrapper" style="display: none">
-		<table id="onlinePlayers">
-			<thead>
+		<div class="lobby">
+			<table id="onlinePlayers">
+				<thead>
+					<tr>
+						<td>User ID</td>
+						<td></td>
+					</tr>
+				</thead>
 				<tr>
-					<td>User ID</td>
-					<td></td>
 				</tr>
-			</thead>
-			<tr>
-			</tr>
-		</table>
+			</table>
+		</div>
 	</div>
 	<div id="gameWrapper" style="display: none; border: 1px solid #000; width: 800px; height: 800px; position: absolute; left: 50%; margin-left: -400px">
 		<div style="width: 750px; height: 600px; border: 1px solid #000; margin: auto; top: 25px; position: relative; background-image: url(img/Backdrop.png)">
