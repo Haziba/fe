@@ -10,13 +10,17 @@ var StartLobby = function($lobbyWrapper, data){
 	}
 	
 	var AddPlayer = function(user){
+		if(onlinePlayers[user.id])
+			return;
+		
 		onlinePlayers[user.id] = $("<tr/>")
 			.data("id", user.id)
 			.append($("<td/>")
 				.text(user.name)
 				.addClass("userId"))
 			.append($("<td/>")
-				.append($("<a/>")
+				.addClass("options")
+				.append($("<button/>")
 				.text("Challenge")
 				.click(ChallengePlayer)));
 		

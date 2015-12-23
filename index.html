@@ -71,28 +71,39 @@
 </script>
 <link rel="stylesheet" type="text/css" href="css/main.css">
 <body>
-	<div id="fbLoginWrapper">
+	<div id="fbLoginWrapper" class="wrapper">
 		<fb:login-button scope="public_profile,email" onlogin="checkLoginState();">
 		</fb:login-button>
 
 		<div id="status">
 		</div>
 	</div>
-	<div id="lobbyWrapper" style="display: none">
+	<div id="lobbyWrapper" class="wrapper" style="display: none">
 		<div class="lobby">
+			<ins class="overlay topLeft"></ins>
+			<ins class="overlay topRight"></ins>
+			<ins class="overlay bottomLeft"></ins>
+			<ins class="overlay bottomRight"></ins>
+			<ins class="overlay horizontal" style="top: 0px;"></ins>
+			<ins class="overlay horizontal" style="bottom: 0px;"></ins>
+			<ins class="overlay vertical" style="left: 0px;"></ins>
+			<ins class="overlay vertical" style="right: 0px;"></ins>
+			<h1>
+				LAND WARS
+			</h1>
 			<table id="onlinePlayers">
 				<thead>
 					<tr>
-						<td>User ID</td>
-						<td></td>
+						<th>User ID</th>
+						<th class="options"></th>
 					</tr>
 				</thead>
-				<tr>
-				</tr>
+				<tbody>
+				</tbody>
 			</table>
 		</div>
 	</div>
-	<div id="gameWrapper" style="display: none; border: 1px solid #000; width: 800px; height: 800px; position: absolute; left: 50%; margin-left: -400px">
+	<div id="gameWrapper" class="wrapper" style="display: none; border: 1px solid #000; width: 800px; height: 800px; position: absolute; left: 50%; margin-left: -400px">
 		<div style="width: 750px; height: 600px; border: 1px solid #000; margin: auto; top: 25px; position: relative; background-image: url(img/Backdrop.png)">
 			<canvas id="gameCanvas" style="border: 1px solid #000; width: 800px; height: 800px; position: absolute; top: 50%; left: 50%">
 			</canvas>
