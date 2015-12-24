@@ -14,20 +14,20 @@ body {
   font-family: 'Trebuchet MS';
 }
 .wrapper {
-  height: 100%;
   min-width: 400px;
   max-width: 800px;
   min-height: 600px;
   position: relative;
   margin: 0 auto;
+  background-color: #351000;
+  border: 3px #BC6C46 solid;
+  padding: 20px;
 }
 .lobby {
-  position: absolute;
-  top: 5px;
-  bottom: 5px;
-  left: 5px;
-  right: 5px;
+  position: relative;
   background-color: #fff;
+  border: 3px #BC6C46 solid;
+  min-height: 560px;
   padding: 30px;
 }
 .lobby h1 {
@@ -67,42 +67,28 @@ body {
 .lobby table tr.options {
   width: 150px;
 }
-.overlay {
-  width: 30px;
-  height: 30px;
+.game {
+  position: relative;
+}
+.game .canvasWrapper {
+  background-color: #fff;
+  border: 3px #BC6C46 solid;
+  margin-bottom: 20px;
+  height: 600px;
+  position: relative;
+  overflow: hidden;
+}
+.game .canvasWrapper #gameCanvas {
+  width: 800px;
+  height: 800px;
   position: absolute;
+  top: 50%;
+  left: 50%;
 }
-.overlay.topLeft {
-  background-image: url("/img/Overlay/top_left.png");
-  top: 0px;
-  left: 0px;
-  z-index: 1;
-}
-.overlay.topRight {
-  background-image: url("/img/Overlay/top_right.png");
-  top: 0px;
-  right: 0px;
-  z-index: 1;
-}
-.overlay.bottomLeft {
-  background-image: url("/img/Overlay/bottom_left.png");
-  bottom: 0px;
-  left: 0px;
-  z-index: 1;
-}
-.overlay.bottomRight {
-  background-image: url("/img/Overlay/bottom_right.png");
-  bottom: 0px;
-  right: 0px;
-  z-index: 1;
-}
-.overlay.horizontal {
-  background-image: url("/img/Overlay/horiz.png");
-  z-index: 0;
-  width: calc(100% - 60px);
-}
-.overlay.vertical {
-  background-image: url("/img/Overlay/vert.png");
-  z-index: 0;
-  height: calc(100% - 60px);
+.game #gameControls {
+  border: 3px #BC6C46 solid;
+  margin: auto;
+  position: relative;
+  background-color: #fff;
+  height: 125px;
 }
