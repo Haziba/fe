@@ -21,7 +21,7 @@ var debugEnv = ip == "127.0.0.1";
 if(debugEnv)
 	db.initialise('mongodb://localhost:27017/test');
 else
-	db.initialise('mongodb://admin7TflPxV:WgtUZvgbBUuz@fe-haziba.rhcloud.com/test');
+	db.initialise(process.env.OPENSHIFT_MONGODB_DB_URL);
 
 app.set('port', process.env.OPENSHIFT_NODEJS_PORT || process.env.PORT || 3000);
 app.set('ip', ip);
