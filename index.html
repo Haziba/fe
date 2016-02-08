@@ -1,139 +1,149 @@
-<script src="js/lib/jquery-2.1.4.min.js"></script>
-<script src="/socket.io/socket.io.js"></script>
-<script src="js/enums.js"></script>
-<script src="js/button.js"></script>
-<script src="js/collisions.js"></script>
-<script src="js/global.js"></script>
-<script src="js/pubsub.js"></script>
-<script src="js/fbLogin.js"></script>
-<script src="js/socketManager.js"></script>
-<script src="js/tileHelper.js"></script>
-<script src="js/spriteHandler.js"></script>
-<script src="js/inputHandler.js"></script>
-<script src="js/control.js"></script>
-<script src="js/gameClass.js"></script>
-<script src="js/tileManager.js"></script>
-<script src="js/tile.js"></script>
-<script src="js/soldierManager.js"></script>
-<script src="js/soldier.js"></script>
-<script src="js/stageManager.js"></script>
-<script src="js/hud.js"></script>
-<script src="js/shipManager.js"></script>
-<script src="js/ship.js"></script>
-<script src="js/action.js"></script>
-<script src="js/actionQueue.js"></script>
-<script src="js/fightManager.js"></script>
-<script src="js/lobbyClass.js"></script>
-<script>
-	var startGame = function(player){
-		Global.canvas = $("#gameCanvas")[0];
-		var context = Global.canvas.getContext("2d");
-		
-		var spritesInitialised, initData;
-		
-		var sprite = new Image();
-		sprite.src = "img/spritesheet.png";
-		
-		var battleBackground = new Image();
-		battleBackground.src = "img/FightBackground.png";
-		
-		var $fbWrapper = $("#fbLoginWrapper");
-		var $lobbyWrapper = $("#lobbyWrapper");
-		var $gameWrapper = $("#gameWrapper");
-		
-		Promise.all([sprite, battleBackground]).then(function(){
-			InputHandler.Initialise(Global.canvas);
-			SpriteHandler.Initialise(context, sprite, battleBackground);
-			
-			spritesInitialised = true;
-			
-			if(initData)
-				StartGame($("#gameControls"), initData);
-		});
-		
-		window.bus.sub('lobby init', function(data){
-			StartLobby($lobbyWrapper, data);
-		});
-		
-		window.bus.sub('game init', function(data){
-			$lobbyWrapper.hide();
-			$gameWrapper.show();
-		
-			initData = data;
-			
-			if(spritesInitialised)
-				StartGame($("#gameControls"), initData);
-		});
-		
-		$fbWrapper.hide();
-		$lobbyWrapper.show();
-	};
-</script>
-<link rel="stylesheet" type="text/css" href="css/main.css">
-<body>
-	<div id="fbLoginWrapper" class="wrapper">
-		<fb:login-button scope="public_profile,email" onlogin="checkLoginState();">
-		</fb:login-button>
+<html>
+	<head>
+		<script src="js/lib/jquery-2.1.4.min.js"></script>
+		<script src="/socket.io/socket.io.js"></script>
 
-		<div id="status">
-		</div>
-	</div>
-	<div id="lobbyWrapper" class="wrapper" style="display: none">
-		<div class="lobby">
-			<h1>
-				LAND WARS
-			</h1>
-			<table id="onlinePlayers">
-				<thead>
-					<tr>
-						<th>User ID</th>
-						<th class="options"></th>
-					</tr>
-				</thead>
-				<tbody>
-				</tbody>
-			</table>
-		</div>
-	</div>
-	<div id="gameWrapper" class="wrapper" style="display: none;">
-		<div class="game">
-			<div class="canvasWrapper">
-				<canvas id="gameCanvas">
-				</canvas>
+		<!-- Start game code -->
+		<script src="js/enums.js"></script>
+		<script src="js/button.js"></script>
+		<script src="js/collisions.js"></script>
+		<script src="js/global.js"></script>
+		<script src="js/pubsub.js"></script>
+		<script src="js/fbLogin.js"></script>
+		<script src="js/socketManager.js"></script>
+		<script src="js/tileHelper.js"></script>
+		<script src="js/spriteHandler.js"></script>
+		<script src="js/inputHandler.js"></script>
+		<script src="js/control.js"></script>
+		<script src="js/gameClass.js"></script>
+		<script src="js/tileManager.js"></script>
+		<script src="js/tile.js"></script>
+		<script src="js/soldierManager.js"></script>
+		<script src="js/soldier.js"></script>
+		<script src="js/stageManager.js"></script>
+		<script src="js/hud.js"></script>
+		<script src="js/shipManager.js"></script>
+		<script src="js/ship.js"></script>
+		<script src="js/action.js"></script>
+		<script src="js/actionQueue.js"></script>
+		<script src="js/fightManager.js"></script>
+		<!-- End game code -->
+
+		<script src="js/lobbyClass.js"></script>
+
+		<script>
+			var startGame = function(player){
+				Global.canvas = $("#gameCanvas")[0];
+				var context = Global.canvas.getContext("2d");
+				
+				var spritesInitialised, initData;
+				
+				var sprite = new Image();
+				sprite.src = "img/spritesheet.png";
+				
+				var battleBackground = new Image();
+				battleBackground.src = "img/FightBackground.png";
+				
+				var $fbWrapper = $("#fbLoginWrapper");
+				var $lobbyWrapper = $("#lobbyWrapper");
+				var $gameWrapper = $("#gameWrapper");
+				
+				Promise.all([sprite, battleBackground]).then(function(){
+					InputHandler.Initialise(Global.canvas);
+					SpriteHandler.Initialise(context, sprite, battleBackground);
+					
+					spritesInitialised = true;
+					
+					if(initData)
+						StartGame($("#gameControls"), initData);
+				});
+				
+				window.bus.sub('lobby init', function(data){
+					StartLobby($lobbyWrapper, data);
+				});
+				
+				window.bus.sub('game init', function(data){
+					$lobbyWrapper.hide();
+					$gameWrapper.show();
+				
+					initData = data;
+					
+					if(spritesInitialised)
+						StartGame($("#gameControls"), initData);
+				});
+				
+				$fbWrapper.hide();
+				$lobbyWrapper.show();
+			};
+		</script>
+		<link rel="stylesheet" type="text/css" href="css/main.css">
+	</head>
+	
+	<body>
+		<div id="fbLoginWrapper" class="wrapper">
+			<fb:login-button scope="public_profile,email" onlogin="checkLoginState();">
+			</fb:login-button>
+
+			<div id="status">
 			</div>
-			<div id="gameControls">
-				<div id="turnTimer" style="border: 1px solid #000; width: 50px; height: 30px; position: absolute; left: 50%; margin-left: -25px; background-color: #fff; top: 10px; font-size: 25px; font-family: Verdana; text-align: center; top: -610px">10</div>
-				<div style="width: 250px; margin: 20px; float: left">
-					<p>
-						Current Turn: <span id='currentTurn'></span>
-					</p>
-					<p>
-						<span id='enemyName'></span>: <span id='enemyOnline'></span>
-					</p>
+		</div>
+		<div id="lobbyWrapper" class="wrapper" style="display: none">
+			<div class="lobby">
+				<h1>
+					LAND WARS
+				</h1>
+				<table id="onlinePlayers">
+					<thead>
+						<tr>
+							<th>User ID</th>
+							<th class="options"></th>
+						</tr>
+					</thead>
+					<tbody>
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<div id="gameWrapper" class="wrapper" style="display: none;">
+			<div class="game">
+				<div class="canvasWrapper">
+					<canvas id="gameCanvas">
+					</canvas>
 				</div>
-				<div id='unitSelection' style="width: 250px; margin: 20px; float: left; display: none">
-					<p>
-						Name: <span id='unitName'></span>
-					</p>
-					<p>
-						Health: <span id='unitHealth'></span>
-					</p>
-					<p>
-						Strength: <span id='unitStrength'></span>
-					</p>
-					<p>
-						Armour: <span id='unitArmour'></span>
-					</p>
+				<div id="gameControls">
+					<div id="turnTimer" style="border: 1px solid #000; width: 50px; height: 30px; position: absolute; left: 50%; margin-left: -25px; background-color: #fff; top: 10px; font-size: 25px; font-family: Verdana; text-align: center; top: -610px">10</div>
+					<div style="width: 250px; margin: 20px; float: left">
+						<p>
+							Current Turn: <span id='currentTurn'></span>
+						</p>
+						<p>
+							<span id='enemyName'></span>: <span id='enemyOnline'></span>
+						</p>
+					</div>
+					<div id='unitSelection' style="width: 250px; margin: 20px; float: left; display: none">
+						<p>
+							Name: <span id='unitName'></span>
+						</p>
+						<p>
+							Health: <span id='unitHealth'></span>
+						</p>
+						<p>
+							Strength: <span id='unitStrength'></span>
+						</p>
+						<p>
+							Armour: <span id='unitArmour'></span>
+						</p>
+					</div>
+					<button id="unitDone" style="position: absolute; right: 25px; top: 25px;">
+						<span>Unit Done</span>
+					</button>
+					<button id="endTurn" style="position: absolute; right: 25px; top: 75px;">
+						<span>End Turn</span>
+					</button>
 				</div>
-				<button id="unitDone" style="position: absolute; right: 25px; top: 25px;">
-					<span>Unit Done</span>
-				</button>
-				<button id="endTurn" style="position: absolute; right: 25px; top: 75px;">
-					<span>End Turn</span>
-				</button>
-			</div>
-			<div style="width: 100%; height: 100%; position: absolute; top: 0px; left: 0px; background-image: url(img/Overlay.png); pointer-events: none">
+				<div style="width: 100%; height: 100%; position: absolute; top: 0px; left: 0px; background-image: url(img/Overlay.png); pointer-events: none">
+				</div>
 			</div>
 		</div>
-	</div>
-</body>
+	</body>
+</html>
