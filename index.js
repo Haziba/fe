@@ -5,9 +5,10 @@ var express = require('express');
 var enums = require('./public/js/enums.js');
 var unitFactory = require('./server/unitFactory.js')(enums);
 var worlds = require('./server/worlds.js')();
+var db = require('./server/db.js')();
 
 app.get('/', function(req, res){
-	res.sendfile('index.html');
+	res.sendfile('index.html?init=' + (!!db._db ? 1 : 0) + '&err=' + db._err);
 });
 
 app.use(express.static('public'));
@@ -16,6 +17,11 @@ var sockets = {};
 
 var ip = process.env.OPENSHIFT_NODEJS_IP || "127.0.0.1";
 var debugEnv = ip == "127.0.0.1";
+
+if(debugEnv)
+	db.initialise('mongodb://localhost:27017/test');
+else
+	db.initialise('mongodb://admin7TflPxV:WgtUZvgbBUuz@fe-haziba.rhcloud.com/test');
 
 app.set('port', process.env.OPENSHIFT_NODEJS_PORT || process.env.PORT || 3000);
 app.set('ip', ip);

@@ -1,1 +1,1 @@
-start cmd /K node index.js && grunt
+start cmd /K mongod --port 27017 --dbpath C:\git\fe\db && start cmd /K node index.js && grunt
