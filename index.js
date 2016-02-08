@@ -8,7 +8,7 @@ var worlds = require('./server/worlds.js')();
 var db = require('./server/db.js')();
 
 app.get('/', function(req, res){
-	res.sendfile('index.html?init=' + (!!db._db ? 1 : 0) + '&err=' + db._err);
+	res.sendfile('index.html');
 });
 
 app.use(express.static('public'));

@@ -7,8 +7,9 @@ module.exports = function(){
 		
 		initialise: function(url){
 			var that = this;
-			
+			console.log("Attempt with: `" + url + "`");
 			mongoClient.connect(url, function(err, db){
+				console.log("Err: `" + err + "`");
 				if(err == null)
 					that._db = db;
 				else
