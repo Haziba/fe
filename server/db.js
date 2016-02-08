@@ -5,15 +5,17 @@ module.exports = function(){
 		_db: undefined,
 		_init: false,
 		
-		initialise: function(url){
+		initialise: function(url, callback){
 			var that = this;
-			console.log("Attempt with: `" + url + "`");
+			
 			mongoClient.connect(url, function(err, db){
-				console.log("Err: `" + err + "`");
 				if(err == null)
 					that._db = db;
 				else
 					that._err = err;
+				
+				if(callback)
+					callback();
 			});
 			
 			this._init = true;
