@@ -19,6 +19,41 @@ module.exports = function(){
 			});
 			
 			this._init = true;
+		},
+		
+		getPlayer: function(id){
+			var that = this;
+			
+			return new Promise(function(resolve, reject){
+				if(!that._db)
+					reject("DB not started");
+				
+				var cursor = that._db.collection('players').find({id: id});
+				
+				cursor.nextObject(function(err, player){
+					if(err != null)
+						reject(err);
+					else
+						resolve(player);
+				});
+			});
+		},
+		
+		setPlayer: function(player){
+			var that = this;
+			
+			return new Promise(function(resolve, reject){
+				if(!that._db){
+					reject("DB not started");
+				}
+				
+				that._db.collection('players').update({id: player.id}, player, {upsert: true}, function(err, data){
+					if(err != null){
+						reject(err);
+					}else
+						resolve();
+				});
+			});
 		}
 	};
 }

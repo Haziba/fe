@@ -4,6 +4,7 @@
   "description": "Socket Game Thing",
   "main": "index.js",
   "dependencies": {
+    "body-parser": "^1.14.2",
     "express": "^4.13.3",
     "mongodb": "^2.1.6",
     "nodejs": "^0.0.0",

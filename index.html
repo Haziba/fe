@@ -45,6 +45,7 @@
 				battleBackground.src = "img/FightBackground.png";
 				
 				var $fbWrapper = $("#fbLoginWrapper");
+				var $firstVisitWrapper = $("#firstVisitWrapper");
 				var $lobbyWrapper = $("#lobbyWrapper");
 				var $gameWrapper = $("#gameWrapper");
 				
@@ -73,7 +74,25 @@
 				});
 				
 				$fbWrapper.hide();
-				$lobbyWrapper.show();
+				$.get('/user/' + Global.player.id, function(player){
+					if(player.exists)
+						$lobbyWrapper.show();
+					else
+						$firstVisitWrapper.show();
+				});
+				
+				$("#firstVisit").submit(function(e){
+					e.preventDefault();
+					
+					$.post('/user/' + Global.player.id, $("#firstVisit").serialize(), function(res){
+						if(res.success){
+							$firstVisitWrapper.hide();
+							$lobbyWrapper.show();
+						}else{
+							console.log("Error saving player");
+						}
+					});
+				});
 			};
 		</script>
 		<link rel="stylesheet" type="text/css" href="css/main.css">
@@ -85,6 +104,18 @@
 			</fb:login-button>
 
 			<div id="status">
+			</div>
+		</div>
+		<div id="firstVisitWrapper" class="wrapper" style="display: none">
+			<div>
+				<h1>
+					LAND WARS
+				</h1>
+				<form id="firstVisit">
+					<label>Name: </label>
+					<input type="text" name="Name" /><br />
+					<input type="submit" value="Set" />
+				</form>
 			</div>
 		</div>
 		<div id="lobbyWrapper" class="wrapper" style="display: none">

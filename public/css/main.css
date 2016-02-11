@@ -23,48 +23,48 @@ body {
   border: 3px #BC6C46 solid;
   padding: 20px;
 }
-.lobby {
+.wrapper > div {
   position: relative;
   background-color: #fff;
   border: 3px #BC6C46 solid;
   min-height: 560px;
   padding: 30px;
 }
-.lobby h1 {
+.wrapper > div h1 {
   text-align: center;
 }
-.lobby table {
+.wrapper > div table {
   margin: 5px;
   width: calc(100% - 10px);
   border-collapse: collapse;
   border-spacing: 0;
 }
-.lobby table th {
+.wrapper > div table th {
   padding-top: 11px;
   padding-bottom: 11px;
   background-color: #2E0F00;
   color: #BC6C46;
 }
-.lobby table th:not(:first-child) {
+.wrapper > div table th:not(:first-child) {
   border-left: 1px solid #BC6C46;
 }
-.lobby table tr {
+.wrapper > div table tr {
   height: 20px;
   border: 2px #000 solid;
   background-color: #BC6C46;
   color: #2E0F00;
 }
-.lobby table tr td {
+.wrapper > div table tr td {
   padding: 4px 0px 3px 5px;
 }
-.lobby table tr td:not(:first-child) {
+.wrapper > div table tr td:not(:first-child) {
   border-left: 1px solid #2E0F00;
 }
-.lobby table tr td button {
+.wrapper > div table tr td button {
   width: 100%;
 }
-.lobby table th.options,
-.lobby table tr.options {
+.wrapper > div table th.options,
+.wrapper > div table tr.options {
   width: 150px;
 }
 .game {
