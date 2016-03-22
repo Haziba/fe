@@ -1,3 +1,5 @@
+var bus = require('./public/js/pubsub.js');
+
 var app = require('express')();
 var http = require('http');
 var path = require('path');

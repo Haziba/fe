@@ -1,24 +1,15 @@
-var Io = require('socket.io');
 var enums = require('../public/js/enums.js');
 var unitFactory = require('./unitFactory.js')(enums);
 var worlds = require('./worlds.js')();
 
 module.exports = function(server, debugEnv){
-	var io = Io(server);
-
-	var sockets = {};
-	
-	io.on('connection', function(socket){
+	bus.sub('socket connect', function(socket){
 		var user;
 		var game;
 		
-		socket.on('disconnect', function(){
+		bus.subOnce('socket disconnect ' + socket.id, function(){
 			if(!user)
 				return;
-			
-			delete sockets[user.id];
-		
-			console.log("disconnected", user.name);
 			
 			if(!game){
 				RemoveOnlinePlayer(user.id);
@@ -34,8 +25,6 @@ module.exports = function(server, debugEnv){
 		
 		socket.on('init', function(msg){
 			user = msg;
-			
-			sockets[user.id] = this;
 			
 			console.log("connected", user.name);
 			
