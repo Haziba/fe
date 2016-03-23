@@ -11,16 +11,15 @@ module.exports = function(server, debugEnv){
 			if(!user)
 				return;
 			
-			if(!game){
-				RemoveOnlinePlayer(user.id);
-				return;
-			}
-			
 			game.data.players[user.id].connected = false;
 			
 			for(var player in game.data.players)
 				if(game.data.players[player].connected)
 					sockets[player].emit('process', {event: 'enemy connection resolve', data: false});
+		});
+		
+		socket.on('start game', function(otherPlayers){
+			game.data.players = otherPlayers;
 		});
 		
 		socket.on('init', function(msg){
@@ -29,9 +28,7 @@ module.exports = function(server, debugEnv){
 			console.log("connected", user.name);
 			
 			if(!inGamePlayers[user.id]){
-				AddOnlinePlayer(user, socket, function(newGame){ game = newGame; });
-				
-				socket.emit('init', {inGame: false, serverTime: (new Date()).getTime(), onlinePlayers: OnlinePlayerObjects()});
+				socket.emit('init', {inGame: false, serverTime: (new Date()).getTime()});
 				return;
 			}
 		
@@ -67,7 +64,7 @@ module.exports = function(server, debugEnv){
 			}
 		});
 		
-		socket.on('lobby', function(action){
+		/*socket.on('lobby', function(action){
 			console.log('lobby', action);
 			
 			switch(action.action){
@@ -75,7 +72,7 @@ module.exports = function(server, debugEnv){
 					StartNewGame(user.id, action.data);
 					break;
 			}
-		});
+		});*/
 	});
 
 	var ProcessAction = function(game, action){
@@ -318,10 +315,6 @@ module.exports = function(server, debugEnv){
 	}
 
 	var AddOnlinePlayer = function(user, s, startGame){
-		for(var player in onlinePlayers){
-			onlinePlayers[player].socket.emit('lobby', {action: 'logged-on', data: user});
-		}
-		
 		onlinePlayers[user.id] = {name: user.name, socket: s, startGame: startGame};
 	}
 
@@ -333,12 +326,12 @@ module.exports = function(server, debugEnv){
 		}
 	}
 
-	var SendGameInit = function(userId, game){
+	var SendGameInit = function(socket, enemySockets, userId, game){
 		game = inGamePlayers[userId];
 		
 		game.data.players[userId].connected = true;
 		
-		sockets[userId].emit('init', {inGame: true, serverTime: (new Date()).getTime(), game: game.data});
+		socket.emit('init', {inGame: true, serverTime: (new Date()).getTime(), game: game.data});
 		
 		for(var player in game.data.players)
 			if(player != userId && game.data.players[player].connected){

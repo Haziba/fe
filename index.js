@@ -1,11 +1,11 @@
-var bus = require('./public/js/pubsub.js');
+var bus = require('./server/pubsub.js');
 
 var app = require('express')();
 var http = require('http');
 var path = require('path');
 var express = require('express');
 var db = require('./server/db.js')();
-var Game = require('./server/game.js');
+//var Game = require('./server/game.js');
 
 app.get('/', function(req, res){
 	res.sendfile('index.html');
@@ -27,7 +27,7 @@ app.set('port', process.env.OPENSHIFT_NODEJS_PORT || process.env.PORT || 3000);
 app.set('ip', ip);
 
 var server = http.Server(app);
-var game = Game(server, debugEnv);
+//var game = Game(server, debugEnv);
 
 server.listen(app.get('port') ,app.get('ip'), function () {
 	console.log('listening on *:' + app.get('port'));
