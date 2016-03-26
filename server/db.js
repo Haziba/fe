@@ -21,25 +21,29 @@ module.exports = function(){
 			this._init = true;
 		},
 		
-		getPlayer: function(id){
+		getById: function(model, id){
 			var that = this;
 			
 			return new Promise(function(resolve, reject){
 				if(!that._db)
 					reject("DB not started");
 				
-				var cursor = that._db.collection('players').find({id: id});
+				var cursor = that._db.collection(model.collection).find({id: id});
 				
-				cursor.nextObject(function(err, player){
+				cursor.nextObject(function(err, obj){
 					if(err != null)
 						reject(err);
-					else
-						resolve(player);
+					else{
+						if(obj != null && obj.modelVersion < model.modelVersion)
+							obj = model.dbUpdate(obj);
+						
+						resolve(obj);
+					}
 				});
 			});
 		},
 		
-		setPlayer: function(player){
+		set: function(model, obj){
 			var that = this;
 			
 			return new Promise(function(resolve, reject){
@@ -47,11 +51,11 @@ module.exports = function(){
 					reject("DB not started");
 				}
 				
-				that._db.collection('players').update({id: player.id}, player, {upsert: true}, function(err, data){
+				that._db.collection(model.collection).update({id: obj.id}, obj, {upsert: true}, function(err, data){
 					if(err != null){
 						reject(err);
 					}else
-						resolve();
+						resolve(obj);
 				});
 			});
 		}

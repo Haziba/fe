@@ -1,5 +1,10 @@
 var bus = require('./server/pubsub.js');
 
+var models = 
+{
+	Player: require('./server/player.js')
+};
+
 var app = require('express')();
 var http = require('http');
 var path = require('path');
@@ -11,13 +16,17 @@ app.get('/', function(req, res){
 	res.sendfile('index.html');
 });
 
-require('./server/api/users/routes.js')(app, express, db);
+app.get('/v_next', function(req, res){
+	res.sendfile('angular.html');
+});
+
+require('./server/api/users/routes.js')(app, express, db, models);
 
 app.use(express.static('public'));
 
 var ip = process.env.OPENSHIFT_NODEJS_IP || "127.0.0.1";
 var debugEnv = ip == "127.0.0.1";
-
+	
 if(debugEnv)
 	db.initialise('mongodb://localhost:27017/landwars');
 else
