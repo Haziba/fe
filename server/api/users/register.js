@@ -1,5 +1,6 @@
 module.exports = function(router, db, models){
 	router.route('/register/:user_id').post(function(req, res){
+		console.log("Register");
 		var userId = req.params.user_id;
 		
 		db.getById(models.Player, userId).then(function(player){

@@ -7,11 +7,13 @@ module.exports = function(router, db, models){
 			
 			if(player != null){
 				if(player.token == token){
-					res.json({success: true});
+					res.json({success: true, player: player});
+				} else {
+					res.json({success: false, error: 'Token mismatch'});
 				}
+			} else {
+				res.json({success: false, error: 'Player doesn\'t exist'})
 			}
-			
-			res.json({success: false});
 		});
 	});
 }

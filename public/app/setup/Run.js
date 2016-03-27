@@ -10,7 +10,7 @@ App.run(
 						var authParts = authCookie.split(':');
 						var userId = authParts[0];
 						var token = authParts[1];
-						debugger;
+						
 						$.post('/user/auth/' + userId, {token: token}).then(function(response){
 							if(response.success){
 								$rootScope.user = response.player;

@@ -10,7 +10,7 @@ module.exports =
 		player.id = userId;
 		player.name = userName;
 		player.units = [0,1,3,2,3,1,0];
-		player.token = newToken();
+		player.token = this.newToken();
 		
 		return player;
 	},

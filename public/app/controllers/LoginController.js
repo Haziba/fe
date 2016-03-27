@@ -7,9 +7,16 @@ App.controller('LoginController', function($scope, $rootScope, $location, $cooki
 				if(response.success){
 					$rootScope.user = response.player;
 					$cookies.put('auth', response.player.id + ":" + response.player.token);
+					
+					$rootScope.$apply(function(){
+						$location.path('/lobby');
+					});
 				}else{
 					$rootScope.user = $scope.user;
-					$scope.info('/create');
+					
+					$rootScope.$apply(function(){
+						$location.path('/create');
+					});
 				}
 			});
 	});
