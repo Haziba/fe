@@ -34,8 +34,11 @@ module.exports = function(){
 					if(err != null)
 						reject(err);
 					else{
-						if(obj != null && obj.modelVersion < model.modelVersion)
+						if(obj != null && obj.modelVersion < model.modelVersion){
 							obj = model.dbUpdate(obj);
+							
+							that.set(model, obj);
+						}
 						
 						resolve(obj);
 					}

@@ -26,7 +26,7 @@ app.use(express.static('public'));
 
 var ip = process.env.OPENSHIFT_NODEJS_IP || "127.0.0.1";
 var debugEnv = ip == "127.0.0.1";
-	
+
 if(debugEnv)
 	db.initialise('mongodb://localhost:27017/landwars');
 else

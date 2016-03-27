@@ -8,6 +8,7 @@ module.exports = function(app, express, db, models){
 	require('./update')(router, db, models);
 	require('./register')(router, db, models);
 	require('./login')(router, db, models);
+	require('./auth')(router, db, models);
 	
 	app.use('/user', router);
 }
