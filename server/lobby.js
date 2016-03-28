@@ -5,8 +5,6 @@ module.exports = function(bus){
 	var lookForGame = function(socketId){
 		socketsLookingForGame.push(socketId);
 		
-		console.log('Looking for game:', socketId);
-		
 		bus.sub('socket disconnect ' + socketId, function(){
 			stopLookingForGame(socketId);
 		});
@@ -19,28 +17,32 @@ module.exports = function(bus){
 	}
 	
 	var matchUpPlayers = function(){
+		if(socketsLookingForGame.length < 1)
+			return;
+		
+		var when = (new Date()).getTime();
+		
 		var sockets = [socketsLookingForGame[0]];
 		
-		bus.pub('socket message', sockets, msg: {
+		bus.pub('socket message', sockets, {
 			type: 'foundGame',
 			when: when
 		});
 		
-		sockets.splice(0, 1);
+		socketsLookingForGame.splice(0, 1);
 		
 		pendingGames.push({sockets: sockets, when: when});
 		return;
 		for(var i = socketsLookingForGame.length - 2; i >= 0; i += 2){
-			var when = (new Date()).getTime();
 			
 			var sockets = [socketsLookingForGame[i], socketsLookingForGame[i+1]];
 			
-			bus.pub('socket message', sockets, msg: {
+			bus.pub('socket message', sockets, {
 				type: 'foundGame',
 				when: when
 			});
 			
-			sockets.splice(i, 2);
+			socketsLookingForGame.splice(i, 2);
 			
 			pendingGames.push({sockets: sockets, when: when});
 		}
@@ -54,16 +56,13 @@ module.exports = function(bus){
 		});
 		
 		for(var i = 0; i < endingGames.length; i++){
-			bus.pub('socket message', endingGames.sockets, msg: {
+			bus.pub('socket message', endingGames.sockets, {
 				type: 'pendingGameCancelled'
 			});
 			
 			pendingGames.splice(pendingGames.indexOf(endingGames[i]), 1);
 		}
 	}
-	
-	setInterval(matchUpPlayers, 1);
-	setInterval(cancelPendingGames, 1);
 	
 	bus.sub('lobby action', function(msg){
 		switch(msg.type){
@@ -75,4 +74,7 @@ module.exports = function(bus){
 				break;
 		}
 	});
+	
+	setInterval(matchUpPlayers, 1);
+	setInterval(cancelPendingGames, 1);
 }

@@ -43,12 +43,13 @@ App.run(function($rootScope, $location, $cookies) {
 	
 	.run(function(bus){
 		var socket = io();
-		console.log("lel", bus);
+		
 		socket.on('message', function(msg){
 			bus.pub('socket ' + msg.type, msg);
 		});
 		
-		bus.sub('socket message', function(msg){
+		bus.sub('socket message', function(area, msg){
+			socket.emit(area, msg)
 			console.log('outward message', msg);
 		});
 		

@@ -31,7 +31,7 @@ module.exports = function(bus, server){
 			
 			console.log('lobby', msg);
 			
-			bus.pub('lobby message', msg);
+			bus.pub('lobby action', msg);
 		});
 	});
 	
