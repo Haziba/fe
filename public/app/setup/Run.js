@@ -1,5 +1,4 @@
-App.run(
-	function($rootScope, $location, $cookies) {
+App.run(function($rootScope, $location, $cookies) {
 		// register listener to watch route changes
 		$rootScope.$on( "$routeChangeStart", function(event, next, current) {
 			new Promise(function(resolve, reject){
@@ -40,4 +39,18 @@ App.run(
 				}
 			});
 		});
+	})
+	
+	.run(function(bus){
+		var socket = io();
+		console.log("lel", bus);
+		socket.on('message', function(msg){
+			bus.pub('socket ' + msg.type, msg);
+		});
+		
+		bus.sub('socket message', function(msg){
+			console.log('outward message', msg);
+		});
+		
+		return socket;
 	});
