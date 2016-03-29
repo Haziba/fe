@@ -5,11 +5,14 @@ module.exports = function(bus, server){
 	var currentSocketId = 0;
 	
 	var onlineUsers = {};
+	var sockets = {};
 	
 	io.on('connection', function(socket){
 		socket.id = currentSocketId++;
-		
-		onlineUsers[socket.id] = socket;
+		sockets[socket.id] = socket;
+		onlineUsers[socket.id] = {
+			socketId: socket.id
+		};
 		
 		bus.sub('socket message ' + socket.id, function(area, msg){
 			socket.emit(area, msg);

@@ -47,7 +47,7 @@ module.exports = function(bus){
 		
 		usersLookingForGame.splice(0, 1);
 		
-		pendingGames.push({sockets: sockets, when: when, acceptedUsers: 0});
+		pendingGames.push({users: [usersLookingForGame[0]], when: when, acceptedUsers: 0});
 		return;
 		
 		for(var i = usersLookingForGame.length - 2; i >= 0; i += 2){
@@ -68,11 +68,12 @@ module.exports = function(bus){
 	var cancelPendingGames = function(){
 		var when = (new Date()).getTime();
 		
-		var endingGames = pendingGames.filter(function(games){
-			return (when - games.when) > 15;
+		var endingGames = pendingGames.filter(function(game){
+			return (when - game.when) > 15;
 		});
-		
+		console.log(endingGames);
 		for(var i = 0; i < endingGames.length; i++){
+			console.log(endingGames[i]);
 			var sockets = endingGames[i].users.map(function(user){ return user.socketId; });
 		
 			bus.pub('socket message', sockets, 'lobby', {
