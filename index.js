@@ -9,7 +9,7 @@ var app = require('express')();
 var http = require('http');
 var path = require('path');
 var express = require('express');
-var db = require('./server/db.js')();
+var db = require('./server/db.js')(models);
 
 require('./server/lobby.js')(bus);
 //var Game = require('./server/game.js');
@@ -42,7 +42,7 @@ app.set('port', process.env.OPENSHIFT_NODEJS_PORT || process.env.PORT || 3000);
 app.set('ip', ip);
 
 var server = http.Server(app);
-//var game = Game(server, debugEnv);
+//var game = Game(server, debugEnv, db);
 
 require('./server/socket.js')(bus, server);
 

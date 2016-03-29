@@ -1,11 +1,11 @@
-module.exports = function(router, db, models){
+module.exports = function(router, db){
 	router.route('/update/:user_id').post(function(req, res){
 		var player = req.body;
 		player.id = req.params.user_id;
 		
-		db.getById(models.Player, player.id).then(function(player){
+		db.getById(db.models.Player, player.id).then(function(player){
 			if(player != null){
-				db.set(models.Player, player).then(function(){
+				db.set(db.models.Player, player).then(function(){
 					res.json({"success": true, "player": player});
 				}, function(err){
 					res.json({"success": false, "error": err});

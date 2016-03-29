@@ -1,9 +1,11 @@
 var mongoClient = require('mongodb').MongoClient;
 
-module.exports = function(){
+module.exports = function(models){
 	return {
 		_db: undefined,
 		_init: false,
+		
+		models: models,
 		
 		initialise: function(url, callback){
 			var that = this;
