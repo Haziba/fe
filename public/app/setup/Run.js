@@ -1,4 +1,4 @@
-App.run(function($rootScope, $location, $cookies) {
+App.run(function($rootScope, $location, $cookies, bus) {
 		// register listener to watch route changes
 		$rootScope.$on( "$routeChangeStart", function(event, next, current) {
 			new Promise(function(resolve, reject){
@@ -13,6 +13,8 @@ App.run(function($rootScope, $location, $cookies) {
 						$.post('/user/auth/' + userId, {token: token}).then(function(response){
 							if(response.success){
 								$rootScope.user = response.player;
+								
+								bus.pub('user login', $rootScope.user);
 								
 								resolve();
 							} else {
@@ -44,6 +46,15 @@ App.run(function($rootScope, $location, $cookies) {
 	.run(function(bus){
 		var socket = io();
 		
+		var areas = ['lobby', 'game'];
+		
+		for(var i = 0; i < areas.length; i++)
+			(function(area){
+				socket.on(area, function(msg){
+					bus.pub('socket ' + area, msg);
+				})
+			})(areas[i]);
+		
 		socket.on('message', function(msg){
 			bus.pub('socket ' + msg.type, msg);
 		});
@@ -51,6 +62,10 @@ App.run(function($rootScope, $location, $cookies) {
 		bus.sub('socket message', function(area, msg){
 			socket.emit(area, msg)
 			console.log('outward message', msg);
+		});
+		
+		bus.sub('user login', function(user){
+			socket.emit('init', user.id);
 		});
 		
 		return socket;

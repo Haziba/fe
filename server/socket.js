@@ -4,6 +4,7 @@ module.exports = function(bus, server){
 	var io = Io(server);
 	var currentSocketId = 0;
 	
+	// This stinks. onlineUsers's keys are the socketId, but then it contains the socketId because it gets passed around, but I need a {userId, socketId} object. Bleh
 	var onlineUsers = {};
 	var sockets = {};
 	
@@ -23,12 +24,14 @@ module.exports = function(bus, server){
 		console.log("connected", socket.id);
 		
 		socket.on('init', function(userId){
+			console.log('Socket init', socket.id, userId);
 			onlineUsers[socket.id].id = userId;
 		});
 		
 		socket.on('disconnect', function(){
 			bus.pub('socket disconnect ' + socket.id);
 			
+			delete sockets[socket.id];
 			delete onlineUsers[socket.id];
 		
 			console.log("disconnected", socket.id);
@@ -53,8 +56,9 @@ module.exports = function(bus, server){
 	
 	// For sending messages to multiple sockets
 	bus.sub('socket message', function(msgSockets, area, msg){
+		console.log('messages', msgSockets, msg);
 		for(var i = 0; i < msgSockets.length; i++)
 			if(onlineUsers[msgSockets[i]])
-				onlineUsers[msgSockets[i]].emit(area, msg);
+				sockets[msgSockets[i]].emit(area, msg);
 	});
 }

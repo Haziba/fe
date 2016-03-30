@@ -3,7 +3,7 @@ module.exports = function(bus){
 	var pendingGames = [];
 	
 	var lookForGame = function(user){
-		usersLookingForGame.push(user.socketId);
+		usersLookingForGame.push(user);
 		
 		bus.sub('socket disconnect ' + user.socketId, function(){
 			stopLookingForGame(user);
@@ -32,23 +32,20 @@ module.exports = function(bus){
 		}
 	}
 	
+	var rejectGame = function(user){
+		for(var i = 0; i < pendingGames.length; i++){
+			for(var j = 0; j < pendingGames[i].users.length; j++){
+				if(pendingGames[i].users[j].id == user.id){
+					cancelPendingGame(pendingGames[i], user.id);
+					
+					return;
+				}
+			}
+		}
+	}
+	
 	var matchUpPlayers = function(){
-		if(usersLookingForGame.length < 1)
-			return;
-		
 		var when = (new Date()).getTime();
-		
-		var sockets = [usersLookingForGame[0].socketId];
-		
-		bus.pub('socket message', sockets, 'lobby', {
-			type: 'foundGame',
-			when: when
-		});
-		
-		usersLookingForGame.splice(0, 1);
-		
-		pendingGames.push({users: [usersLookingForGame[0]], when: when, acceptedUsers: 0});
-		return;
 		
 		for(var i = usersLookingForGame.length - 2; i >= 0; i += 2){
 			var users = [usersLookingForGame[i], usersLookingForGame[i+1]];
@@ -59,9 +56,9 @@ module.exports = function(bus){
 				when: when
 			});
 			
-			usersLookingForGame.splice(i, 2);
-			
 			pendingGames.push({users: users, when: when});
+			
+			usersLookingForGame.splice(i, 2);
 		}
 	}
 	
@@ -69,28 +66,32 @@ module.exports = function(bus){
 		var when = (new Date()).getTime();
 		
 		var endingGames = pendingGames.filter(function(game){
-			return (when - game.when) > 15;
+			return (when - game.when) > 15000;
 		});
-		console.log(endingGames);
-		for(var i = 0; i < endingGames.length; i++){
-			console.log(endingGames[i]);
-			var sockets = endingGames[i].users.map(function(user){ return user.socketId; });
 		
-			bus.pub('socket message', sockets, 'lobby', {
-				type: 'pendingGameCancelled'
-			});
-			
-			for(var j = 0; j < endingGames[i].users.length; j++)
-				usersLookingForGame.push(endingGames[i].users[j]);
-			
-			pendingGames.splice(pendingGames.indexOf(endingGames[i]), 1);
+		for(var i = 0; i < endingGames.length; i++){
+			cancelPendingGame(endingGames[i]);
 		}
+	}
+	
+	var cancelPendingGame = function(game, rejectingUserId){
+		var sockets = game.users.map(function(user){ return user.socketId; });
+	
+		bus.pub('socket message', sockets, 'lobby', {
+			type: 'pendingGameCancelled'
+		});
+		
+		for(var j = 0; j < game.users.length; j++)
+			if(game.users.id != rejectingUserId)
+				usersLookingForGame.push(game.users[j]);
+		
+		pendingGames.splice(pendingGames.indexOf(game), 1);
 	}
 	
 	var startGame = function(pendingGame){
 		pendingGames.splice(pendingGames.indexOf(pendingGame), 1);
 		
-		var sockets = pendingGames.users.map(function(user){ return user.socketId; });
+		var sockets = pendingGame.users.map(function(user){ return user.socketId; });
 		
 		bus.pub('socket message', sockets, 'lobby', {
 			type: 'gameAccepted'
@@ -109,6 +110,10 @@ module.exports = function(bus){
 				break;
 			case 'acceptGame':
 				acceptGame(msg.user);
+				break;
+			case 'rejectGame':
+				rejectGame(msg.user);
+				break;
 		}
 	});
 	
