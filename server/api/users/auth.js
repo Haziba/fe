@@ -1,4 +1,4 @@
-module.exports = function(router, db){
+module.exports = function(router, db, socket){
 	router.route('/auth/:user_id').post(function(req, res){
 		var userId = req.params.user_id;
 		
@@ -7,7 +7,9 @@ module.exports = function(router, db){
 			
 			if(player != null){
 				if(player.token == token){
-					res.json({success: true, player: player});
+					var playerInGame = socket.isUserInGame(userId);
+					
+					res.json({success: true, player: player, inGame: playerInGame});
 				} else {
 					res.json({success: false, error: 'Token mismatch'});
 				}

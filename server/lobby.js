@@ -3,6 +3,7 @@ module.exports = function(bus){
 	var pendingGames = [];
 	
 	var lookForGame = function(user){
+		//todo: Stop users joining queue multiple times
 		usersLookingForGame.push(user);
 		
 		bus.sub('socket disconnect ' + user.socketId, function(){
@@ -17,6 +18,7 @@ module.exports = function(bus){
 	}
 	
 	var acceptGame = function(user){
+		//todo: Stop user accepting game multiple times
 		for(var i = 0; i < pendingGames.length; i++){
 			for(var j = 0; j < pendingGames[i].users.length; j++){
 				if(pendingGames[i].users[j].id == user.id){
@@ -47,7 +49,7 @@ module.exports = function(bus){
 	var matchUpPlayers = function(){
 		var when = (new Date()).getTime();
 		
-		for(var i = usersLookingForGame.length - 2; i >= 0; i += 2){
+		for(var i = usersLookingForGame.length - 2; i >= 0; i -= 2){
 			var users = [usersLookingForGame[i], usersLookingForGame[i+1]];
 			var sockets = users.map(function(user){ return user.socketId; });
 			
@@ -56,7 +58,11 @@ module.exports = function(bus){
 				when: when
 			});
 			
-			pendingGames.push({users: users, when: when});
+			pendingGames.push({
+				users: users,
+				when: when,
+				acceptedUsers: 0
+			});
 			
 			usersLookingForGame.splice(i, 2);
 		}

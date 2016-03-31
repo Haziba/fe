@@ -92,7 +92,12 @@ module.exports = function(server, debugEnv, db){
 			
 			var sockets = game.data.players.map(function(player){ return player.socketId; });
 			
-			bus.pub('socket message', sockets, {type: 'enemyConnection resolve', data: {userId: user.id, connected: true}});
+			bus.pub('socket message', sockets, {type: 'connectionChange', data: {userId: user.id, connected: true}});
+			
+			bus.pub('socket message', sockets, 'game', {
+				type: 'gameStarted',
+				data: game.data
+			});
 		}, 'game ' + game.id);
 	
 		bus.sub('socket disconnect ' + user.socketId, function(){
@@ -100,7 +105,7 @@ module.exports = function(server, debugEnv, db){
 			
 			var sockets = game.data.players.map(function(player){ return player.socketId; });
 			
-			bus.pub('socket message', sockets, {type: 'enemyConnection resolve', data: {userId: user.id, connected: false}});
+			bus.pub('socket message', sockets, {type: 'connectionChange', data: {userId: user.id, connected: false}});
 		}, 'game ' + game.id);
 	}
 	

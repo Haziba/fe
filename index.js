@@ -26,8 +26,6 @@ app.get('/socket.io/:fileName', function(req, res){
 	res.sendfile('./node_modules/socket.io/node_modules/socket.io-client/' + req.params.fileName);
 });
 
-require('./server/api/users/routes.js')(app, express, db, models);
-
 app.use(express.static('public'));
 
 var ip = process.env.OPENSHIFT_NODEJS_IP || "127.0.0.1";
@@ -42,11 +40,13 @@ app.set('port', process.env.OPENSHIFT_NODEJS_PORT || process.env.PORT || 3000);
 app.set('ip', ip);
 
 var server = http.Server(app);
-//var game = Game(server, debugEnv, db);
 
-require('./server/socket.js')(bus, server);
+var socket = require('./server/socket.js')(bus, server);
+//var game = Game(server, debugEnv, db, socket);
 
-server.listen(app.get('port') ,app.get('ip'), function () {
+require('./server/api/users/routes.js')(app, express, db, socket);
+
+server.listen(app.get('port'), app.get('ip'), function () {
 	console.log('listening on *:' + app.get('port'));
 });
 

@@ -2,7 +2,7 @@ App.controller('LobbyController', function($scope, $rootScope, $location, bus){
 	$scope.user = $rootScope.user;
 	$scope.foundGame = false;
 	
-	$('#playGame').click(function(){
+	$('#joinQueue').click(function(){
 		bus.pub('socket message', 'lobby', {
 			type: 'lookForGame'
 		});
@@ -24,7 +24,8 @@ App.controller('LobbyController', function($scope, $rootScope, $location, bus){
 	});
 	
 	bus.sub('socket lobby', function(msg){
-		console.log(msg);
+		console.log('lobby', msg);
+		
 		switch(msg.type){
 			case 'foundGame':
 				$scope.status = 'Found game!';
@@ -39,10 +40,9 @@ App.controller('LobbyController', function($scope, $rootScope, $location, bus){
 				$scope.$apply();
 				break;
 			case 'gameAccepted':
-				$scope.status = 'Game accepted! Starting!';
-				
-				$scope.foundGame = false;
-				$scope.$apply();
+				$rootScope.$apply(function(){
+					$location.path('/game');
+				});
 				break;
 		}
 	});

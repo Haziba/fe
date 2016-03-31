@@ -11,7 +11,7 @@ module.exports = function(bus, server){
 	io.on('connection', function(socket){
 		socket.id = currentSocketId++;
 		sockets[socket.id] = socket;
-		onlineUsers[socket.id] = {
+		var user = {
 			socketId: socket.id
 		};
 		
@@ -21,24 +21,42 @@ module.exports = function(bus, server){
 		
 		bus.pub('socket connect ' + socket.id);
 		
+		bus.sub('game start', function(gameStart){
+			for(var i = 0; i < gameStart.users.length; i++)
+				user.inGame = true;
+		});
+		
+		//todo: Hook this bad boy up
+		bus.sub('game end', function(gameEnd){
+			for(var i = 0; i < gameEnd.users.length; i++)
+				user.inGame = false;
+		});
+		
 		console.log("connected", socket.id);
 		
 		socket.on('init', function(userId){
 			console.log('Socket init', socket.id, userId);
-			onlineUsers[socket.id].id = userId;
+			
+			user = {
+				id: userId,
+				socketId: socket.id
+			};
+			
+			onlineUsers[user.id] = user;
 		});
 		
 		socket.on('disconnect', function(){
 			bus.pub('socket disconnect ' + socket.id);
 			
 			delete sockets[socket.id];
-			delete onlineUsers[socket.id];
+			if(onlineUsers[user.id])
+				delete onlineUsers[user.id];
 		
 			console.log("disconnected", socket.id);
 		});
 		
 		socket.on('lobby', function(msg){
-			msg.user = onlineUsers[socket.id];
+			msg.user = user;
 			
 			console.log('lobby', msg);
 			
@@ -46,7 +64,7 @@ module.exports = function(bus, server){
 		});
 		
 		socket.on('game', function(msg){
-			msg.user = onlineUsers[socket.id];
+			msg.user = user;
 			
 			console.log('game', msg);
 			
@@ -61,4 +79,11 @@ module.exports = function(bus, server){
 			if(onlineUsers[msgSockets[i]])
 				sockets[msgSockets[i]].emit(area, msg);
 	});
+	
+	return {
+		isUserInGame: function(userId){
+			console.log(userId, onlineUsers);
+			return onlineUsers[userId].inGame;
+		}
+	};
 }
