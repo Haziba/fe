@@ -1,18 +1,18 @@
-module.exports = function(router, db){
+module.exports = function(router, users){
 	router.route('/login/:user_id').post(function(req, res){
 		var userId = req.params.user_id;
 		var userData = {success: false};
 		
-		db.getById(db.models.Player, userId).then(function(player){
-			if(player != null){
+		users.getById(userId).then(function(user){
+			if(user != null){
 				userData.success = true;
 				
-				player.token = db.models.Player.newToken();
+				users.refreshToken(user);
 				
-				db.set(db.models.Player, player);
+				users.set(user);
 			}
 			
-			userData.player = player;
+			userData.user = user;
 			
 			res.json(userData);
 		}, function(error){

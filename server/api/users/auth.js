@@ -1,20 +1,18 @@
-module.exports = function(router, db, socket){
+module.exports = function(router, users){
 	router.route('/auth/:user_id').post(function(req, res){
 		var userId = req.params.user_id;
 		
-		db.getById(db.models.Player, userId).then(function(player){
+		users.getById(userId).then(function(user){
 			var token = req.body.token;
 			
-			if(player != null){
-				if(player.token == token){
-					var playerInGame = socket.isUserInGame(userId);
-					
-					res.json({success: true, player: player, inGame: playerInGame});
+			if(user != null){
+				if(user.token == token){
+					res.json({success: true, user: user});
 				} else {
 					res.json({success: false, error: 'Token mismatch'});
 				}
 			} else {
-				res.json({success: false, error: 'Player doesn\'t exist'})
+				res.json({success: false, error: 'User doesn\'t exist'});
 			}
 		});
 	});

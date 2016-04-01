@@ -1,8 +1,8 @@
-var enums = require('../public/js/enums.js');
+var enums = require('../public/js/game/enums.js');
 var unitFactory = require('./unitFactory.js')(enums);
 var worlds = require('./worlds.js')();
 
-module.exports = function(server, debugEnv, db){
+module.exports = function(server, debugEnv, users, socket, bus){
 	var currentGameId = 0;
 	
 	bus.sub('game start', function(gameStart){
@@ -10,13 +10,10 @@ module.exports = function(server, debugEnv, db){
 		var sockets = [];
 		var getUsers = [];
 		
-		// Set up socket connect / disconnect
 		for(var i = 0; i < gameStart.users.length; i++){
 			sockets.push(gameStart.users[i].socketId);
 			
-			InitialiseUser(game, gameStart.users[i]);
-			
-			getUsers.push(db.getById(db.models.Player, gameStart.users[i].id));
+			getUsers.push(users.getById(gameStart.users[i].id));
 		}
 		
 		Promise.all(getUsers).then(function(users){
@@ -30,6 +27,11 @@ module.exports = function(server, debugEnv, db){
 			}
 			
 			game = InitGame(game.id, users[0], users[1]);
+		
+			// Set up socket connect / disconnect
+			for(var i = 0; i < gameStart.users.length; i++){
+				InitialiseUser(game, gameStart.users[i]);
+			}
 			
 			bus.sub('game ' + game.id + ' action', function(msg){
 				console.log("Got a game action!", msg);

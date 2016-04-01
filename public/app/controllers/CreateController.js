@@ -5,8 +5,8 @@ App.controller('CreateController', function($scope, $rootScope, $cookies, $locat
 		$.post('/user/register/' + $scope.user.id, $scope.user)
 			.then(function(response){
 				if(response.success){
-					$rootScope.user = response.player;
-					$cookies.put('auth', response.player.id + ":" + response.player.token);
+					$rootScope.user = response.user;
+					$cookies.put('auth', response.user.id + ":" + response.user.token);
 					
 					$rootScope.$apply(function(){
 						$location.path('/lobby');

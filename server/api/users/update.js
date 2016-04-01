@@ -1,17 +1,17 @@
-module.exports = function(router, db){
+module.exports = function(router, db, users){
 	router.route('/update/:user_id').post(function(req, res){
-		var player = req.body;
-		player.id = req.params.user_id;
+		var user = req.body;
+		user.id = req.params.user_id;
 		
-		db.getById(db.models.Player, player.id).then(function(player){
-			if(player != null){
-				db.set(db.models.Player, player).then(function(){
-					res.json({"success": true, "player": player});
+		users.getById(user.id).then(function(user){
+			if(user != null){
+				users.update(user).then(function(){
+					res.json({"success": true, "user": user});
 				}, function(err){
 					res.json({"success": false, "error": err});
 				});
 			} else {
-				res.json({"success": false, "error": "Player does not exist"});
+				res.json({"success": false, "error": "User does not exist"});
 			}
 		});
 	});

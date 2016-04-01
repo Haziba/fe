@@ -12,7 +12,7 @@ App.run(function($rootScope, $location, $cookies, bus) {
 						
 						$.post('/user/auth/' + userId, {token: token}).then(function(response){
 							if(response.success){
-								$rootScope.user = response.player;
+								$rootScope.user = response.user;
 								
 								bus.pub('user login', $rootScope.user);
 								
@@ -51,11 +51,14 @@ App.run(function($rootScope, $location, $cookies, bus) {
 		for(var i = 0; i < areas.length; i++)
 			(function(area){
 				socket.on(area, function(msg){
+					console.log('inward message', area, msg);
 					bus.pub('socket ' + area, msg);
 				})
 			})(areas[i]);
 		
 		socket.on('message', function(msg){
+			console.log('inward message', msg);
+			
 			bus.pub('socket ' + msg.type, msg);
 		});
 		

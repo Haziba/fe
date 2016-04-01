@@ -8,8 +8,8 @@ App.controller('LoginController', function($scope, $rootScope, $location, $cooki
 				bus.pub('user login', $scope.user);
 				
 				if(response.success){
-					$rootScope.user = response.player;
-					$cookies.put('auth', response.player.id + ":" + response.player.token);
+					$rootScope.user = response.user;
+					$cookies.put('auth', response.user.id + ":" + response.user.token);
 					
 					$rootScope.$apply(function(){
 						$location.path('/lobby');

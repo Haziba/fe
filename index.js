@@ -2,7 +2,7 @@ var bus = require('./server/pubsub.js');
 
 var models = 
 {
-	Player: require('./server/player.js')
+	User: require('./server/user.js')
 };
 
 var app = require('express')();
@@ -10,9 +10,10 @@ var http = require('http');
 var path = require('path');
 var express = require('express');
 var db = require('./server/db.js')(models);
+var users = require('./server/users.js')(db, bus);
 
 require('./server/lobby.js')(bus);
-//var Game = require('./server/game.js');
+var Game = require('./server/game.js');
 
 app.get('/', function(req, res){
 	res.sendfile('index.html');
@@ -42,9 +43,9 @@ app.set('ip', ip);
 var server = http.Server(app);
 
 var socket = require('./server/socket.js')(bus, server);
-//var game = Game(server, debugEnv, db, socket);
+var game = Game(server, debugEnv, users, socket, bus);
 
-require('./server/api/users/routes.js')(app, express, db, socket);
+require('./server/api/users/routes.js')(app, express, db, users);
 
 server.listen(app.get('port'), app.get('ip'), function () {
 	console.log('listening on *:' + app.get('port'));

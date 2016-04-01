@@ -16,6 +16,7 @@ module.exports = function(bus, server){
 		};
 		
 		bus.sub('socket message ' + socket.id, function(area, msg){
+			console.log('outbound', area, msg);
 			socket.emit(area, msg);
 		});
 		
@@ -74,10 +75,12 @@ module.exports = function(bus, server){
 	
 	// For sending messages to multiple sockets
 	bus.sub('socket message', function(msgSockets, area, msg){
-		console.log('messages', msgSockets, msg);
+		console.log('outbound multi message', msgSockets);
 		for(var i = 0; i < msgSockets.length; i++)
-			if(onlineUsers[msgSockets[i]])
+			if(sockets[msgSockets[i]]){
+				console.log('outbound', area, msg);
 				sockets[msgSockets[i]].emit(area, msg);
+			}
 	});
 	
 	return {
