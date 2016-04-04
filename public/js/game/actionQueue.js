@@ -10,7 +10,7 @@ var NewActionQueue = function(_soldierManager, _stageManager, _hud){
 	});*/
 	
 	window.bus.sub('action queue', function(action){
-		_queue.push(NewAction(action.action, action.data));
+		_queue.push(NewAction(action.action, action.response));
 		
 		console.log("New action", action, _queue);
 		

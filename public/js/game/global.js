@@ -33,8 +33,8 @@ var Global = {
 		$(this.canvas).css({
 			width: this.TileSize() * this.ScreenSize().width,
 			height: this.TileSize() * this.ScreenSize().height,
-			"margin-left": -this.TileSize() * this.ScreenSize().width / 2,
-			"margin-top": -this.TileSize() * this.ScreenSize().height / 2
+			/*"margin-left": -this.TileSize() * this.ScreenSize().width / 2,
+			"margin-top": -this.TileSize() * this.ScreenSize().height / 2*/
 		});
 	},
 	ScreenSize: function(){

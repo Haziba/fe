@@ -97,8 +97,8 @@ var NewHUD = function($controls, initData){
 		init(game);
 	}
 	
-	window.bus.sub('enemy connection resolve', function(connected){
-		$enemyOnline.text(connected ? "Online" : "Offline");
+	window.bus.sub('connection change', function(user){
+		$enemyOnline.text(user.connected ? "Online" : "Offline");
 	});
 	
 	window.bus.sub('select', function(unit){

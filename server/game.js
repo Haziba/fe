@@ -23,11 +23,52 @@ module.exports = function(server, debugEnv, users, socket, bus){
 		
 			// Set up socket connect / disconnect
 			for(var i = 0; i < gameStart.users.length; i++){
-				InitialiseUser(game, gameStart.users[i]);
+				InitialiseUser(sockets, game, gameStart.users[i]);
 			}
 			
 			bus.sub('game ' + game.id + ' action', function(msg){
 				console.log("Got a game action!", msg);
+				switch(msg.type){
+					case 'action':
+						console.log("----" + user.name + "----");
+						var response = ProcessAction(game, msg);
+						console.log("----RESPONSE----");
+						console.log(response);
+						
+						CheckForGameEnd(game);
+						
+						var autoTurnEnd = AutoTurnEnd(game);
+						
+						if(autoTurnEnd)
+							TurnEnd(game);
+						
+						bus.pub('socket message', sockets, 'game', {
+							type: 'action',
+							data: {
+								action: action.action,
+								response: response
+							}
+						});
+						
+						if(game.data.state != 0){
+							bus.pub('socket message', sockets, 'game', {
+								type: 'action',
+								data: {
+									action: 'state change',
+									response: game.data.state
+								}
+							});
+						}else if(autoTurnEnd){
+							bus.pub('socket message', sockets, 'game', {
+								type: 'action',
+								data: {
+									action: 'turn end',
+									response: game.data.activeUser
+								}
+							});
+						}
+						break;
+				}
 			}, 'game ' + game.id);
 			
 			bus.pub('socket message', sockets, 'game', {
@@ -39,57 +80,21 @@ module.exports = function(server, debugEnv, users, socket, bus){
 		});
 		
 		return;
-		
-		socket.on('init', function(msg){
-			user = msg;
-			
-			console.log("connected", user.name);
-			
-			if(!inGamePlayers[user.id]){
-				socket.emit('init', {inGame: false, serverTime: (new Date()).getTime()});
-				return;
-			}
-		
-			game = inGamePlayers[user.id];
-			
-			SendGameInit(user.id, game);
-		});
-		
-		socket.on('action', function(action){
-			console.log("----" + user.name + "----");
-			var response = ProcessAction(game, action);
-			console.log("----RESPONSE----");
-			console.log(response);
-			
-			CheckForGameEnd(game);
-			
-			var autoTurnEnd = AutoTurnEnd(game);
-			
-			if(autoTurnEnd){
-				TurnEnd(game);
-			}
-			
-			for(var player in game.data.users){
-				if(game.data.users[player].connected){
-					sockets[player].emit('action', {action: action.action, data: response});
-					
-					if(game.data.state != 0){
-						sockets[player].emit('action', {action: 'state change', data: game.data.state});
-					}else if(autoTurnEnd){
-						sockets[player].emit('action', {action: 'turn end', data: game.data.activeUser});
-					}
-				}
-			}
-		});
 	});
 	
-	var InitialiseUser = function(game, user){
+	var InitialiseUser = function(gameSockets, game, user){
 		bus.sub('user connect ' + user.id, function(user){
 			game.data.users[user.id].connected = true;
 			
 			var sockets = Object.keys(game.data.users).map(function(userId){ return game.data.users[userId].socketId; });
 			
-			bus.pub('socket message', sockets, {type: 'connectionChange', data: {userId: user.id, connected: true}});
+			bus.pub('socket message', sockets, 'game', {
+				type: 'connection change', 
+				data: {
+					userId: user.id, 
+					connected: true 
+				}
+			});
 			
 			game.data.users[user.id].socketId = user.socketId;
 			
@@ -97,6 +102,10 @@ module.exports = function(server, debugEnv, users, socket, bus){
 				type: 'gameStarted',
 				data: game.data
 			});
+			
+			console.log('connect', gameSockets);
+			gameSockets.push(user.socketId);
+			console.log('connect', gameSockets);
 		}, 'game ' + game.id);
 	
 		bus.sub('user disconnect ' + user.id, function(){
@@ -104,7 +113,17 @@ module.exports = function(server, debugEnv, users, socket, bus){
 			
 			var sockets = Object.keys(game.data.users).map(function(userId){ return game.data.users[userId].socketId; });
 			
-			bus.pub('socket message', sockets, {type: 'connectionChange', data: {userId: user.id, connected: false}});
+			bus.pub('socket message', sockets, 'game', {
+				type: 'connection change', 
+				data: {
+					userId: user.id, 
+					connected: false 
+				}
+			});
+			
+			console.log('disconnect', gameSockets);
+			gameSockets.splice(gameSockets.indexOf(game.data.users[user.id].socketId), 1);
+			console.log('disconnect', gameSockets);
 		}, 'game ' + game.id);
 	}
 	
@@ -207,8 +226,11 @@ module.exports = function(server, debugEnv, users, socket, bus){
 		var sockets = Object.keys(game.data.users).map(function(userId){ return game.data.users[userId].socketId; });
 		
 		bus.pub('socket message', sockets, 'game', {
-			type: 'turn end',
-			data: response
+			type: 'action',
+			data: {
+				action: 'turn end',
+				response: response
+			}
 		});
 	}
 
@@ -254,7 +276,7 @@ module.exports = function(server, debugEnv, users, socket, bus){
 	}
 
 	var InitGame = function(gameId, user1, user2){
-		var turnTime = 60;
+		var turnTime = 3;//60;
 		
 		var units = {
 			'HarrySoldierOne': unitFactory.NewAxe(user1.id, {x: 2, y: 2}),

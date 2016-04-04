@@ -2,6 +2,9 @@ App.controller('GameController', function($scope, $rootScope, bus){
 	Global.canvas = $("#gameCanvas")[0];
 	var context = Global.canvas.getContext("2d");
 	
+	//todo: Remove this hack, just to get the bus working across the game
+	window.bus = bus;
+	
 	var spritesInitialised, initData;
 	
 	var sprite = new Image();
@@ -33,15 +36,26 @@ App.controller('GameController', function($scope, $rootScope, bus){
 	});
 	
 	bus.sub('socket game', function(msg){
-		console.log('game', msg);
-		
 		switch(msg.type){
 			case 'gameStarted':
 				initData = msg.data;
 				
 				if(spritesInitialised)
 					StartGame($("#gameControls"), initData, $rootScope.user);
-			break;
+				break;
+			case 'action':
+				bus.pub('action queue', msg.data);
+				break;
+			case 'connection change':
+				bus.pub('connection change', msg.data);
+				break;
 		}
+	});
+
+	bus.sub('action new', function(action){
+		bus.pub('socket message', 'game', {
+			type: action,
+			data: action
+		});
 	});
 });
