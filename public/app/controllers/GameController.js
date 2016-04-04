@@ -34,5 +34,14 @@ App.controller('GameController', function($scope, $rootScope, bus){
 	
 	bus.sub('socket game', function(msg){
 		console.log('game', msg);
+		
+		switch(msg.type){
+			case 'gameStarted':
+				initData = data;
+				
+				if(spritesInitialised)
+					StartGame($("#gameControls"), initData);
+			break;
+		}
 	});
 });

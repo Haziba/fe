@@ -9,7 +9,12 @@ module.exports = function(db, bus){
 	});
 	
 	bus.sub('user connect', function(user){
-		users[user.id].socketId = user.socketId;
+		if(users[user.id])
+			users[user.id].socketId = user.socketId;
+		else
+			getById(user.id).then(function(user){
+				users[user.id].socketId = user.socketId;
+			});
 	});
 	
 	return {

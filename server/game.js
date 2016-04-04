@@ -82,14 +82,16 @@ module.exports = function(server, debugEnv, users, socket, bus){
 	});
 	
 	var InitialiseUser = function(game, user){
-		bus.sub('user connect ' + user.id, function(){
+		bus.sub('user connect ' + user.id, function(user){
 			game.data.users[user.id].connected = true;
 			
 			var sockets = Object.keys(game.data.users).map(function(userId){ return game.data.users[userId].socketId; });
 			
 			bus.pub('socket message', sockets, {type: 'connectionChange', data: {userId: user.id, connected: true}});
 			
-			bus.pub('socket message', sockets, 'game', {
+			game.data.users[user.id].socketId = user.socketId;
+			
+			bus.pub('socket message ' + game.data.users[user.id].socketId, 'game', {
 				type: 'gameStarted',
 				data: game.data
 			});

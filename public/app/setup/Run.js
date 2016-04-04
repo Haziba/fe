@@ -71,6 +71,7 @@ App.run(function($rootScope, $location, $cookies, bus) {
 		
 		bus.sub('user login', function(user){
 			socket.emit('init', user.id);
+			console.log('user init', user);
 		});
 		
 		return socket;

@@ -16,7 +16,7 @@ module.exports = function(bus, server){
 		};
 		
 		bus.sub('socket message ' + socket.id, function(area, msg){
-			console.log('outbound', area, msg);
+			console.log('outbound', socket.id, area, msg);
 			socket.emit(area, msg);
 		});
 		
@@ -37,19 +37,14 @@ module.exports = function(bus, server){
 		
 		socket.on('init', function(userId){
 			console.log('Socket init', socket.id, userId);
-			bus.pub('user connect', {
-				id: userId,
-				socketId: socket.id
-			});
-			
-			bus.pub('user connect ' + userId, {
-				socketId: socket.id
-			});
 			
 			user = {
 				id: userId,
 				socketId: socket.id
 			};
+			
+			bus.pub('user connect', user);
+			bus.pub('user connect ' + userId, user);
 			
 			onlineUsers[user.id] = user;
 		});
@@ -85,10 +80,11 @@ module.exports = function(bus, server){
 	
 	// For sending messages to multiple sockets
 	bus.sub('socket message', function(msgSockets, area, msg){
-		console.log('outbound multi message', msgSockets);
+		console.log('outbound multi message', msgSockets, area, msg);
+		if(area == 'game')
+			console.log(sockets);
 		for(var i = 0; i < msgSockets.length; i++)
 			if(sockets[msgSockets[i]]){
-				console.log('outbound', area, msg);
 				sockets[msgSockets[i]].emit(area, msg);
 			}
 	});
