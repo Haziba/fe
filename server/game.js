@@ -34,6 +34,8 @@ module.exports = function(server, debugEnv, users, socket, bus){
 				type: 'gameStarted',
 				data: game.data
 			});
+			
+			console.log('users', game.data.users);
 		});
 		
 		return;

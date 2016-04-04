@@ -29,7 +29,7 @@ App.controller('GameController', function($scope, $rootScope, bus){
 		initData = data;
 		
 		if(spritesInitialised)
-			StartGame($("#gameControls"), initData);
+			StartGame($("#gameControls"), initData, $rootScope.user);
 	});
 	
 	bus.sub('socket game', function(msg){
@@ -37,10 +37,10 @@ App.controller('GameController', function($scope, $rootScope, bus){
 		
 		switch(msg.type){
 			case 'gameStarted':
-				initData = data;
+				initData = msg.data;
 				
 				if(spritesInitialised)
-					StartGame($("#gameControls"), initData);
+					StartGame($("#gameControls"), initData, $rootScope.user);
 			break;
 		}
 	});

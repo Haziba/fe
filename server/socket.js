@@ -81,8 +81,7 @@ module.exports = function(bus, server){
 	// For sending messages to multiple sockets
 	bus.sub('socket message', function(msgSockets, area, msg){
 		console.log('outbound multi message', msgSockets, area, msg);
-		if(area == 'game')
-			console.log(sockets);
+		
 		for(var i = 0; i < msgSockets.length; i++)
 			if(sockets[msgSockets[i]]){
 				sockets[msgSockets[i]].emit(area, msg);

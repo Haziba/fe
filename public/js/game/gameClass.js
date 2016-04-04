@@ -1,9 +1,10 @@
-var StartGame = function($controls, initData)
+var StartGame = function($controls, initData, user)
 {
-	debugger;
+	Global.user = user;
+	
 	var _stageManager = NewStageManager(initData);
 	
-	var _teamNum = initData.players[Global.player.id].team;
+	var _teamNum = initData.users[Global.user.id].team;
 	
 	var _tileManager = NewTileManager(initData);
 	// todo: Just pass through initData
@@ -24,7 +25,7 @@ var StartGame = function($controls, initData)
 		_stageManager = NewStageManager(data);
 		
 		_tileManager = NewTileManager(data);
-		_soldierManager = NewSoldierManager(data.units, data.players[Global.player.id].team);
+		_soldierManager = NewSoldierManager(data.units, data.users[Global.users.id].team);
 		_shipManager = NewShipManager(data, _teamNum);
 
 		_control = NewControl(data);
