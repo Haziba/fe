@@ -48,8 +48,8 @@ var NewAction = function(_action, _data){
 	}
 	
 	var TurnEnd = function(soldierManager, hud){
-		soldierManager.TurnEnd(_data);
-		hud.TurnEnd(_data);
+		soldierManager.TurnEnd(_data.activeUser);
+		hud.TurnEnd(_data.activeUser);
 		
 		window.bus.pub('action complete');
 	}
