@@ -1,8 +1,15 @@
 module.exports = function(db, bus){
 	var users = {};
+	var usersInGame = {};
 	
-	bus.sub('user update', function(user){
-		users[user.id] = user;
+	bus.sub('game start', function(pendingGame){
+		for(var i = 0; i < pendingGame.users.length; i++){
+			users[pendingGame.users[i].id].inGame = true;
+		}
+	});
+	
+	bus.sub('user connect', function(user){
+		users[user.id].socketId = user.socketId;
 	});
 	
 	return {

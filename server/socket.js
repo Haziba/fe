@@ -37,6 +37,14 @@ module.exports = function(bus, server){
 		
 		socket.on('init', function(userId){
 			console.log('Socket init', socket.id, userId);
+			bus.pub('user connect', {
+				id: userId,
+				socketId: socket.id
+			});
+			
+			bus.pub('user connect ' + userId, {
+				socketId: socket.id
+			});
 			
 			user = {
 				id: userId,
@@ -48,6 +56,8 @@ module.exports = function(bus, server){
 		
 		socket.on('disconnect', function(){
 			bus.pub('socket disconnect ' + socket.id);
+			if(onlineUsers[user.id])
+				bus.pub('user disconnect ' + user.id);
 			
 			delete sockets[socket.id];
 			if(onlineUsers[user.id])

@@ -28,15 +28,17 @@ App.run(function($rootScope, $location, $cookies, bus) {
 					}
 				}
 			}).then(function(){
-				// Authed, sweet
+				if(next.controller != 'GameController' && $rootScope.user.inGame){
+					$location.path('/game');
+				}
+				
+				if(next.controller == 'GameController' && !$rootScope.user.inGame){
+					$location.path('/lobby');
+				}
 			}, function(){
 				$cookies.remove('auth');
 				
-				$location.path('/login');
-				if ( next.controller == 'LoginController' ) {
-					// already going to #login, no redirect needed
-				} else {
-					// not going to #login, we should redirect now
+				if ( next.controller != 'LoginController' ) {
 					$location.path('/login');
 				}
 			});

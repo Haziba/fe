@@ -19,13 +19,6 @@ module.exports = function(server, debugEnv, users, socket, bus){
 		Promise.all(getUsers).then(function(users){
 			console.log("Got users", users);
 			
-			for(var i = 0; i < users.length; i++){
-				var user = gameStart.users.filter(function(user){ return user.id == users[i].id; })[0];
-				
-				// Test this works by reference
-				user.socketId = users[i].socketId;
-			}
-			
 			game = InitGame(game.id, users[0], users[1]);
 		
 			// Set up socket connect / disconnect
@@ -74,14 +67,14 @@ module.exports = function(server, debugEnv, users, socket, bus){
 				TurnEnd(game);
 			}
 			
-			for(var player in game.data.players){
-				if(game.data.players[player].connected){
+			for(var player in game.data.users){
+				if(game.data.users[player].connected){
 					sockets[player].emit('action', {action: action.action, data: response});
 					
 					if(game.data.state != 0){
 						sockets[player].emit('action', {action: 'state change', data: game.data.state});
 					}else if(autoTurnEnd){
-						sockets[player].emit('action', {action: 'turn end', data: game.data.activeTeam});
+						sockets[player].emit('action', {action: 'turn end', data: game.data.activeUser});
 					}
 				}
 			}
@@ -89,10 +82,10 @@ module.exports = function(server, debugEnv, users, socket, bus){
 	});
 	
 	var InitialiseUser = function(game, user){
-		bus.sub('socket connect ' + user.socketId, function(){
-			game.data.players[user.id].connected = true;
+		bus.sub('user connect ' + user.id, function(){
+			game.data.users[user.id].connected = true;
 			
-			var sockets = game.data.players.map(function(player){ return player.socketId; });
+			var sockets = Object.keys(game.data.users).map(function(userId){ return game.data.users[userId].socketId; });
 			
 			bus.pub('socket message', sockets, {type: 'connectionChange', data: {userId: user.id, connected: true}});
 			
@@ -102,10 +95,10 @@ module.exports = function(server, debugEnv, users, socket, bus){
 			});
 		}, 'game ' + game.id);
 	
-		bus.sub('socket disconnect ' + user.socketId, function(){
-			game.data.players[user.id].connected = false;
+		bus.sub('user disconnect ' + user.id, function(){
+			game.data.users[user.id].connected = false;
 			
-			var sockets = game.data.players.map(function(player){ return player.socketId; });
+			var sockets = Object.keys(game.data.users).map(function(userId){ return game.data.users[userId].socketId; });
 			
 			bus.pub('socket message', sockets, {type: 'connectionChange', data: {userId: user.id, connected: false}});
 		}, 'game ' + game.id);
@@ -133,9 +126,9 @@ module.exports = function(server, debugEnv, users, socket, bus){
 
 	/* Needs sorting
 	var GameReset = function(game) {
-		var players = Object.keys(game.data.players);
+		var users = Object.keys(game.data.users);
 		
-		game.data = InitGame(players[0], players[1], game.data);
+		game.data = InitGame(users[0], users[1], game.data);
 		
 		return game.data;
 	} */
@@ -193,18 +186,21 @@ module.exports = function(server, debugEnv, users, socket, bus){
 			game.data.units[unitId].stats.fights.remaining = game.data.units[unitId].stats.fights.max;
 		}
 		
-		game.data.activeTeam = 1 - game.data.activeTeam;
+		var nextUser = game.data.userOrder.indexOf(game.data.activeUser) + 1;
+		
+		game.data.activeUser = nextUser >= game.data.userOrder.length ? game.data.userOrder[0] : game.data.userOrder[nextUser];
 		
 		clearTimeout(game.turnTimer);
 		game.turnTimer = setTimeout(function(){ TimeRunOut(game); }, game.data.turnTime * 1000);
 		game.data.lastTurnStart = (new Date()).getTime();
 		
-		return game.data.activeTeam;
+		return { activeUser: game.data.activeUser };
 	}
 
 	var TimeRunOut = function(game){
 		var response = TurnEnd(game);
-		var sockets = game.data.players.map(function(player){ return player.socketId; });
+		
+		var sockets = Object.keys(game.data.users).map(function(userId){ return game.data.users[userId].socketId; });
 		
 		bus.pub('socket message', sockets, 'game', {
 			type: 'turn end',
@@ -235,7 +231,7 @@ module.exports = function(server, debugEnv, users, socket, bus){
 	/* Not been ran through */
 	var AutoTurnEnd = function(game){
 		for(var unitId in game.data.units){
-			if(game.data.units[unitId].stats.health > 0 && game.data.units[unitId].team == game.data.activeTeam && game.data.units[unitId].waiting)
+			if(game.data.units[unitId].stats.health > 0 && game.data.units[unitId].team == game.data.activeUser && game.data.units[unitId].waiting)
 				return false;
 		}
 		
@@ -301,8 +297,9 @@ module.exports = function(server, debugEnv, users, socket, bus){
 				turnTime: turnTime,
 				lastTurnStart: (new Date()).getTime(),
 				state: 0, //todo: Make game state enum available here
-				activeTeam: 0,
-				players: {
+				activeUser: user1.id,
+				userOrder: [user1.id, user2.id],
+				users: {
 				},
 				units: units,
 				ships: [
@@ -325,14 +322,14 @@ module.exports = function(server, debugEnv, users, socket, bus){
 			}
 		};
 
-		game.data.players[user1.id] = {
+		game.data.users[user1.id] = {
 			name: user1.name,
 			connected: true,
 			socketId: user1.socketId,
 			team: user1.id
 		};
 		
-		game.data.players[user2.id] = {
+		game.data.users[user2.id] = {
 			name: user2.name,
 			connected: true,
 			socketId: user2.socketId,
@@ -341,9 +338,6 @@ module.exports = function(server, debugEnv, users, socket, bus){
 		
 		return game;
 	}
-
-	var inGamePlayers = {};
-	var games = [];
 
 	/* Not sure if necessary anymore, why do I need games in an array? Maybe to poll to see if they're abandoned?
 	var StartNewGame = function(user1, user2){
@@ -355,13 +349,13 @@ module.exports = function(server, debugEnv, users, socket, bus){
 	var SendGameInit = function(socket, enemySockets, userId, game){
 		game = inGamePlayers[userId];
 		
-		game.data.players[userId].connected = true;
+		game.data.users[userId].connected = true;
 		
 		socket.emit('init', {inGame: true, serverTime: (new Date()).getTime(), game: game.data});
 		
-		for(var player in game.data.players)
-			if(player != userId && game.data.players[player].connected){
-				sockets[player].emit('process', {event: 'enemy connection resolve', data: true});
+		for(var user in game.data.users)
+			if(user.id != userId && game.data.users[user].connected){
+				sockets[user].emit('process', {event: 'enemy connection resolve', data: true});
 			}
 	}
 }

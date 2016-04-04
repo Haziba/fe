@@ -1,5 +1,6 @@
 var StartGame = function($controls, initData)
 {
+	debugger;
 	var _stageManager = NewStageManager(initData);
 	
 	var _teamNum = initData.players[Global.player.id].team;

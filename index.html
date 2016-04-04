@@ -61,10 +61,6 @@
 						StartGame($("#gameControls"), initData);
 				});
 				
-				window.bus.sub('lobby init', function(data){
-					StartLobby($lobbyWrapper, data);
-				});
-				
 				window.bus.sub('game init', function(data){
 					$lobbyWrapper.hide();
 					$gameWrapper.show();
