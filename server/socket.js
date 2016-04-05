@@ -72,7 +72,7 @@ module.exports = function(bus, server){
 		socket.on('game', function(msg){
 			msg.user = user;
 			
-			console.log('game', msg);
+			console.log('game', msg.gameId, msg);
 			
 			bus.pub('game ' + msg.gameId + ' action', msg);
 		});

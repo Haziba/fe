@@ -5,7 +5,7 @@ var NewSoldierManager = function(_units, _teamNum, _activeTeam){
 	
 	var init = function(units, activeTeam){
 		_soldiers = {};
-	
+		
 		for(var unitId in units)
 			_soldiers[unitId] = NewSoldier(unitId, units[unitId], _teamNum, activeTeam);
 	}

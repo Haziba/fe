@@ -17,7 +17,7 @@ module.exports = function(server, debugEnv, users, socket, bus){
 		}
 		
 		Promise.all(getUsers).then(function(users){
-			console.log("Got users", users);
+			console.log("Got gameId", game.id);
 			
 			game = InitGame(game.id, users[0], users[1]);
 		
@@ -27,48 +27,43 @@ module.exports = function(server, debugEnv, users, socket, bus){
 			}
 			
 			bus.sub('game ' + game.id + ' action', function(msg){
-				console.log("Got a game action!", msg);
-				switch(msg.type){
-					case 'action':
-						console.log("----" + user.name + "----");
-						var response = ProcessAction(game, msg);
-						console.log("----RESPONSE----");
-						console.log(response);
-						
-						CheckForGameEnd(game);
-						
-						var autoTurnEnd = AutoTurnEnd(game);
-						
-						if(autoTurnEnd)
-							TurnEnd(game);
-						
+					console.log("----" + msg.user.name + "----");
+					var response = ProcessAction(game, msg);
+					console.log("----RESPONSE----");
+					console.log(response);
+					
+					CheckForGameEnd(game);
+					
+					var autoTurnEnd = AutoTurnEnd(game);
+					
+					if(autoTurnEnd)
+						TurnEnd(game);
+					
+					bus.pub('socket message', sockets, 'game', {
+						type: 'action',
+						data: {
+							action: msg.type,
+							response: response
+						}
+					});
+					
+					if(game.data.state != 0){
 						bus.pub('socket message', sockets, 'game', {
 							type: 'action',
 							data: {
-								action: action.action,
-								response: response
+								action: 'state change',
+								response: game.data.state
 							}
 						});
-						
-						if(game.data.state != 0){
-							bus.pub('socket message', sockets, 'game', {
-								type: 'action',
-								data: {
-									action: 'state change',
-									response: game.data.state
-								}
-							});
-						}else if(autoTurnEnd){
-							bus.pub('socket message', sockets, 'game', {
-								type: 'action',
-								data: {
-									action: 'turn end',
-									response: game.data.activeUser
-								}
-							});
-						}
-						break;
-				}
+					}else if(autoTurnEnd){
+						bus.pub('socket message', sockets, 'game', {
+							type: 'action',
+							data: {
+								action: 'turn end',
+								response: game.data.activeUser
+							}
+						});
+					}
 			}, 'game ' + game.id);
 			
 			bus.pub('socket message', sockets, 'game', {
@@ -131,7 +126,7 @@ module.exports = function(server, debugEnv, users, socket, bus){
 	var ProcessAction = function(game, action){
 		console.log(action);
 		
-		switch(action.action){
+		switch(action.type){
 			case 'soldier move':
 				return MoveSoldier(game, action.data);
 			case 'soldier fight':
@@ -276,7 +271,7 @@ module.exports = function(server, debugEnv, users, socket, bus){
 	}
 
 	var InitGame = function(gameId, user1, user2){
-		var turnTime = 3;//60;
+		var turnTime = 60;
 		
 		var units = {
 			'HarrySoldierOne': unitFactory.NewAxe(user1.id, {x: 2, y: 2}),
@@ -317,13 +312,13 @@ module.exports = function(server, debugEnv, users, socket, bus){
 		}
 		
 		var game = {
-			id: gameId,
 			turnTimer: setTimeout(function(){ TimeRunOut(game); }, turnTime * 1000),
 			data: {
+				id: gameId,
 				turnTime: turnTime,
 				lastTurnStart: (new Date()).getTime(),
 				state: 0, //todo: Make game state enum available here
-				activeUser: user1.id,
+				activeUser: user2.id,
 				userOrder: [user1.id, user2.id],
 				users: {
 				},

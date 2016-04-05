@@ -44,6 +44,7 @@ App.controller('GameController', function($scope, $rootScope, bus){
 					StartGame($("#gameControls"), initData, $rootScope.user);
 				break;
 			case 'action':
+				console.log('action', msg);
 				bus.pub('action queue', msg.data);
 				break;
 			case 'connection change':
@@ -54,8 +55,8 @@ App.controller('GameController', function($scope, $rootScope, bus){
 
 	bus.sub('action new', function(action){
 		bus.pub('socket message', 'game', {
-			type: action,
-			data: action
+			type: action.action,
+			data: action.data
 		});
 	});
 });

@@ -70,10 +70,10 @@ var NewHUD = function($controls, initData){
 		$endTurn.attr('disabled', true);
 	});
 	
-	if(_team != initData.activeTeam)
+	if(_team != initData.activeUser)
 		$endTurn.attr("disabled", true);
 	
-	UpdateCurrentTurn(initData.activeTeam);
+	UpdateCurrentTurn(initData.activeUser);
 	
 	_me.StateChange = function(gameState){
 		_gameState = gameState;
@@ -82,14 +82,14 @@ var NewHUD = function($controls, initData){
 			window.bus.pub('game end');
 	};
 	
-	_me.TurnEnd = function(activeTeam){
-		UpdateCurrentTurn(activeTeam);
+	_me.TurnEnd = function(activeUser){
+		UpdateCurrentTurn(activeUser);
 		
 		_nextTurn = (new Date()).getTime() + initData.turnTime * 1000;
 		
 		_turnEndPopupTimer = 120;
 		
-		if(_team == activeTeam)
+		if(_team == activeUser)
 			$endTurn.removeAttr('disabled');
 	}
 	
