@@ -1,12 +1,17 @@
 App.config(['$routeProvider',
 	function($routeProvider){
-		/*
-		var loginController = local ? 'LoginController' : 'FbLoginController';
-		*/
-		
 		$routeProvider.when('/login', {
 			templateUrl: './app/templates/login.html',
-			controller: 'LoginController' // loginController
+			controller: 'LoginController',
+			resolve: {
+				data: function(debugState, $rootScope, $location){
+					if(!debugState.local)
+						$location.path('/fblogin');
+				}
+			}
+		}).when('/fblogin', {
+			templateUrl: './app/templates/fblogin.html',
+			controller: 'FbLoginController'
 		}).when('/create', {
 			templateUrl: './app/templates/create.html',
 			controller: 'CreateController'

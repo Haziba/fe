@@ -20,7 +20,7 @@ app.get('/', function(req, res){
 });
 
 app.get('/v_next', function(req, res){
-	res.sendfile('angular.html');
+	// No current v_next to send to
 });
 
 app.get('/socket.io/:fileName', function(req, res){

@@ -33,4 +33,10 @@ App.service('bus', function(){
 				}
 			}
 		}
+	})
+	
+	.service('debugState', function($location){
+		return {
+			local: $location.host() == 'localhost'
+		};
 	});

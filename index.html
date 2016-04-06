@@ -1,8 +1,24 @@
-<html ng-app>
+<html>
 	<head>
-		<script src="/js/lib/angular.min.js"></script>
+		<title>Land Wars</title>
+		
 		<script src="js/lib/jquery-2.1.4.min.js"></script>
-		<script src="/socket.io/socket.io.js"></script>
+		<script src="js/lib/angular.min.js"></script>
+		<script src="js/lib/angular-route.min.js"></script>
+		<script src="js/lib/angular-cookies.min.js"></script>
+		<script src="socket.io/socket.io.js"></script>
+		
+		<script src="app/app.js"></script>
+		
+		<script src="app/setup/Services.js"></script>
+		<script src="app/setup/Config.js"></script>
+		<script src="app/setup/Run.js"></script>
+		
+		<script src="app/controllers/LoginController.js"></script>
+		<script src="app/controllers/FbLoginController.js"></script>
+		<script src="app/controllers/CreateController.js"></script>
+		<script src="app/controllers/LobbyController.js"></script>
+		<script src="app/controllers/GameController.js"></script>
 
 		<!-- Start game code -->
 		<script src="js/game/enums.js"></script>
@@ -29,149 +45,19 @@
 		<script src="js/game/fightManager.js"></script>
 		<!-- End game code -->
 		
-		<script src="js/
-		<script src="js/lobbyClass.js"></script>
-		<script src="js/fbLogin.js"></script>
-
-		<script>
-			var startGame = function(player){
-				Global.canvas = $("#gameCanvas")[0];
-				var context = Global.canvas.getContext("2d");
-				
-				var spritesInitialised, initData;
-				
-				var sprite = new Image();
-				sprite.src = "img/spritesheet.png";
-				
-				var battleBackground = new Image();
-				battleBackground.src = "img/FightBackground.png";
-				
-				var $fbWrapper = $("#fbLoginWrapper");
-				var $firstVisitWrapper = $("#firstVisitWrapper");
-				var $lobbyWrapper = $("#lobbyWrapper");
-				var $gameWrapper = $("#gameWrapper");
-				
-				Promise.all([sprite, battleBackground]).then(function(){
-					InputHandler.Initialise(Global.canvas);
-					SpriteHandler.Initialise(context, sprite, battleBackground);
-					
-					spritesInitialised = true;
-					
-					if(initData)
-						StartGame($("#gameControls"), initData);
-				});
-				
-				window.bus.sub('game init', function(data){
-					$lobbyWrapper.hide();
-					$gameWrapper.show();
-				
-					initData = data;
-					
-					if(spritesInitialised)
-						StartGame($("#gameControls"), initData);
-				});
-				
-				$fbWrapper.hide();
-				$.get('/user/' + Global.player.id, function(player){
-					if(player.exists)
-						$lobbyWrapper.show();
-					else
-						$firstVisitWrapper.show();
-				});
-				
-				$("#firstVisit").submit(function(e){
-					e.preventDefault();
-					
-					$.post('/user/' + Global.player.id, $("#firstVisit").serialize(), function(res){
-						if(res.success){
-							$firstVisitWrapper.hide();
-							$lobbyWrapper.show();
-						}else{
-							console.log("Error saving player");
-						}
-					});
-				});
-			};
-		</script>
-		<link rel="stylesheet" type="text/css" href="css/main.css">
+		<link rel="stylesheet" href="css/main.css" />
+		
 	</head>
 	
-	<body>
-		<div id="fbLoginWrapper" class="wrapper">
-			<fb:login-button scope="public_profile,email" onlogin="checkLoginState();">
-			</fb:login-button>
-
-			<div id="status">
-			</div>
-		</div>
-		<div id="firstVisitWrapper" class="wrapper" style="display: none">
-			<div>
-				<h1>
-					LAND WARS
-				</h1>
-				<form id="firstVisit">
-					<label>Name: </label>
-					<input type="text" name="Name" /><br />
-					<input type="submit" value="Set" />
-				</form>
-			</div>
-		</div>
-		<div id="lobbyWrapper" class="wrapper" style="display: none">
-			<div class="lobby">
-				<h1>
-					LAND WARS
-				</h1>
-				<table id="onlinePlayers">
-					<thead>
-						<tr>
-							<th>User ID</th>
-							<th class="options"></th>
-						</tr>
-					</thead>
-					<tbody>
-					</tbody>
-				</table>
-			</div>
-		</div>
-		<div id="gameWrapper" class="wrapper" style="display: none;">
-			<div class="game">
-				<div class="canvasWrapper">
-					<canvas id="gameCanvas">
-					</canvas>
+	<body ng-app="App">
+		<div class="container">
+			<div class="page-header">
+				<div class="col-lg-8 col-md-7 col-sm-6">
+					<h1>Land Wars</h1>
 				</div>
-				<div id="gameControls">
-					<div id="turnTimer" style="border: 1px solid #000; width: 50px; height: 30px; position: absolute; left: 50%; margin-left: -25px; background-color: #fff; top: 10px; font-size: 25px; font-family: Verdana; text-align: center; top: -610px">10</div>
-					<div style="width: 250px; margin: 20px; float: left">
-						<p>
-							Current Turn: <span id='currentTurn'></span>
-						</p>
-						<p>
-							<span id='enemyName'></span>: <span id='enemyOnline'></span>
-						</p>
-					</div>
-					<div id='unitSelection' style="width: 250px; margin: 20px; float: left; display: none">
-						<p>
-							Name: <span id='unitName'></span>
-						</p>
-						<p>
-							Health: <span id='unitHealth'></span>
-						</p>
-						<p>
-							Strength: <span id='unitStrength'></span>
-						</p>
-						<p>
-							Armour: <span id='unitArmour'></span>
-						</p>
-					</div>
-					<button id="unitDone" style="position: absolute; right: 25px; top: 25px;">
-						<span>Unit Done</span>
-					</button>
-					<button id="endTurn" style="position: absolute; right: 25px; top: 75px;">
-						<span>End Turn</span>
-					</button>
-				</div>
-				<div style="width: 100%; height: 100%; position: absolute; top: 0px; left: 0px; background-image: url(img/Overlay.png); pointer-events: none">
-				</div>
+			</div>
+		
+			<div class="ng-view well bs-component">
 			</div>
 		</div>
 	</body>
