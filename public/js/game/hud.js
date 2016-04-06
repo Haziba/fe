@@ -34,7 +34,7 @@ var NewHUD = function($controls, initData){
 	$enemyOnline.text(_enemyUser.connected ? "Online" : "Offline");
 	
 	var init = function(game){
-		_team = game.users[Global.user.id].team;
+		_team = Global.user.id;
 		_activeTeam = game.activeTeam;
 		
 		_gameState = game.state;

@@ -51,7 +51,7 @@ var StartGame = function($controls, initData, user)
 		InputHandler.EndUpdate();
 		
 		_updateRunning = false;
-	}, 1 / 12);
+	}, 1 / 30);
 	
 	var Draw = function(){
 		SpriteHandler.Clear();

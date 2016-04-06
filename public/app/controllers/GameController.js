@@ -1,4 +1,6 @@
 App.controller('GameController', function($scope, $rootScope, bus){
+	//todo: Fix bug where running through this twice sends all actions twice
+
 	Global.canvas = $("#gameCanvas")[0];
 	var context = Global.canvas.getContext("2d");
 	

@@ -1,12 +1,11 @@
 <div id="gameWrapper">
 	<div class="game">
-		<div class="canvasWrapper">
+		<div class="canvasWrapper bs-component" style="margin-bottom: 15px; text-align: center">
 			<canvas id="gameCanvas">
 			</canvas>
 		</div>
-		<div id="gameControls">
-			<div id="turnTimer" style="border: 1px solid #000; width: 50px; height: 30px; position: absolute; left: 50%; margin-left: -25px; background-color: #fff; top: 10px; font-size: 25px; font-family: Verdana; text-align: center; top: -610px">10</div>
-			<div style="width: 250px; margin: 20px; float: left">
+		<div id="gameControls" class="row bs-component">
+			<div class="col-xs-3">
 				<p>
 					Current Turn: <span id='currentTurn'></span>
 				</p>
@@ -14,26 +13,37 @@
 					<span id='enemyName'></span>: <span id='enemyOnline'></span>
 				</p>
 			</div>
-			<div id='unitSelection' style="width: 250px; margin: 20px; float: left; display: none">
+			<div class="col-xs-2">
 				<p>
-					Name: <span id='unitName'></span>
-				</p>
-				<p>
-					Health: <span id='unitHealth'></span>
-				</p>
-				<p>
-					Strength: <span id='unitStrength'></span>
-				</p>
-				<p>
-					Armour: <span id='unitArmour'></span>
+					Turn Timer: <span id="turnTimer"></span>
 				</p>
 			</div>
-			<button id="unitDone" style="position: absolute; right: 25px; top: 25px;">
-				<span>Unit Done</span>
-			</button>
-			<button id="endTurn" style="position: absolute; right: 25px; top: 75px;">
-				<span>End Turn</span>
-			</button>
+			<div class="col-xs-4">
+				<div id="unitSelection" style="display: none">
+					<p>
+						Name: <span id='unitName'></span>
+					</p>
+					<p>
+						Health: <span id='unitHealth'></span>
+					</p>
+					<p>
+						Strength: <span id='unitStrength'></span>
+					</p>
+					<p>
+						Armour: <span id='unitArmour'></span>
+					</p>
+				</div>
+			</div>
+			<div class="col-xs-3">
+				<div class="btn-group-vertical">
+					<button id="unitDone" class="btn btn-default">
+						<span>Unit Done</span>
+					</button>
+					<button id="endTurn" class="btn btn-default">
+						<span>End Turn</span>
+					</button>
+				</div>
+			</div>
 		</div>
 		<div style="width: 100%; height: 100%; position: absolute; top: 0px; left: 0px; pointer-events: none">
 		</div>
