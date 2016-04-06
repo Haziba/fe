@@ -52,7 +52,7 @@ App.controller('GameController', function($scope, $rootScope, bus){
 				break;
 		}
 	});
-
+	console.log("ACTION NEW SUB");
 	bus.sub('action new', function(action){
 		bus.pub('socket message', 'game', {
 			type: action.action,
