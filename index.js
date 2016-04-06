@@ -23,6 +23,12 @@ app.get('/v_next', function(req, res){
 	// No current v_next to send to
 });
 
+app.post('/fblogin', function(req, res){
+	// what are the post varbs?
+    res.setHeader('Content-Type', 'application/json');
+    res.send(JSON.stringify(req.body));
+});
+
 app.get('/socket.io/:fileName', function(req, res){
 	res.sendfile('./node_modules/socket.io/node_modules/socket.io-client/' + req.params.fileName);
 });
