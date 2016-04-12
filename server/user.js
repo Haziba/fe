@@ -1,6 +1,6 @@
 module.exports =
 {
-	'modelVersion': 2,
+	'modelVersion': 3,
 	'collection': 'users',
 	
 	'new': function(userId, userName){
@@ -11,6 +11,7 @@ module.exports =
 		user.name = userName;
 		user.units = [0,1,3,2,3,1,0];
 		user.token = this.newToken();
+		user.fbLogins = 0;
 		
 		return user;
 	},
@@ -21,6 +22,8 @@ module.exports =
 				user.units = [0,1,3,2,3,1,0];
 			case 1:
 				user.token = this.newToken();
+			case 2:
+				user.fbLogins = 0;
 		}
 		
 		user.modelVersion = this.modelVersion;

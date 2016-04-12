@@ -6,7 +6,8 @@ App.config(['$routeProvider',
 			resolve: {
 				data: function(debugState, $rootScope, $location){
 					if(!debugState.local)
-						$location.path('/fblogin');
+						console.log('redirect to fblogin?');
+						//$location.path('/fblogin');
 				}
 			}
 		}).when('/fblogin', {
