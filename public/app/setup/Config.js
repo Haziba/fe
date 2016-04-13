@@ -1,28 +1,27 @@
 App.config(['$routeProvider',
 	function($routeProvider){
-		$routeProvider.when('/login', {
-			templateUrl: './app/templates/login.html',
-			controller: 'LoginController',
-			resolve: {
-				data: function(debugState, $rootScope, $location){
-					if(!debugState.local)
-						console.log('redirect to fblogin?');
-						//$location.path('/fblogin');
-				}
-			}
-		}).when('/fblogin', {
-			templateUrl: './app/templates/fblogin.html',
-			controller: 'FbLoginController'
-		}).when('/create', {
+		$routeProvider.when('/create', {
 			templateUrl: './app/templates/create.html',
 			controller: 'CreateController'
 		}).when('/lobby', {
 			templateUrl: './app/templates/lobby.html',
-			controller: 'LobbyController'
+			controller: 'LobbyController',
+			resolve: {
+				data: function($rootScope){
+					if($rootScope.user.inGame)
+						$location.path('/game');
+				}
+			}
 		}).when('/game', {
 			templateUrl: './app/templates/game.html',
-			controller: 'GameController'
+			controller: 'GameController',
+			resolve: {
+				data: function($rootScope){
+					if(!$rootScope.user.inGame)
+						$location.path('/lobby');
+				}
+			}
 		}).otherwise({
-			redirectTo: '/login'
+			redirectTo: '/lobby'
 		});
 	}]);

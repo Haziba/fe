@@ -1,21 +1,19 @@
 <html>
 	<head>
 		<title>Land Wars</title>
-		
+
 		<script src="js/lib/jquery-2.1.4.min.js"></script>
 		<script src="js/lib/angular.min.js"></script>
 		<script src="js/lib/angular-route.min.js"></script>
 		<script src="js/lib/angular-cookies.min.js"></script>
 		<script src="socket.io/socket.io.js"></script>
-		
+
 		<script src="app/app.js"></script>
-		
+
 		<script src="app/setup/Services.js"></script>
 		<script src="app/setup/Config.js"></script>
 		<script src="app/setup/Run.js"></script>
-		
-		<script src="app/controllers/LoginController.js"></script>
-		<script src="app/controllers/FbLoginController.js"></script>
+
 		<script src="app/controllers/CreateController.js"></script>
 		<script src="app/controllers/LobbyController.js"></script>
 		<script src="app/controllers/GameController.js"></script>
@@ -44,11 +42,11 @@
 		<script src="js/game/actionQueue.js"></script>
 		<script src="js/game/fightManager.js"></script>
 		<!-- End game code -->
-		
+
 		<link rel="stylesheet" href="css/main.css" />
-		
+
 	</head>
-	
+
 	<body ng-app="App">
 		<div class="container">
 			<div class="page-header">
@@ -56,13 +54,14 @@
 					<h1>Land Wars</h1>
 				</div>
 			</div>
-		
+
 			<div class="ng-view well bs-component">
 			</div>
 		</div>
 	</body>
-	
+
 	<script>
-		var user = {{{toJSON user}}};
+		// Not a fan of this way of getting the user into angular, but it'll do for now
+		window.user = {{{toJSON user}}};
 	</script>
 </html>
