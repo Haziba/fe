@@ -1,22 +1,37 @@
-module.exports = function(express, app, users){
+module.exports = function(express, app, users, models){
 	var bodyParser = require('body-parser');
 	var cookieParser = require('cookie-parser');
 	var session = require('express-session');
-	var passport = require('passport');
+	var passport = require('../passport/lib/index.js');
 	var FacebookStrategy = require('passport-facebook').Strategy;
 
 	app.use(cookieParser());
 	app.use(bodyParser.urlencoded());
 	app.use(bodyParser.json());
 	app.use(session({secret: 'hrld'}));
-	app.use(passport.initialize());
+	app.use(passport.initialize({
+		woo: true
+	}));
 	app.use(passport.session());
 
+	app.get('/fblogin', function(req, res){
+		if(req.isAuthenticated())
+			res.render('index', {
+				user: req.user
+			});
+		else
+			res.render('login', {
+				authUrl: req.param('authUrl')
+			});
+	});
+
 	passport.serializeUser(function(user, cb) {
+		//console.log('serial', user);
 		cb(null, user.id);
 	});
 
 	passport.deserializeUser(function(userId, cb) {
+		console.log('deserial', userId);
 		users.getById(userId).then(function(user){
 			cb(null, user);
 		});
@@ -34,19 +49,20 @@ module.exports = function(express, app, users){
 					user = models.User.new(profile.id, profile.displayName);
 				}
 
-				user.fbAuthentications++;
+				user.fbLogins++;
 				users.set(user).then(function(){
 					cb(null, profile);
 				});
 			});
-	  }
-	));
+		}));
 
 	app.post('/auth/facebook',
-	  passport.authenticate('facebook'));
+		passport.authenticate('facebook', {
+		  successRedirect: '/'
+	  }));
 
 	app.get('/auth/facebook/callback',
 	  passport.authenticate('facebook', {
-		  successRedirect: '/',
+		  successRedirect: 'https://apps.facebook.com/battlelandwars/?test=true'
 	  }));
 }

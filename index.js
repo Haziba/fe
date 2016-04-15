@@ -1,10 +1,6 @@
 var bus = require('./server/pubsub.js');
 
-var models =
-{
-	User: require('./server/user.js')
-};
-
+var models = require('./server/models.js');
 var app = require('express')();
 var http = require('http');
 var path = require('path');
@@ -12,7 +8,7 @@ var express = require('express');
 var exphbr = require('express-handlebars');
 var db = require('./server/db.js')(models);
 var users = require('./server/users.js')(db, bus);
-require('./server/passport.js')(express, app, users);
+require('./server/passport.js')(express, app, users, models);
 
 require('./server/lobby.js')(bus);
 var Game = require('./server/game.js');
@@ -29,6 +25,7 @@ app.engine('handlebars', hbs.engine);
 app.set('view engine', 'handlebars');
 
 app.get('/', function(req, res){
+	console.log('hit /');
 	res.render('index', {
 		user: req.user
 	});
