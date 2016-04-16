@@ -39,7 +39,7 @@ module.exports = function(bus, server){
 			console.log('Socket init', socket.id, userId);
 
 			user = {
-				id: userId,
+				id: parseInt(userId),
 				socketId: socket.id
 			};
 

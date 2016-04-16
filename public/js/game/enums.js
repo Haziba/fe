@@ -10,7 +10,14 @@ var Team = {
 	ENEMY: 1
 }
 
+var GameState = {
+	PLAYING: 0,
+	FINISHED_SHIP: 1,
+	FINISHED_SLAUGHTER: 2
+}
+
 if(typeof exports !== "undefined"){
 	exports.Soldier = Soldier;
 	exports.Team = Team;
+	exports.GameState = GameState;
 }
