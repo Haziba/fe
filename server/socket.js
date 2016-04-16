@@ -42,7 +42,7 @@ module.exports = function(bus, server){
 				id: parseInt(userId),
 				socketId: socket.id
 			};
-
+			console.log('user connect', user);
 			bus.pub('user connect', user);
 			bus.pub('user connect ' + userId, user);
 

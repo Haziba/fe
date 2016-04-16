@@ -63,7 +63,7 @@ module.exports = function(server, debugEnv, users, socket, bus){
 							type: 'action',
 							data: {
 								action: 'turn end',
-								response: game.data.activeUser
+								response: { activeTeam: game.data.activeTeam }
 							}
 						});
 					}
@@ -95,7 +95,7 @@ module.exports = function(server, debugEnv, users, socket, bus){
 			});
 
 			game.data.users[user.id].socketId = user.socketId;
-
+			console.log('resend game data', user.id);
 			bus.pub('socket message ' + game.data.users[user.id].socketId, 'game', {
 				type: 'gameStarted',
 				data: game.data
@@ -207,15 +207,15 @@ module.exports = function(server, debugEnv, users, socket, bus){
 			game.data.units[unitId].stats.fights.remaining = game.data.units[unitId].stats.fights.max;
 		}
 
-		var nextUser = game.data.userOrder.indexOf(game.data.activeUser) + 1;
+		var nextUser = game.data.userOrder.indexOf(game.data.activeTeam) + 1;
 
-		game.data.activeUser = nextUser >= game.data.userOrder.length ? game.data.userOrder[0] : game.data.userOrder[nextUser];
+		game.data.activeTeam = nextUser >= game.data.userOrder.length ? game.data.userOrder[0] : game.data.userOrder[nextUser];
 
 		clearTimeout(game.turnTimer);
 		game.turnTimer = setTimeout(function(){ TimeRunOut(game); }, game.data.turnTime * 1000);
 		game.data.lastTurnStart = (new Date()).getTime();
 
-		return { activeUser: game.data.activeUser };
+		return { activeTeam: game.data.activeTeam };
 	}
 
 	var TimeRunOut = function(game){
@@ -256,7 +256,7 @@ module.exports = function(server, debugEnv, users, socket, bus){
 	/* Not been ran through */
 	var AutoTurnEnd = function(game){
 		for(var unitId in game.data.units){
-			if(game.data.units[unitId].stats.health > 0 && game.data.units[unitId].team == game.data.activeUser && game.data.units[unitId].waiting)
+			if(game.data.units[unitId].stats.health > 0 && game.data.units[unitId].team == game.data.activeTeam && game.data.units[unitId].waiting)
 				return false;
 		}
 
@@ -275,7 +275,7 @@ module.exports = function(server, debugEnv, users, socket, bus){
 	}
 
 	var InitGame = function(gameId, user1, user2){
-		var turnTime = 60;
+		var turnTime = 10;
 
 		var units = {
 			'HarrySoldierOne': unitFactory.NewAxe(user1.id, {x: 2, y: 2}),
@@ -322,7 +322,7 @@ module.exports = function(server, debugEnv, users, socket, bus){
 				turnTime: turnTime,
 				lastTurnStart: (new Date()).getTime(),
 				state: 0, //todo: Make game state enum available here
-				activeUser: user2.id,
+				activeTeam: user2.id,
 				userOrder: [user1.id, user2.id],
 				users: {
 				},
