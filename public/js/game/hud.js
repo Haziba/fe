@@ -70,10 +70,10 @@ var NewHUD = function($controls, initData){
 		$endTurn.attr('disabled', true);
 	});
 
-	if(_team != initData.activeUser)
+	if(_team != initData.activeTeam)
 		$endTurn.attr("disabled", true);
 
-	UpdateCurrentTurn(initData.activeUser);
+	UpdateCurrentTurn(initData.activeTeam);
 
 	_me.StateChange = function(gameState){
 		_gameState = gameState.state;
@@ -83,14 +83,16 @@ var NewHUD = function($controls, initData){
 			window.bus.pub('game end', _gameState);
 	};
 
-	_me.TurnEnd = function(activeUser){
-		UpdateCurrentTurn(activeUser);
+	_me.TurnEnd = function(activeTeam){
+		UpdateCurrentTurn(activeTeam);
 
 		_nextTurn = (new Date()).getTime() + initData.turnTime * 1000;
 
 		_turnEndPopupTimer = 120;
+		console.log('turn end', _team, activeTeam);
+		_activeTeam = activeTeam;
 
-		if(_team == activeUser)
+		if(_team == activeTeam)
 			$endTurn.removeAttr('disabled');
 	}
 
@@ -182,6 +184,7 @@ var NewHUD = function($controls, initData){
 			context.fillStyle = 'black';
 			context.font = '30px Arial black';
 			context.textAlign = 'center';
+			console.log(_activeTeam, _team);
 			context.fillText(_activeTeam == _team ? 'Your turn' : 'Enemy turn', Global.canvasSize.width / 2, Global.canvasSize.height / 2);
 
 			context.globalAlpha = 1;

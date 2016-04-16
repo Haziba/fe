@@ -26,12 +26,10 @@ module.exports = function(express, app, users, models){
 	});
 
 	passport.serializeUser(function(user, cb) {
-		//console.log('serial', user);
 		cb(null, user.id);
 	});
 
 	passport.deserializeUser(function(userId, cb) {
-		console.log('deserial', userId);
 		users.getById(userId).then(function(user){
 			cb(null, user);
 		});

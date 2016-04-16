@@ -8,7 +8,7 @@ var StartGame = function($controls, initData, user)
 
 	var _tileManager = NewTileManager(initData);
 	// todo: Just pass through initData
-	var _soldierManager = NewSoldierManager(initData.units, _teamNum, initData.activeUser);
+	var _soldierManager = NewSoldierManager(initData.units, _teamNum, initData.activeTeam);
 	var _shipManager = NewShipManager(initData, _teamNum);
 
 	var _fightManager = NewFightManager();
