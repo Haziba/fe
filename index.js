@@ -9,6 +9,7 @@ var exphbr = require('express-handlebars');
 var db = require('./server/db.js')(models);
 var users = require('./server/users.js')(db, bus);
 require('./server/passport.js')(express, app, users, models);
+require('./server/localLogin.js')(app, users, models);
 
 require('./server/lobby.js')(bus);
 var Game = require('./server/game.js');
