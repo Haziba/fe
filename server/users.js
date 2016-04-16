@@ -24,6 +24,8 @@ module.exports = function(db, bus){
 					resolve(users[userId]);
 				} else {
 					db.getById(db.models.User, userId).then(function(user){
+						user.inGame = false;
+
 						users[userId] = user;
 
 						resolve(users[userId]);

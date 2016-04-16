@@ -1,27 +1,30 @@
-App.run(function($rootScope){
-		$rootScope.user = window.user;
-
-		$rootScope.$on( "$routeChangeStart", function(event, next, current) {
-			if(next.controller != 'GameController' && $rootScope.user.inGame){
-				$location.path('/game');
-			}
-
-			if(next.controller == 'GameController' && !$rootScope.user.inGame){
-				$location.path('/lobby');
-			}
-		});
-	})
-
-	.run(function(bus){
+App.run(function(bus){
 		var socket = io();
 
 		var areas = ['lobby', 'game'];
 
 		for(var i = 0; i < areas.length; i++)
 			(function(area){
+				var state = {
+					subbed: false,
+					queued: []
+				}
+
 				socket.on(area, function(msg){
 					console.log('inward message', area, msg);
-					bus.pub('socket ' + area, msg);
+					if(state.subbed)
+						bus.pub('socket ' + area, msg);
+					else
+						state.queued.push(msg);
+				});
+
+				bus.sub(area + ' subbed', function(){
+					state.subbed = true;
+
+					for(var i = 0; i < state.queued.length; i++)
+						bus.pub('socket ' + area, state.queued[i]);
+
+					state.queued = [];
 				})
 			})(areas[i]);
 
@@ -42,4 +45,20 @@ App.run(function($rootScope){
 		});
 
 		return socket;
-	});
+	})
+
+	.run(function($rootScope, bus, $location){
+			$rootScope.user = window.user;
+
+			bus.pub('user login', window.user);
+
+			$rootScope.$on( "$routeChangeStart", function(event, next, current) {
+				if(next.controller != 'GameController' && $rootScope.user.inGame){
+					$location.path('/game');
+				}
+
+				if(next.controller == 'GameController' && !$rootScope.user.inGame){
+					$location.path('/lobby');
+				}
+			});
+		});

@@ -352,7 +352,6 @@ module.exports = function authenticate(passport, name, options, callback) {
       };
 
       // ----- END STRATEGY AUGMENTATION -----
-console.log('start authenticate');
       strategy.authenticate(req, options);
       //console.log('end authenticate');
     })(0); // attempt

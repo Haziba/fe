@@ -10,7 +10,7 @@ module.exports = function(app, users, models){
         res.status(403).send('User does not exist');
       }else{
         user.localLogins++;
-
+        console.log(user);
         users.set(user).then(function(user){
           res.render('index', {user: user});
         });

@@ -40,12 +40,16 @@ App.controller('LobbyController', function($scope, $rootScope, $location, bus){
 				$scope.$apply();
 				break;
 			case 'gameAccepted':
+				$rootScope.user.inGame = true;
+
 				$rootScope.$apply(function(){
 					$location.path('/game');
 				});
 				break;
 		}
 	});
+
+	bus.pub('lobby subbed');
 
 	$scope.status = 'Not looking';
 });
