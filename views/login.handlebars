@@ -1,6 +1,12 @@
 <html>
   <head>
     <title>Land Wars Authentication</title>
+    <script>
+      if (window.location != window.parent.location)
+        window.parent.location = "{{{authUrl}}}";
+      else
+        window.location = '{{{authUrl}}}';
+    </script>
   </head>
   <body>
     <p>Please login with Facebook:</p>

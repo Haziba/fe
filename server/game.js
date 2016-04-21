@@ -81,7 +81,9 @@ module.exports = function(server, debugEnv, users, socket, bus){
 	});
 
 	var InitialiseUser = function(gameSockets, game, user){
+		console.log('Initialise user', 'user connect ' + user.id);
 		bus.sub('user connect ' + user.id, function(user){
+			console.log('game reconnect', user.id);
 			game.data.users[user.id].connected = true;
 
 			var sockets = Object.keys(game.data.users).map(function(userId){ return game.data.users[userId].socketId; });

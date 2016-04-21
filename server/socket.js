@@ -39,7 +39,7 @@ module.exports = function(bus, server){
 			console.log('Socket init', socket.id, userId);
 
 			user = {
-				id: parseInt(userId),
+				id: userId,
 				socketId: socket.id
 			};
 			console.log('user connect', user);
@@ -90,7 +90,6 @@ module.exports = function(bus, server){
 
 	return {
 		isUserInGame: function(userId){
-			console.log(userId, onlineUsers);
 			return onlineUsers[userId].inGame;
 		}
 	};
