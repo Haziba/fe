@@ -283,7 +283,7 @@ module.exports = function(server, debugEnv, users, socket, bus){
 	}
 
 	var InitGame = function(gameId, user1, user2){
-		var turnTime = 45;
+		var turnTime = 5;
 
 		var units = {
 			'HarrySoldierOne': unitFactory.NewAxe(user1.id, {x: 2, y: 2}),

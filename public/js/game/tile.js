@@ -1,6 +1,6 @@
 var NewTile = function(x, y, tileType) {
 	var _me = {id: Global.NewId()};
-	
+
 	var GetSprite = function(){
 		switch(tileType)
 		{
@@ -10,11 +10,11 @@ var NewTile = function(x, y, tileType) {
 				return Sprite.GRASS;
 		}
 	}
-	
+
 	_me.Draw = function(){
 		SpriteHandler.Draw(GetSprite(), {x: x * Global.TileSize(), y: y * Global.TileSize()});
 	}
-	
+
 	return _me;
 }
 

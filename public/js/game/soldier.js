@@ -137,6 +137,8 @@ var NewSoldier = function(unitId, initUnit, teamNum, activeTeam)
 
 		_active = activeTeam == teamNum;
 
+		_me.Deselect();
+
 		_stats.moves.remaining = _stats.moves.max;
 		_stats.fights.remaining = _stats.fights.max;
 	}
@@ -155,6 +157,9 @@ var NewSoldier = function(unitId, initUnit, teamNum, activeTeam)
 	}
 
 	_me.ShowHealthChange = function(newHealth){
+		if(newHealth == _stats.health)
+			return;
+
 		_healthChangeAnim = {
 			diff: newHealth - _stats.health,
 			currentLocation: {x: _location.x + Global.TileSize() / 2, y: _location.y + Global.TileSize() / 8},
