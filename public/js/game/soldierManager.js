@@ -34,7 +34,7 @@ var NewSoldierManager = function(_units, _teamNum, _activeTeam){
 	}
 
 	_me.ResolveFight = function(data){
-		window.bus.pub('fight start', _soldiers[data.unitId], _soldiers[data.enemyUnitId], ['LaurieSoldierOne', 'LaurieSoldierOne', 'HarrySoldierOne', 'LaurieSoldierOne']);//data.attackOrder);
+		window.bus.pub('fight start', _soldiers[data.unitId], _soldiers[data.enemyUnitId], data.attackOrder);
 
 		window.bus.subOnce('anim complete', function(){
 			_soldiers[data.unitId].Fight(data);

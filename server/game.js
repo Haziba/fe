@@ -154,12 +154,16 @@ module.exports = function(server, debugEnv, users, socket, bus){
 	var ResolveFight = function(game, fight){
 		var myUnit = game.data.units[fight.unitId];
 		var enemyUnit = game.data.units[fight.enemyUnitId];
+		var attacks = [];
 
 		enemyUnit.stats.health = Math.max(enemyUnit.stats.health - Math.max(myUnit.stats.strength - enemyUnit.stats.armour, 0), 0);
+		attacks.push(myUnit.id);
 
 		if(enemyUnit.combatRetaliation && InMeleeRange(myUnit, enemyUnit))
-			if(enemyUnit.stats.health > 0)
+			if(enemyUnit.stats.health > 0){
 				myUnit.stats.health = Math.max(myUnit.stats.health - Math.max(enemyUnit.stats.strength - myUnit.stats.armour, 0), 0);
+				attacks.push(enemyUnit.id);
+			}
 
 		fight.health = myUnit.stats.health;
 		fight.enemyHealth = enemyUnit.stats.health;
@@ -168,6 +172,8 @@ module.exports = function(server, debugEnv, users, socket, bus){
 
 		if(myUnit.stats.fights.remaining == 0 && myUnit.stats.moves.remaining == 1)
 			myUnit.waiting = false;
+
+		fight.attackOrder = attacks;
 
 		return fight;
 	}
