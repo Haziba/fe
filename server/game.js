@@ -157,12 +157,12 @@ module.exports = function(server, debugEnv, users, socket, bus){
 		var attacks = [];
 
 		enemyUnit.stats.health = Math.max(enemyUnit.stats.health - Math.max(myUnit.stats.strength - enemyUnit.stats.armour, 0), 0);
-		attacks.push(myUnit.id);
+		attacks.push(fight.unitId);
 
 		if(enemyUnit.combatRetaliation && InMeleeRange(myUnit, enemyUnit))
 			if(enemyUnit.stats.health > 0){
 				myUnit.stats.health = Math.max(myUnit.stats.health - Math.max(enemyUnit.stats.strength - myUnit.stats.armour, 0), 0);
-				attacks.push(enemyUnit.id);
+				attacks.push(fight.enemyUnitId);
 			}
 
 		fight.health = myUnit.stats.health;
