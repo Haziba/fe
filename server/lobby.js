@@ -3,7 +3,16 @@ module.exports = function(bus){
 	var pendingGames = [];
 
 	var lookForGame = function(user){
-		//todo: Stop users joining queue multiple times
+		if(!user.id || !user.socketId){
+			bus.pub('socket message', [user.socketId], 'lobby', {
+				type: 'error'
+			});
+			return;
+		}
+
+		if(!!usersLookingForGame.find(function(u){ u.userId == user.userId }))
+			return;
+
 		usersLookingForGame.push(user);
 
 		bus.sub('socket disconnect ' + user.socketId, function(){

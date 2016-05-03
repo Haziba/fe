@@ -52,6 +52,16 @@ App.controller('LobbyController', function($scope, $rootScope, $location, bus){
 					$location.path('/game');
 				});
 				break;
+
+			case 'error':
+				console.log('An error has occurred. This may be caused by attempting to join a game before the page has fully loaded. Apologies for any inconvenience this may have caused');
+
+				$scope.lookingForGame = false;
+				$scope.foundGame = false;
+				$scope.status = "";
+
+				$scope.$apply();
+				break;
 		}
 	}, 'lobbyCont');
 

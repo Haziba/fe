@@ -283,7 +283,7 @@ module.exports = function(server, debugEnv, users, socket, bus){
 	}
 
 	var InitGame = function(gameId, user1, user2){
-		var turnTime = 1000;//45;
+		var turnTime = 45;
 
 		var units = {
 			'HarrySoldierOne': unitFactory.NewAxe(user1.id, {x: 2, y: 2}),
@@ -303,7 +303,7 @@ module.exports = function(server, debugEnv, users, socket, bus){
 			'LaurieSoldierSix': unitFactory.NewAxe(user2.id, {x: 12, y: 8}),
 		};
 
-		if(debugEnv){
+		if(false){//debugEnv){
 			units = {
 				'HarrySoldierOne': unitFactory.NewAxe(user1.id, {x: 2, y: 2}),
 				/*'HarrySoldierTwo': unitFactory.NewArcher(user1.id, {x: 1, y: 3}),
