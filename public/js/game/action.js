@@ -35,11 +35,22 @@ var NewAction = function(_action, _data){
 
 	var SoldierFight = function(soldierManager){
 		soldierManager.ResolveFight(_data);
-debugger;
+
 		window.bus.subOnce('anim complete', function(){
+			soldierManager.ShowHealthChange([{
+				unitId: _data.unitId,
+				newHealth: _data.health
+			}, {
+				unitId: _data.enemyUnitId,
+				newHealth: _data.enemyHealth
+			}]);
 
+			console.log('fight complete');
 
-			window.bus.pub('action complete');
+			window.bus.subOnce('anim complete', function(){
+				console.log('health complete');
+				window.bus.pub('action complete');
+			});
 		}, 'game');
 	}
 

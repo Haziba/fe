@@ -2,6 +2,7 @@ var NewSoldierManager = function(_units, _teamNum, _activeTeam){
 	var _me = {id: Global.NewId()};
 
 	var _soldiers = {};
+	var _healthChangePause = 0;
 
 	var init = function(units, activeTeam){
 		_soldiers = {};
@@ -36,10 +37,15 @@ var NewSoldierManager = function(_units, _teamNum, _activeTeam){
 	_me.ResolveFight = function(data){
 		window.bus.pub('fight start', _soldiers[data.unitId], _soldiers[data.enemyUnitId], data.attackOrder);
 
-		window.bus.subOnce('anim complete', function(){
-			_soldiers[data.unitId].Fight(data);
-			_soldiers[data.enemyUnitId].GetFought(data);
-		}, 'game');
+		_soldiers[data.unitId].Fight(data);
+	}
+
+	_me.ShowHealthChange = function(units){
+		_healthChangePause = 0;
+
+		for(var i = 0; i < units.length; i++){
+			_healthChangePause = Math.max(_healthChangePause, _soldiers[units[i].unitId].ShowHealthChange(units[i].newHealth));
+		}
 	}
 
 	_me.SoldierDone = function(unitId){
@@ -58,6 +64,13 @@ var NewSoldierManager = function(_units, _teamNum, _activeTeam){
 	_me.Update = function(){
 		for(var unitId in _soldiers)
 			_soldiers[unitId].Update();
+
+		if(_healthChangePause > 0){
+			_healthChangePause--;
+
+			if(_healthChangePause == 0)
+				window.bus.pub('anim complete');
+		}
 	}
 
 	_me.Draw = function(){
