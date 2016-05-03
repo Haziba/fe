@@ -35,8 +35,10 @@ var NewAction = function(_action, _data){
 
 	var SoldierFight = function(soldierManager){
 		soldierManager.ResolveFight(_data);
-
+debugger;
 		window.bus.subOnce('anim complete', function(){
+
+
 			window.bus.pub('action complete');
 		}, 'game');
 	}
