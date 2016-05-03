@@ -2,6 +2,8 @@ var StartGame = function($controls, initData, user)
 {
 	Global.user = user;
 
+	var _gameRunning = true;
+
 	var _stageManager = NewStageManager(initData);
 
 	var _teamNum = initData.users[Global.user.id].team;
@@ -30,10 +32,16 @@ var StartGame = function($controls, initData, user)
 
 		_control = NewControl(data);
 		_hud = NewHUD(data);
-	});
+	}, 'game');
 
-	setInterval(function(){
-		if(_updateRunning)
+	window.bus.sub('game close', function(){
+		clearInterval(gameLoop);
+
+		_gameRunning = false;
+	}, 'game');
+
+	var gameLoop = setInterval(function(){
+		if(!_gameRunning || _updateRunning)
 			return;
 
 		InputHandler.StartUpdate();
@@ -51,9 +59,12 @@ var StartGame = function($controls, initData, user)
 		InputHandler.EndUpdate();
 
 		_updateRunning = false;
-	}, 1 / 30);
+	}, 1000 / 60);
 
 	var Draw = function(){
+		if(!_gameRunning)
+			return;
+
 		SpriteHandler.Clear();
 
 		_tileManager.Draw();

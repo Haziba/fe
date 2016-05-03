@@ -1,4 +1,4 @@
-App.controller('GameController', function($scope, $rootScope, bus){
+App.controller('GameController', function($scope, $rootScope, $location, bus){
 	//todo: Fix bug where running through this twice sends all actions twice
 
 	Global.canvas = $("#gameCanvas")[0];
@@ -27,7 +27,10 @@ App.controller('GameController', function($scope, $rootScope, bus){
 			StartGame($("#gameControls"), initData, $rootScope.user);
 	});
 
-	window.bus.sub('game init', function(data){
+	if($rootScope.subbedControllers['game'])
+		bus.clearGroup('gameCont');
+
+	bus.sub('game init', function(data){
 		$lobbyWrapper.hide();
 		$gameWrapper.show();
 
@@ -35,7 +38,7 @@ App.controller('GameController', function($scope, $rootScope, bus){
 
 		if(spritesInitialised)
 			StartGame($("#gameControls"), initData, $rootScope.user);
-	});
+	}, 'gameCont');
 
 	bus.sub('socket game', function(msg){
 		switch(msg.type){
@@ -53,7 +56,7 @@ App.controller('GameController', function($scope, $rootScope, bus){
 				bus.pub('connection change', msg.data);
 				break;
 		}
-	});
+	}, 'gameCont');
 
 	bus.pub('game subbed');
 
@@ -62,5 +65,15 @@ App.controller('GameController', function($scope, $rootScope, bus){
 			type: action.action,
 			data: action.data
 		});
-	});
+	}, 'gameCont');
+
+	bus.sub('game close', function(){
+		console.log('game close finish');
+		$rootScope.user.inGame = false;
+
+		$rootScope.$apply(function(){
+			console.log('navigate to lobby');
+			$location.path('/lobby');
+		});
+	}, 'gameCont');
 });

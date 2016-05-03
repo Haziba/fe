@@ -1,5 +1,5 @@
 <h2>Lobby</h2>
 Click the button to look for a game:<br /><br />
-<button id="joinQueue" class="btn btn-primary">Join Queue</button><br /><br />
+<button id="joinQueue" class="btn btn-primary" ng-show="!lookingForGame">Join Queue</button><br /><br />
 <span ng-bind="status"></span><br /><br />
 <button id="acceptGame" class="btn btn-primary" ng-show="foundGame">Accept</button><button id="rejectGame" class="btn" ng-show="foundGame">Reject</button>

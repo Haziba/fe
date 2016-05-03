@@ -9,11 +9,11 @@ var NewControl = function(initData){
 
 	window.bus.sub('game end', function(){
 		_gameRunning = false;
-	});
+	}, 'game');
 
 	window.bus.sub('game start', function(){
 		_gameRunning = true;
-	})
+	}, 'game');
 
 	_me.Update = function(){
 		if(!_gameRunning)

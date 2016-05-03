@@ -1,8 +1,11 @@
 App.controller('LobbyController', function($scope, $rootScope, $location, bus){
 	$scope.user = $rootScope.user;
+	$scope.lookingForGame = false;
 	$scope.foundGame = false;
 
 	$('#joinQueue').click(function(){
+		$scope.lookingForGame = true;
+
 		bus.pub('socket message', 'lobby', {
 			type: 'lookForGame'
 		});
@@ -22,6 +25,9 @@ App.controller('LobbyController', function($scope, $rootScope, $location, bus){
 			type: 'rejectGame'
 		});
 	});
+
+	if($rootScope.subbedControllers['lobby'])
+		bus.clearGroup('lobbyCont');
 
 	bus.sub('socket lobby', function(msg){
 		console.log('lobby', msg);
@@ -47,9 +53,10 @@ App.controller('LobbyController', function($scope, $rootScope, $location, bus){
 				});
 				break;
 		}
-	});
+	}, 'lobbyCont');
 
 	bus.pub('lobby subbed');
+
 
 	$scope.status = 'Not looking';
 });

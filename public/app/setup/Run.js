@@ -1,7 +1,9 @@
-App.run(function(bus){
+App.run(function(bus, $rootScope){
 		var socket = io();
 
 		var areas = ['lobby', 'game'];
+		
+		$rootScope.subbedControllers = {};
 
 		for(var i = 0; i < areas.length; i++)
 			(function(area){
@@ -9,6 +11,8 @@ App.run(function(bus){
 					subbed: false,
 					queued: []
 				}
+
+				$rootScope.subbedControllers[area] = false;
 
 				socket.on(area, function(msg){
 					console.log('inward message', area, msg);
@@ -19,6 +23,7 @@ App.run(function(bus){
 				});
 
 				bus.sub(area + ' subbed', function(){
+					$rootScope.subbedControllers[area] = true;
 					state.subbed = true;
 
 					for(var i = 0; i < state.queued.length; i++)

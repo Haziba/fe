@@ -13,6 +13,8 @@ module.exports = function(db, bus){
 						users[userId] = user;
 
 						resolve(users[userId]);
+					}, function(err){
+						console.log('Failed to get user: ', err);
 					});
 				}
 			});
@@ -36,6 +38,14 @@ module.exports = function(db, bus){
 		for(var i = 0; i < pendingGame.users.length; i++){
 			_me.getById(pendingGame.users[i].id).then(function(user){
 				user.inGame = true;
+			});
+		}
+	});
+
+	bus.sub('game close', function(closedGame){
+		for(var userId in closedGame.users){
+			_me.getById(userId).then(function(user){
+				user.inGame = false;
 			});
 		}
 	});

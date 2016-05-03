@@ -27,12 +27,12 @@ module.exports = function(server, debugEnv, users, socket, bus){
 			}
 
 			bus.sub('game ' + game.id + ' action', function(msg){
-					console.log("----" + msg.user.name + "----");
+					/*console.log("----" + msg.user.name + "----");*/
 					var response = ProcessAction(game, msg);
-					console.log("----RESPONSE----");
-					console.log(response);
+					/*console.log("----RESPONSE----");
+					console.log(response);*/
 
-					CheckForGameEnd(game);
+					var gameEnd = CheckForGameEnd(game);
 
 					var autoTurnEnd = AutoTurnEnd(game);
 
@@ -47,7 +47,7 @@ module.exports = function(server, debugEnv, users, socket, bus){
 						}
 					});
 
-					if(game.data.state != enums.GameState.PLAYING){
+					if(gameEnd){
 						bus.pub('socket message', sockets, 'game', {
 							type: 'action',
 							data: {
@@ -58,6 +58,8 @@ module.exports = function(server, debugEnv, users, socket, bus){
 								}
 							}
 						});
+
+						GameEnd(game);
 					}else if(autoTurnEnd){
 						bus.pub('socket message', sockets, 'game', {
 							type: 'action',
@@ -81,7 +83,6 @@ module.exports = function(server, debugEnv, users, socket, bus){
 	});
 
 	var InitialiseUser = function(gameSockets, game, user){
-		console.log('Initialise user', 'user connect ' + user.id);
 		bus.sub('user connect ' + user.id, function(user){
 			console.log('game reconnect', user.id);
 			game.data.users[user.id].connected = true;
@@ -97,15 +98,13 @@ module.exports = function(server, debugEnv, users, socket, bus){
 			});
 
 			game.data.users[user.id].socketId = user.socketId;
-			console.log('resend game data', user.id);
+
 			bus.pub('socket message ' + game.data.users[user.id].socketId, 'game', {
 				type: 'gameStarted',
 				data: game.data
 			});
 
-			console.log('connect', gameSockets);
 			gameSockets.push(user.socketId);
-			console.log('connect', gameSockets);
 		}, 'game ' + game.id);
 
 		bus.sub('user disconnect ' + user.id, function(){
@@ -121,13 +120,10 @@ module.exports = function(server, debugEnv, users, socket, bus){
 				}
 			});
 
-			console.log('disconnect', gameSockets);
 			gameSockets.splice(gameSockets.indexOf(game.data.users[user.id].socketId), 1);
-			console.log('disconnect', gameSockets);
 		}, 'game ' + game.id);
 	}
 
-	/* Not been ran through */
 	var ProcessAction = function(game, action){
 		console.log(action);
 
@@ -140,23 +136,9 @@ module.exports = function(server, debugEnv, users, socket, bus){
 				return SoldierDone(game, action.data);
 			case 'turn end':
 				return TurnEnd(game);
-			case 'game reset':
-				//return GameReset(game);
-				console.log('Game reset needs re-implementing');
-				return;
 		}
 	}
 
-	/* Needs sorting
-	var GameReset = function(game) {
-		var users = Object.keys(game.data.users);
-
-		game.data = InitGame(users[0], users[1], game.data);
-
-		return game.data;
-	} */
-
-	/* Not been ran through */
 	var MoveSoldier = function(game, data){
 		var myUnit = game.data.units[data.unitId];
 
@@ -169,7 +151,6 @@ module.exports = function(server, debugEnv, users, socket, bus){
 		return data;
 	}
 
-	/* Not been ran through */
 	var ResolveFight = function(game, fight){
 		var myUnit = game.data.units[fight.unitId];
 		var enemyUnit = game.data.units[fight.enemyUnitId];
@@ -191,7 +172,6 @@ module.exports = function(server, debugEnv, users, socket, bus){
 		return fight;
 	}
 
-	/* Not been ran through */
 	var SoldierDone = function(game, unitId){
 		var myUnit = game.data.units[unitId];
 
@@ -220,7 +200,21 @@ module.exports = function(server, debugEnv, users, socket, bus){
 		return { activeTeam: game.data.activeTeam };
 	}
 
+	var GameEnd = function(game){
+		bus.pub('game close', game.data);
+
+		clearTimeout(game.turnTimer);
+
+		bus.clearGroup('game ' + game.id);
+
+		// Not sure if this actually does anything lel
+		delete game;
+	}
+
 	var TimeRunOut = function(game){
+		if(!game)
+			return;
+
 		var response = TurnEnd(game);
 
 		var sockets = Object.keys(game.data.users).map(function(userId){ return game.data.users[userId].socketId; });
@@ -234,12 +228,10 @@ module.exports = function(server, debugEnv, users, socket, bus){
 		});
 	}
 
-	/* Not been ran through */
 	var InMeleeRange = function(myUnit, enemyUnit){
 		return (enemyUnit.pos.x == myUnit.pos.x && Math.abs(enemyUnit.pos.y - myUnit.pos.y) == 1) || (Math.abs(enemyUnit.pos.x - myUnit.pos.x) == 1 && enemyUnit.pos.y == myUnit.pos.y);
 	}
 
-	/* Not been ran through */
 	var CheckForGameEnd = function(game){
 		for(var i = 0; i < game.data.ships.length; i++){
 			var ship = game.data.ships[i];
@@ -253,9 +245,15 @@ module.exports = function(server, debugEnv, users, socket, bus){
 				}
 			}
 		}
+
+		for(var userId in game.data.users){
+			if(RemainingLivingUnitsFor(game, userId) <= 0)
+				game.data.state = enums.GameState.FINISHED_SLAUGHTER;
+		}
+
+		return game.data.state != enums.GameState.PLAYING;
 	}
 
-	/* Not been ran through */
 	var AutoTurnEnd = function(game){
 		for(var unitId in game.data.units){
 			if(game.data.units[unitId].stats.health > 0 && game.data.units[unitId].team == game.data.activeTeam && game.data.units[unitId].waiting)
@@ -265,7 +263,6 @@ module.exports = function(server, debugEnv, users, socket, bus){
 		return true;
 	}
 
-	/* Not been ran through */
 	var RemainingLivingUnitsFor = function(game, team){
 		var remaining = 0;
 
@@ -277,7 +274,7 @@ module.exports = function(server, debugEnv, users, socket, bus){
 	}
 
 	var InitGame = function(gameId, user1, user2){
-		var turnTime = 10;
+		var turnTime = 1000;//45;
 
 		var units = {
 			'HarrySoldierOne': unitFactory.NewAxe(user1.id, {x: 2, y: 2}),
@@ -300,20 +297,20 @@ module.exports = function(server, debugEnv, users, socket, bus){
 		if(debugEnv){
 			units = {
 				'HarrySoldierOne': unitFactory.NewAxe(user1.id, {x: 2, y: 2}),
-				'HarrySoldierTwo': unitFactory.NewArcher(user1.id, {x: 1, y: 3}),
+				/*'HarrySoldierTwo': unitFactory.NewArcher(user1.id, {x: 1, y: 3}),
 				'HarryCaptain': unitFactory.NewSword(user1.id, {x: 2, y: 4}),
 				'HarrySoldierThree': unitFactory.NewArcher(user1.id, {x: 1, y: 5}),
 				'HarrySoldierFour': unitFactory.NewSword(user1.id, {x: 2, y: 6}),
 				'HarrySoldierFive': unitFactory.NewArcher(user1.id, {x: 1, y: 7}),
-				'HarrySoldierSix': unitFactory.NewSpear(user1.id, {x: 2, y: 8}),
+				'HarrySoldierSix': unitFactory.NewSpear(user1.id, {x: 2, y: 8}),*/
 
 				'LaurieSoldierOne': unitFactory.NewSpear(user2.id, {x: 3, y: 2}),
-				'LaurieSoldierTwo': unitFactory.NewArcher(user2.id, {x: 3, y: 3}),
+				/*'LaurieSoldierTwo': unitFactory.NewArcher(user2.id, {x: 3, y: 3}),
 				'LaurieCaptain': unitFactory.NewSword(user2.id, {x: 3, y: 4}),
 				'LaurieSoldierThree': unitFactory.NewArcher(user2.id, {x: 3, y: 5}),
 				'LaurieSoldierFour': unitFactory.NewSword(user2.id, {x: 3, y: 6}),
 				'LaurieSoldierFive': unitFactory.NewArcher(user2.id, {x: 3, y: 7}),
-				'LaurieSoldierSix': unitFactory.NewAxe(user2.id, {x: 3, y: 8}),
+				'LaurieSoldierSix': unitFactory.NewAxe(user2.id, {x: 3, y: 8}),*/
 			};
 		}
 

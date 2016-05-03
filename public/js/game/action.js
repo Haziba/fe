@@ -1,5 +1,5 @@
 var NewAction = function(_action, _data){
-	var _me = {};
+	var _me = { action: _action };
 
 	_me.Process = function(soldierManager, stageManager, hud){
 		switch(_action){
@@ -30,7 +30,7 @@ var NewAction = function(_action, _data){
 
 		window.bus.subOnce('anim complete', function(){
 			window.bus.pub('action complete');
-		});
+		}, 'game');
 	}
 
 	var SoldierFight = function(soldierManager){
@@ -38,7 +38,7 @@ var NewAction = function(_action, _data){
 
 		window.bus.subOnce('anim complete', function(){
 			window.bus.pub('action complete');
-		});
+		}, 'game');
 	}
 
 	var SoldierDone = function(soldierManager){
@@ -50,7 +50,7 @@ var NewAction = function(_action, _data){
 	var TurnEnd = function(soldierManager, hud){
 		soldierManager.TurnEnd(_data.activeTeam);
 		hud.TurnEnd(_data.activeTeam);
-		
+
 		window.bus.pub('action complete');
 	}
 

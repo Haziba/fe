@@ -89,7 +89,7 @@ var NewHUD = function($controls, initData){
 		_nextTurn = (new Date()).getTime() + initData.turnTime * 1000;
 
 		_turnEndPopupTimer = 120;
-		console.log('turn end', _team, activeTeam);
+		//console.log('turn end', _team, activeTeam);
 		_activeTeam = activeTeam;
 
 		if(_team == activeTeam)
@@ -102,7 +102,7 @@ var NewHUD = function($controls, initData){
 
 	window.bus.sub('connection change', function(user){
 		$enemyOnline.text(user.connected ? "Online" : "Offline");
-	});
+	}, 'game');
 
 	window.bus.sub('select', function(unit){
 		_selectedUnit = unit;
@@ -118,7 +118,7 @@ var NewHUD = function($controls, initData){
 
 		if(unit.Team() == _team && _activeTeam == _team)
 			$unitDone.removeAttr('disabled');
-	});
+	}, 'game');
 
 	window.bus.sub('deselect', function(){
 		_selectedUnit = undefined;
@@ -126,12 +126,17 @@ var NewHUD = function($controls, initData){
 		$unitSelection.hide();
 
 		$unitDone.attr('disabled', true);
-	});
+	}, 'game');
 
 	_me.Update = function(){
 		if(_gameState != 0){
-			if(InputHandler.MouseClicked())
-				window.bus.pub('action new', {action: 'game reset'});
+			if(InputHandler.MouseClicked()){
+				window.bus.pub('game close');
+
+				bus.clearGroup('game');
+
+				_gameState = 0;
+			}
 		}
 
 		$turnTimer.text(Math.floor((_nextTurn - (new Date()).getTime()) / 1000) + 1);
@@ -160,7 +165,7 @@ var NewHUD = function($controls, initData){
 					context.fillText('You lose!', 400, 270);
 			}
 			context.font = '14px Arial black';
-			context.fillText('Click anywhere to restart the game', 400, 320);
+			context.fillText('Click anywhere to return to the lobby', 400, 320);
 		}
 
 		if(_selectedUnit){
@@ -184,7 +189,7 @@ var NewHUD = function($controls, initData){
 			context.fillStyle = 'black';
 			context.font = '30px Arial black';
 			context.textAlign = 'center';
-			console.log(_activeTeam, _team);
+			//console.log(_activeTeam, _team);
 			context.fillText(_activeTeam == _team ? 'Your turn' : 'Enemy turn', Global.canvasSize.width / 2, Global.canvasSize.height / 2);
 
 			context.globalAlpha = 1;
