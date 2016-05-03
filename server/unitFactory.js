@@ -2,40 +2,40 @@ module.exports = function(enums){
 	return {
 		NewArcher: function(team, pos){
 			var stats = BaseStats();
-			
+
 			stats.health = stats.maxHealth = 12;
 			stats.strength = 8;
-			
+
 			var unit = BaseUnit(enums.Soldier.ARCHER, pos, team, stats);
-			
+
 			unit.combatRetaliation = false;
-			
+
 			return unit;
 		},
-		
+
 		NewSword: function(team, pos){
 			var stats = BaseStats();
-			
+
 			return BaseUnit(enums.Soldier.SWORD, pos, team, stats);
 		},
-		
+
 		NewAxe: function(team, pos){
 			var stats = BaseStats();
-			
+
 			stats.health = stats.maxHealth = 24;
 			stats.strength = 12;
 			stats.moves.remaining = stats.moves.max = 3;
-			
+
 			return BaseUnit(enums.Soldier.AXE, pos, team, stats);
 		},
-		
+
 		NewSpear: function(team, pos){
 			var stats = BaseStats();
-			
+
 			stats.health = stats.maxHealth = 16;
 			stats.strength = 8;
 			stats.moves.remaining = stats.moves.max = 5;
-			
+
 			return BaseUnit(enums.Soldier.SPEAR, pos, team, stats);
 		}
 	};

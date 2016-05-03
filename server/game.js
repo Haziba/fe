@@ -253,8 +253,11 @@ module.exports = function(server, debugEnv, users, socket, bus){
 		}
 
 		for(var userId in game.data.users){
-			if(RemainingLivingUnitsFor(game, userId) <= 0)
+			if(RemainingLivingUnitsFor(game, userId) <= 0){
 				game.data.state = enums.GameState.FINISHED_SLAUGHTER;
+				//todo: lol
+				game.data.winningTeam = Object.keys(game.data.users).find(function(enemyUserId){ return enemyUserId != userId; });
+			}
 		}
 
 		return game.data.state != enums.GameState.PLAYING;
