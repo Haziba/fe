@@ -5,6 +5,7 @@ module.exports = function(enums){
 
 			stats.health = stats.maxHealth = 12;
 			stats.strength = 8;
+			stats.attackRange = {min: 2, max: 2};
 
 			var unit = BaseUnit(enums.Soldier.ARCHER, pos, team, stats);
 
@@ -47,6 +48,7 @@ var BaseStats = function(){
 		maxHealth: 20,
 		strength: 10,
 		armour: 5,
+		attackRange: {min: 1, max: 1},
 		moves: {
 			remaining: 4,
 			max: 4

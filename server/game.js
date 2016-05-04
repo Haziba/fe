@@ -239,7 +239,8 @@ module.exports = function(server, debugEnv, users, socket, bus){
 	}
 
 	var InMeleeRange = function(myUnit, enemyUnit){
-		return (enemyUnit.pos.x == myUnit.pos.x && Math.abs(enemyUnit.pos.y - myUnit.pos.y) == 1) || (Math.abs(enemyUnit.pos.x - myUnit.pos.x) == 1 && enemyUnit.pos.y == myUnit.pos.y);
+		return (enemyUnit.pos.x == myUnit.pos.x && Math.abs(enemyUnit.pos.y - myUnit.pos.y) == 1)
+			|| (Math.abs(enemyUnit.pos.x - myUnit.pos.x) == 1 && enemyUnit.pos.y == myUnit.pos.y);
 	}
 
 	var CheckForGameEnd = function(game){
@@ -287,7 +288,7 @@ module.exports = function(server, debugEnv, users, socket, bus){
 	}
 
 	var InitGame = function(gameId, user1, user2){
-		var turnTime = 5000;
+		var turnTime = 45;
 
 		var units = {
 			'HarrySoldierOne': unitFactory.NewAxe(user1.id, {x: 2, y: 2}),
@@ -307,7 +308,9 @@ module.exports = function(server, debugEnv, users, socket, bus){
 			'LaurieSoldierSix': unitFactory.NewAxe(user2.id, {x: 12, y: 8}),
 		};
 
-		if(false){//debugEnv){
+		if(debugEnv){
+			turnTime = 5000;
+
 			units = {
 				'HarrySoldierOne': unitFactory.NewAxe(user1.id, {x: 2, y: 2}),
 				/*'HarrySoldierTwo': unitFactory.NewArcher(user1.id, {x: 1, y: 3}),
@@ -317,7 +320,7 @@ module.exports = function(server, debugEnv, users, socket, bus){
 				'HarrySoldierFive': unitFactory.NewArcher(user1.id, {x: 1, y: 7}),
 				'HarrySoldierSix': unitFactory.NewSpear(user1.id, {x: 2, y: 8}),*/
 
-				'LaurieSoldierOne': unitFactory.NewSpear(user2.id, {x: 3, y: 2}),
+				'LaurieSoldierOne': unitFactory.NewArcher(user2.id, {x: 3, y: 2}),
 				/*'LaurieSoldierTwo': unitFactory.NewArcher(user2.id, {x: 3, y: 3}),
 				'LaurieCaptain': unitFactory.NewSword(user2.id, {x: 3, y: 4}),
 				'LaurieSoldierThree': unitFactory.NewArcher(user2.id, {x: 3, y: 5}),

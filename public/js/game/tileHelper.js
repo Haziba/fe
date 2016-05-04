@@ -108,3 +108,8 @@ TileHelper = {
 		return tilePos.x >= 0 && tilePos.x < Global.ScreenSize().width && tilePos.y >= 0 && tilePos.y < Global.ScreenSize().height;
 	}
 }
+
+
+if(typeof exports !== "undefined"){
+	exports.TilesInRange = TileHelper.TilesInRange;
+}
