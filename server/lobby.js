@@ -3,7 +3,7 @@ module.exports = function(bus){
 	var pendingGames = [];
 
 	var lookForGame = function(user){
-		if(!user.id || !user.socketId){
+		if(user.id === undefined || user.socketId === undefined){
 			bus.pub('socket message', [user.socketId], 'lobby', {
 				type: 'error'
 			});

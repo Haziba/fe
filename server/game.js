@@ -1,6 +1,7 @@
 var enums = require('../public/js/game/enums.js');
 var unitFactory = require('./unitFactory.js')(enums);
 var worlds = require('./worlds.js')();
+var verify = require('./verify.js')();
 
 module.exports = function(server, debugEnv, users, socket, bus){
 	var currentGameId = 0;
@@ -27,6 +28,9 @@ module.exports = function(server, debugEnv, users, socket, bus){
 			}
 
 			bus.sub('game ' + game.id + ' action', function(msg){
+					if(!verify(game, msg))
+						return;
+
 					/*console.log("----" + msg.user.name + "----");*/
 					var response = ProcessAction(game, msg);
 					/*console.log("----RESPONSE----");
@@ -283,7 +287,7 @@ module.exports = function(server, debugEnv, users, socket, bus){
 	}
 
 	var InitGame = function(gameId, user1, user2){
-		var turnTime = 5;
+		var turnTime = 5000;
 
 		var units = {
 			'HarrySoldierOne': unitFactory.NewAxe(user1.id, {x: 2, y: 2}),
