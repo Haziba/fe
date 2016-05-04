@@ -51,7 +51,6 @@ module.exports = function(){
     },
 
     'soldier fight': function(game, user, data){
-      console.log('verify soldier fight', data);
       var attacker = game.data.units[data.unitId];
       var defender = game.data.units[data.enemyUnitId];
 
@@ -78,7 +77,7 @@ module.exports = function(){
       // confirm attacker has attacks remaining
       if(attacker.stats.fights.remaining <= 0)
         return false;
-        
+
       // confirm attacker is in range to attack
       if(!TileHelper.TilesInRange(attacker.pos, defender.pos, attacker.stats.attackRange))
         return false;
@@ -87,12 +86,23 @@ module.exports = function(){
     },
 
     'soldier done': function(game, user, data){
-      console.log('verify soldier done', data);
+      var unit = game.data.units[data.unitId];
 
-      // confirm team is currently active
-      // confirm soldier is of same team as active
-      // confirm soldier is still alive
+      // confirm owner of unit is attempting
+      if(unit.team != user.id)
+        return false;
+
+      // confirm attacker's team is currently active
+      if(game.data.activeTeam != unit.team)
+        return false;
+
+      // confirm attacker is still alive
+      if(unit.stats.health <= 0)
+        return false;
+
       // confirm soldier isn't already done
+      if(!unit.waiting)
+        return false;
 
       return true;
     },
