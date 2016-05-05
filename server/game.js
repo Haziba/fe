@@ -109,6 +109,12 @@ module.exports = function(server, debugEnv, users, socket, bus){
 			});
 
 			gameSockets.push(user.socketId);
+
+			if(game.autoCloseGameTimer){
+				console.log('clear timeout');
+				clearTimeout(game.autoCloseGameTimer);
+				game.autoCloseGameTimer = undefined;
+			}
 		}, 'game ' + game.id);
 
 		bus.sub('user disconnect ' + user.id, function(){
@@ -125,6 +131,17 @@ module.exports = function(server, debugEnv, users, socket, bus){
 			});
 
 			gameSockets.splice(gameSockets.indexOf(game.data.users[user.id].socketId), 1);
+
+			var usersConnected = 0;
+			for(var userId in game.data.users){
+				if(game.data.users[userId].connected)
+					usersConnected++;
+			}
+
+			if(usersConnected == 0)
+				game.autoCloseGameTimer = setTimeout(function(){
+					GameEnd(game);
+				}, 5 * 60 * 1000);
 		}, 'game ' + game.id);
 	}
 
@@ -332,6 +349,7 @@ module.exports = function(server, debugEnv, users, socket, bus){
 
 		var game = {
 			turnTimer: setTimeout(function(){ TimeRunOut(game); }, turnTime * 1000),
+			autoCloseGameTimer: undefined,
 			data: {
 				id: gameId,
 				turnTime: turnTime,

@@ -89,7 +89,6 @@ var NewHUD = function($controls, initData){
 		_nextTurn = (new Date()).getTime() + initData.turnTime * 1000;
 
 		_turnEndPopupTimer = 120;
-		//console.log('turn end', _team, activeTeam);
 		_activeTeam = activeTeam;
 
 		if(_team == activeTeam)
