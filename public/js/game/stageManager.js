@@ -20,6 +20,7 @@ var NewStageManager = function(initData) {
 	init(initData);
 
 	var SelectUnit = function(unit){
+		console.log('SelectUnit', _currentSelection);
 		if(!unit.Controlable()){
 			if(_currentSelection){
 				_currentSelection.SelectUnit(unit);
@@ -70,8 +71,9 @@ var NewStageManager = function(initData) {
 			SelectGround(position);
 	}, 'game');
 
-	window.bus.sub('deselect', function(){
-		_currentSelection = undefined;
+	window.bus.sub('deselect', function(unit){
+		if(_currentSelection.id == unit.id)
+			_currentSelection = undefined;
 	}, 'game');
 
 	_me.MoveUnit = function(unit, move){

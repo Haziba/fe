@@ -41,7 +41,7 @@ var NewSoldier = function(unitId, initUnit, teamNum, activeTeam)
 
 		_availableMoves = _availableFights = _displayFights = _displayMoves = [];
 
-		window.bus.pub('deselect');
+		window.bus.pub('deselect', _me);
 	}
 
 	_me.Select = function(availableFights, availableMoves){
@@ -85,6 +85,7 @@ var NewSoldier = function(unitId, initUnit, teamNum, activeTeam)
 	}
 
 	_me.SelectUnit = function(unit){
+		console.log('select unit');
 		if(!_selected)
 			return;
 
