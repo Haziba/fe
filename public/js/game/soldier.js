@@ -116,6 +116,15 @@ var NewSoldier = function(unitId, initUnit, teamNum, activeTeam)
 		_position = move.pos;
 	}
 
+	_me.SkipMove = function(){
+		_position = _queuedMovementSteps[_queuedMovementSteps.length-1];
+		_location = {x: _position.x * Global.TileSize(), y: _position.y * Global.TileSize()};
+
+		_queuedMovementSteps = [];
+
+		window.bus.pub('anim complete');
+	}
+
 	_me.Fight = function(fight){
 		_stats.fights.remaining--;
 
@@ -158,7 +167,7 @@ var NewSoldier = function(unitId, initUnit, teamNum, activeTeam)
 
 	_me.ShowHealthChange = function(newHealth){
 		if(newHealth == _stats.health)
-			return;
+			return 0;
 
 		_healthChangeAnim = {
 			diff: newHealth - _stats.health,
@@ -169,6 +178,14 @@ var NewSoldier = function(unitId, initUnit, teamNum, activeTeam)
 		};
 
 		return 40;
+	}
+
+	_me.SkipHealthChange = function(){
+		if(_healthChangeAnim){
+			ResolveHealthChange(_healthChangeAnim.newHealth);
+
+			_healthChangeAnim = undefined;
+		}
 	}
 
 	_me.MovementRange = function(){

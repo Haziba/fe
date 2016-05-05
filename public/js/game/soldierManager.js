@@ -34,10 +34,18 @@ var NewSoldierManager = function(_units, _teamNum, _activeTeam){
 		_soldiers[unitId].Move(move);
 	}
 
+	_me.SkipMove = function(unitId){
+		_soldiers[unitId].SkipMove();
+	}
+
 	_me.ResolveFight = function(data){
 		window.bus.pub('fight start', _soldiers[data.unitId], _soldiers[data.enemyUnitId], data.attackOrder);
 
 		_soldiers[data.unitId].Fight(data);
+	}
+
+	_me.SkipFight = function(){
+		window.bus.pub('fight skip');
 	}
 
 	_me.ShowHealthChange = function(units){
@@ -46,6 +54,13 @@ var NewSoldierManager = function(_units, _teamNum, _activeTeam){
 		for(var i = 0; i < units.length; i++){
 			_healthChangePause = Math.max(_healthChangePause, _soldiers[units[i].unitId].ShowHealthChange(units[i].newHealth));
 		}
+	}
+
+	_me.SkipHealthChange = function(units){
+		for(var i = 0; i < units.length; i++)
+			_soldiers[units[i].unitId].SkipHealthChange();
+
+		window.bus.pub('anim complete');
 	}
 
 	_me.SoldierDone = function(unitId){

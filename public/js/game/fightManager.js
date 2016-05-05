@@ -33,6 +33,12 @@ var NewFightManager = function(){
 					_fightStages.push(FightStage.UNIT_ONE_FORWARDS, FightStage.UNIT_ONE_BACKWARDS, FightStage.PAUSE);
 		}
 
+		window.bus.sub('fight skip', function(){
+			_fightStages = [];
+
+			window.bus.pub('anim complete');
+		});
+
 		_fightStages.push(FightStage.PAUSE);
 
 		var leftSprite = _attackerOnLeft ? unitOne.SpriteType() : unitTwo.SpriteType();

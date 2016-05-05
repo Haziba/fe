@@ -2,24 +2,36 @@ var NewAction = function(_action, _data){
 	var _me = { action: _action };
 
 	_me.Process = function(soldierManager, stageManager, hud){
+		var processing;
+
+		window.bus.subOnce('action skip', function(){
+			processing.skip();
+		}, 'action-skip');
+
+		window.bus.subOnce('action complete', function(){
+			window.bus.clearGroup('action-skip');
+		});
+
+		window.bus.pub('action start');
+
 		switch(_action){
 			case 'soldier move':
-				SoldierMove(soldierManager, stageManager);
+				processing = SoldierMove(soldierManager, stageManager);
 				break;
 			case 'soldier fight':
-				SoldierFight(soldierManager);
+				processing = SoldierFight(soldierManager);
 				break;
 			case 'soldier done':
-				SoldierDone(soldierManager);
+				processing = SoldierDone(soldierManager);
 				break;
 			case 'turn end':
-				TurnEnd(soldierManager, hud);
+				processing = TurnEnd(soldierManager, hud);
 				break;
 			case 'state change':
-				StateChange(hud);
+				processing = StateChange(hud);
 				break;
 			case 'game reset':
-				ResetGame(soldierManager, stageManager, hud);
+				processing = ResetGame(soldierManager, stageManager, hud);
 				break;
 		}
 	}
@@ -31,12 +43,22 @@ var NewAction = function(_action, _data){
 		window.bus.subOnce('anim complete', function(){
 			window.bus.pub('action complete');
 		}, 'game');
+
+		return {
+			skip: function(){
+				soldierManager.SkipMove(_data.unitId);
+			}
+		}
 	}
 
 	var SoldierFight = function(soldierManager){
+		var stage = 'fight';
+
 		soldierManager.ResolveFight(_data);
 
 		window.bus.subOnce('anim complete', function(){
+			stage = 'healthChange'
+
 			soldierManager.ShowHealthChange([{
 				unitId: _data.unitId,
 				newHealth: _data.health
@@ -45,13 +67,19 @@ var NewAction = function(_action, _data){
 				newHealth: _data.enemyHealth
 			}]);
 
-			console.log('fight complete');
-
 			window.bus.subOnce('anim complete', function(){
-				console.log('health complete');
 				window.bus.pub('action complete');
 			});
 		}, 'game');
+
+		return {
+			skip: function(){
+				if(stage == 'fight')
+					soldierManager.SkipFight();
+				if(stage == 'healthChange')
+					soldierManager.SkipHealthChange([{unitId: _data.unitId}, {unitId: _data.enemyUnitId}]);
+			}
+		}
 	}
 
 	var SoldierDone = function(soldierManager){
