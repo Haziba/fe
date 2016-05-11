@@ -25,6 +25,8 @@ var NewSprite = function(sprite){
     },
 
     ChangeAction: function(action){
+      if(spriteAction == action)
+        return;
       spriteAction = action;
       currentFrame = {x: sprite.animations[spriteAction].start.x, y: sprite.animations[spriteAction].start.y};
     },

@@ -72,7 +72,7 @@ var NewStageManager = function(initData) {
 	}, 'game');
 
 	window.bus.sub('deselect', function(unit){
-		if(_currentSelection.id == unit.id)
+		if(_currentSelection && _currentSelection.id == unit.id)
 			_currentSelection = undefined;
 	}, 'game');
 

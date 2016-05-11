@@ -22,6 +22,8 @@ var NewSoldier = function(unitId, initUnit, teamNum, activeTeam)
 
 	var _healthChangeAnim;
 
+	var _animatedSprite = NewSprite(SPRITES.SOLDIER);
+
 	var GetSprite = function(){
 		switch(_soldierType)
 		{
@@ -234,14 +236,22 @@ var NewSoldier = function(unitId, initUnit, teamNum, activeTeam)
 	var animateMovement = function(){
 		var nextLoc = {x: _queuedMovementSteps[0].x * Global.TileSize(), y: _queuedMovementSteps[0].y * Global.TileSize()};
 
-		if(nextLoc.x > _location.x)
+		if(nextLoc.x > _location.x){
+			_animatedSprite.ChangeAction(SPRITE_ACTION.WALK_RIGHT);
 			_location.x = Math.min(nextLoc.x, _location.x + _speed);
-		if(nextLoc.x < _location.x)
+		}
+		if(nextLoc.x < _location.x){
+			_animatedSprite.ChangeAction(SPRITE_ACTION.WALK_LEFT);
 			_location.x = Math.max(nextLoc.x, _location.x - _speed);
-		if(nextLoc.y > _location.y)
+		}
+		if(nextLoc.y > _location.y){
+			_animatedSprite.ChangeAction(SPRITE_ACTION.WALK_DOWN);
 			_location.y = Math.min(nextLoc.y, _location.y + _speed);
-		if(nextLoc.y < _location.y)
+		}
+		if(nextLoc.y < _location.y){
+			_animatedSprite.ChangeAction(SPRITE_ACTION.WALK_UP);
 			_location.y = Math.max(nextLoc.y, _location.y - _speed);
+		}
 
 		if(nextLoc.x == _location.x && nextLoc.y == _location.y){
 			_queuedMovementSteps.splice(0, 1);
@@ -249,6 +259,8 @@ var NewSoldier = function(unitId, initUnit, teamNum, activeTeam)
 			if(_queuedMovementSteps.length == 0){
 				if(_doneAfterMoving)
 					_waiting = false;
+
+				_animatedSprite.ChangeAction(SPRITE_ACTION.STAND);
 
 				window.bus.pub('anim complete');
 			}
@@ -267,6 +279,8 @@ var NewSoldier = function(unitId, initUnit, teamNum, activeTeam)
 	}
 
 	_me.Update = function(){
+		_animatedSprite.NextFrame();
+
 		if(_queuedMovementSteps.length > 0)
 			animateMovement();
 
@@ -283,6 +297,7 @@ var NewSoldier = function(unitId, initUnit, teamNum, activeTeam)
 			return;
 
 		SpriteHandler.Draw(GetSprite(), _location);
+		_animatedSprite.Draw(_location);
 
 		if(!_waiting){
 			SpriteHandler.Draw(Sprite.FADE_OUT, _location);
