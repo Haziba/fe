@@ -15,11 +15,18 @@ App.controller('GameController', function($scope, $rootScope, $location, bus){
 	var battleBackground = new Image();
 	battleBackground.src = "img/FightBackground.png";
 
+	var soldierSprites = new Image();
+	soldierSprites.src = "img/soldier_sprites.png";
+
 	var $gameWrapper = $("#gameWrapper");
 
-	Promise.all([sprite, battleBackground]).then(function(){
+	Promise.all([sprite, battleBackground, soldierSprites]).then(function(){
 		InputHandler.Initialise(Global.canvas);
-		SpriteHandler.Initialise(context, sprite, battleBackground);
+
+		var spriteSheetCollection = {};
+		spriteSheetCollection[SPRITE_SHEETS.SOLDIER] = soldierSprites
+
+		SpriteHandler.Initialise(context, sprite, battleBackground, spriteSheetCollection);
 
 		spritesInitialised = true;
 

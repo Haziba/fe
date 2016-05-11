@@ -1,27 +1,32 @@
 var SpriteHandler = {
-	Initialise: function(context, spriteSheet, battleBackground){
+	Initialise: function(context, spriteSheet, battleBackground, spriteSheetCollection){
 		this.context = context;
 		this.spriteSheet = spriteSheet;
 		//todo: Not good implementation, but doesn't suit the spritesheet
 		this.battleBackground = battleBackground;
+		this.spriteSheetCollection = spriteSheetCollection;
 	},
-	
+
 	Clear: function(){
 		this.context.clearRect(0, 0, 800, 800);
 	},
-	
+
 	Draw: function(spriteId, location){
 		this.context.drawImage(this.spriteSheet, spriteId.x * 40, spriteId.y * 40, 40, 40, location.x, location.y, Global.TileSize(), Global.TileSize());
 	},
-	
+
 	DrawBattleBackground: function(location){
 		this.context.drawImage(this.battleBackground, location.x - this.battleBackground.width/2, location.y - this.battleBackground.height/2);
 	},
-	
+
 	DrawInRect: function(spriteId, location, rect){
 		this.context.drawImage(this.spriteSheet, spriteId.x * 40 + rect.x, spriteId.y * 40 + rect.y, rect.width, rect.height, location.x, location.y, rect.width / (40 / Global.TileSize()), rect.height / (40 / Global.TileSize()));
 	},
-	
+
+	DrawSprite: function(spriteSheet, spriteLocation, location, tileSize){
+		this.context.drawImage(this.spriteSheetCollection[spriteSheet], spriteLocation.x * tileSize.width, spriteLocation.y * tileSize.height, tileSize.width, tileSize.height, location.x, location.y, tileSize.width, tileSize.height);
+	},
+
 	//todo: Move this elsewhere, shouldn't live here
 	GetContext: function(){
 		return this.context;
