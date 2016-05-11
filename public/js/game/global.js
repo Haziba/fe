@@ -22,17 +22,17 @@ var Global = {
 	},
 	SetScreenSize: function(screenSize){
 		this.screenSize = screenSize;
-		
+
 		var context = this.canvas.getContext("2d");
-		
+
 		this.canvasSize = {width: this.TileSize() * this.ScreenSize().width, height: this.TileSize() * this.ScreenSize().height};
-		
+
 		context.width = this.canvas.width = this.canvasSize.width;
 		context.height = this.canvas.height = this.canvasSize.height;
-		
+
 		$(this.canvas).css({
-			width: this.TileSize() * this.ScreenSize().width,
-			height: this.TileSize() * this.ScreenSize().height,
+			maxWidth: this.TileSize() * this.ScreenSize().width,
+			maxHeight: this.TileSize() * this.ScreenSize().height,
 			/*"margin-left": -this.TileSize() * this.ScreenSize().width / 2,
 			"margin-top": -this.TileSize() * this.ScreenSize().height / 2*/
 		});
