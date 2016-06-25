@@ -2,6 +2,24 @@ App.controller('LobbyController', function($scope, $rootScope, $location, bus){
 	$scope.user = $rootScope.user;
 	$scope.lookingForGame = false;
 	$scope.foundGame = false;
+	$scope.queueTimer = "-- seconds in queue";
+
+	queueTimer = 0;
+
+	var setQueueTime = function(time){
+		if(time < 0){
+			$scope.queueTimer = "-- seconds in queue";
+			clearInterval(queueTimer);
+		} else {
+			$scope.queueTimer = time + " seconds in queue";
+
+			queueTimer = setTimeout(function(){
+				setQueueTime(time + 1);
+			}, 1000);
+		}
+
+		$scope.$apply();
+	}
 
 	$('#joinQueue').click(function(){
 		$scope.lookingForGame = true;
@@ -10,20 +28,23 @@ App.controller('LobbyController', function($scope, $rootScope, $location, bus){
 			type: 'lookForGame'
 		});
 
-		$scope.status = 'Looking...';
-		$scope.$apply();
+		setQueueTime(0);
 	});
 
 	$('#acceptGame').click(function(){
 		bus.pub('socket message', 'lobby', {
 			type: 'acceptGame'
 		});
+
+		setQueueTime(-1);
 	});
 
 	$('#rejectGame').click(function(){
 		bus.pub('socket message', 'lobby', {
 			type: 'rejectGame'
 		});
+
+		setQueueTime(-1);
 	});
 
 	if($rootScope.subbedControllers['lobby'])
@@ -58,7 +79,7 @@ App.controller('LobbyController', function($scope, $rootScope, $location, bus){
 
 				$scope.lookingForGame = false;
 				$scope.foundGame = false;
-				$scope.status = "";
+				setQueueTime(-1);
 
 				$scope.$apply();
 				break;
@@ -66,7 +87,4 @@ App.controller('LobbyController', function($scope, $rootScope, $location, bus){
 	}, 'lobbyCont');
 
 	bus.pub('lobby subbed');
-
-
-	$scope.status = 'Not looking';
 });
