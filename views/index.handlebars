@@ -45,19 +45,34 @@
 		<!-- End game code -->
 
 		<link rel="stylesheet" href="css/main.css" />
+		<link href='https://fonts.googleapis.com/css?family=Metamorphous' rel='stylesheet' type='text/css'>
 
 	</head>
 
 	<body ng-app="App">
-		<div class="container">
-			<div class="page-header">
-				<div class="col-lg-8 col-md-7 col-sm-6">
-					<h1>Land Wars</h1>
-				</div>
-			</div>
+		<div class="wall"></div>
 
-			<div class="ng-view well bs-component">
-			</div>
+		<div class="container-fluid wrapper">
+			<header>
+				<div>
+					<h1 class="title">Land Wars</h1>
+				</div>
+			</header>
+
+			<nav>
+				<ul class="nav nav-tabs">
+					<li class="active"><a href="#">Lobby</a></li>
+					<li><a href="#">Game</a></li>
+					<li><a href="#">Account</a></li>
+					<li><a href="#">Support</a></li>
+				</ul>
+			</nav>
+
+			<main class="ng-view bs-component">
+			</main>
+
+			<footer>
+			</footer>
 		</div>
 	</body>
 
