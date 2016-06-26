@@ -206,3 +206,7 @@ footer {
   background-color: #DDD;
   color: #000;
 }
+
+#gameWrapper {
+  margin-top: 30px;
+}
