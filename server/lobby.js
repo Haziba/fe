@@ -10,8 +10,11 @@ module.exports = function(bus){
 			return;
 		}
 
-		if(!!usersLookingForGame.find(function(u){ u.userId == user.userId }))
-			return;
+		for(var i = 0; i < usersLookingForGame.length; i++)
+			if(usersLookingForGame[i].id == user.id) {
+				console.log("User " + user.id + " attempting to join jobby but already in queue");
+				return;
+			}
 
 		usersLookingForGame.push(user);
 
@@ -116,6 +119,8 @@ module.exports = function(bus){
 	}
 
 	bus.sub('lobby action', function(msg){
+		console.log("Lobby action: ", msg);
+
 		switch(msg.type){
 			case 'lookForGame':
 				lookForGame(msg.user);
