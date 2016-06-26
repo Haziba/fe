@@ -138,7 +138,7 @@ var NewHUD = function($controls, initData){
 			}
 		}
 
-		$turnTimer.text(Math.floor((_nextTurn - (new Date()).getTime()) / 1000) + 1);
+		$turnTimer.text(Math.floor((_nextTurn - (new Date()).getTime()) / 1000) + 1 + "s");
 
 		if(_turnEndPopupTimer > 0)
 			_turnEndPopupTimer--;

@@ -31,7 +31,7 @@ App.controller('GameController', function($scope, $rootScope, $location, bus){
 		spritesInitialised = true;
 
 		if(initData)
-			StartGame($("#gameControls"), initData, $rootScope.user);
+			StartGame($gameWrapper, initData, $rootScope.user);
 	});
 
 	if($rootScope.subbedControllers['game'])
@@ -44,7 +44,7 @@ App.controller('GameController', function($scope, $rootScope, $location, bus){
 		initData = data;
 
 		if(spritesInitialised)
-			StartGame($("#gameControls"), initData, $rootScope.user);
+			StartGame($gameWrapper, initData, $rootScope.user);
 	}, 'gameCont');
 
 	bus.sub('socket game', function(msg){
@@ -53,7 +53,7 @@ App.controller('GameController', function($scope, $rootScope, $location, bus){
 				initData = msg.data;
 
 				if(spritesInitialised)
-					StartGame($("#gameControls"), initData, $rootScope.user);
+					StartGame($gameWrapper, initData, $rootScope.user);
 				break;
 			case 'action':
 				console.log('action', msg);

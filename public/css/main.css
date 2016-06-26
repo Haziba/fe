@@ -207,6 +207,8 @@ footer {
   color: #000;
 }
 
-#gameWrapper {
-  margin-top: 30px;
+.turn-timer {
+  text-align: center;
+  width: 100px;
+  margin: 0px auto 10px auto;
 }
