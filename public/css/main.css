@@ -58,30 +58,38 @@ h2 {
   text-shadow: 2px 2px 3px #000;
 }
 
-.wall {
-  width: 100%;
-  height: calc(100% - 25vw);
-  background: url('../img/WallTop.png')  repeat-x 61% 0% / 100% auto border-box,
-          url('../img/WallRepeat.png')  repeat-y 5% 0% / 100% auto content-box;
-  padding-top: 8%;
-
-  top: 25vw;
-
-  position: absolute;
-  z-index: -1;
-}
-
 @media (max-width: 768px) {
   .page-header {
     margin: 21px 0 12px;
   }
 }
 
+html {
+  height: 100%;
+  min-height: 100%;
+}
+
 body {
   background-repeat: no-repeat;
-  background: linear-gradient(to top, rgba(2, 0, 0, 0.4), rgba(225, 255, 255, 0.1)), url('../img/Background.jpg') 0px -5vw / 100% auto;
+  background: linear-gradient(to top, rgba(2, 0, 0, 0.4), rgba(225, 255, 255, 0.1)),
+    url('../img/Background.jpg') 0px -5vw / 100% auto;
   font-family: 'Metamorphous', cursive;
   min-width: 550px;
+  position: relative;
+}
+
+.wall {
+  flex: 1;
+  width: 100%;
+  background: url('../img/WallTop.png')  repeat-x 61% 0% / 100% auto border-box,
+          url('../img/WallRepeat.png')  repeat-y 5% 0% / 100% auto content-box;
+  padding-top: 8%;
+
+  z-index: -1;
+
+  position: absolute;
+  top: 25vw;
+  height: calc(100% - 25vw);
 }
 
 hr {
@@ -95,7 +103,6 @@ hr {
   width: 100%;
   display: flex;
   flex-flow: column;
-  height: 100%;
 }
 
 header {
