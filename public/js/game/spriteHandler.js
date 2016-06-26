@@ -15,6 +15,12 @@ var SpriteHandler = {
 		this.context.drawImage(this.spriteSheet, spriteId.x * 40, spriteId.y * 40, 40, 40, location.x, location.y, Global.TileSize(), Global.TileSize());
 	},
 
+	DrawAlpha: function(spriteId, location, alpha){
+		this.context.globalAlpha = alpha;
+		this.Draw(spriteId, location);
+		this.context.globalAlpha = 1;
+	},
+
 	DrawBattleBackground: function(location){
 		this.context.drawImage(this.battleBackground, location.x - this.battleBackground.width/2, location.y - this.battleBackground.height/2);
 	},

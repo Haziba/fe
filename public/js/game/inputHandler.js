@@ -75,30 +75,37 @@ var InputHandler = {
 		return this.mouseOver;
 	},
 
-    MouseDown: function(){
-        return this.mouseDown;
-    },
+  MouseDown: function(){
+      return this.mouseDown;
+  },
 
-    MouseClicked: function(){
-        return this.mouseDown && !this.prevMouseDown;
-    },
+  MouseClicked: function(){
+      return this.mouseDown && !this.prevMouseDown;
+  },
 
-    MouseReleased: function(){
-        return !this.mouseDown && this.prevMouseDown;
-    },
+  MouseReleased: function(){
+      return !this.mouseDown && this.prevMouseDown;
+  },
 
-    MousePosition: function(){
-				var $canvas = $(this.canvas);
-				var canvasRatio = {
-					width: $canvas.width() / parseInt($canvas.css('max-width')),
-					height: $canvas.height() / parseInt($canvas.css('max-height'))
-				};
+	MouseWithinRect: function(rect){
+		return 	this.mousePosition.x >= rect.x &&
+						this.mousePosition.y >= rect.y &&
+						this.mousePosition.x < rect.x + rect.width &&
+						this.mousePosition.y < rect.y + rect.height;
+	},
 
-        return {
-					x: this.mousePosition.x / canvasRatio.width,
-					y: this.mousePosition.y / canvasRatio.height
-				};
-    },
+  MousePosition: function(){
+			var $canvas = $(this.canvas);
+			var canvasRatio = {
+				width: $canvas.width() / parseInt($canvas.css('max-width')),
+				height: $canvas.height() / parseInt($canvas.css('max-height'))
+			};
+
+      return {
+				x: this.mousePosition.x / canvasRatio.width,
+				y: this.mousePosition.y / canvasRatio.height
+			};
+  },
 
 	SetMouseClickable: function(clickable){
 		$(this.canvas).css('cursor', clickable ? 'pointer' : 'inherit');

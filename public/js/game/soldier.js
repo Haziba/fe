@@ -20,6 +20,8 @@ var NewSoldier = function(unitId, initUnit, teamNum, activeTeam)
 	var _speed = 2.5;
 	var _doneAfterMoving = false;
 
+	var _hovered = false;
+
 	var _healthChangeAnim;
 
 	var _animatedSprite = NewSprite(SPRITES.SOLDIER);
@@ -287,8 +289,12 @@ var NewSoldier = function(unitId, initUnit, teamNum, activeTeam)
 		if(_healthChangeAnim)
 			animateHealthChange();
 
+		var spriteRect = {x: _location.x, y: _location.y, width: Global.TileSize(), height: Global.TileSize()};
+
+		_hovered = InputHandler.MouseWithinRect(spriteRect);
+
 		if(_alive)
-			InputHandler.AddClickableArea({x: _location.x, y: _location.y, width: Global.TileSize(), height: Global.TileSize()});
+			InputHandler.AddClickableArea(spriteRect);
 	}
 
 	_me.Draw = function(){
@@ -296,8 +302,11 @@ var NewSoldier = function(unitId, initUnit, teamNum, activeTeam)
 			// Show gravestone maybe?
 			return;
 
-		SpriteHandler.Draw(GetSprite(), _location);
 		_animatedSprite.Draw(_location);
+
+		if(_hovered){
+			SpriteHandler.DrawAlpha(GetSprite(), _location);
+		}
 
 		if(!_waiting){
 			SpriteHandler.Draw(Sprite.FADE_OUT, _location);
