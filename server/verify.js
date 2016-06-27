@@ -120,7 +120,12 @@ module.exports = function(){
 
   // action {type, data}
   return function(game, action){
-    return verify[action.type](game, action.user, action.data);
+    var valid = verify[action.type](game, action.user, action.data);
+
+    if(!valid)
+      console.log("Action invalid: ", action);
+
+    return valid;
   }
 }
 
