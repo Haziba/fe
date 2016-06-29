@@ -23,6 +23,37 @@ module.exports = function(models){
 			this._init = true;
 		},
 
+		all: function(model){
+			var that = this;
+
+			return new Promise(function(resolve, reject){
+				if(!that._db)
+					reject("DB not started");
+
+				var cursor = that._db.collection(model.collection).find();
+
+				var objs = [];
+
+				cursor.each(function(err, obj){
+					if(err != null)
+						reject(err);
+					else {
+						if(obj != null && obj.modelVersion < model.modelVersion){
+							obj = model.dbUpdate(obj);
+
+							that.set(model, obj);
+						}
+
+						if(obj != null){
+							objs.push(obj);
+						} else {
+							resolve(objs);
+						}
+					}
+				});
+			})
+		},
+
 		getById: function(model, id){
 			var that = this;
 

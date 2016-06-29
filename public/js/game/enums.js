@@ -16,8 +16,13 @@ var GameState = {
 	FINISHED_SLAUGHTER: 2
 }
 
+var Unit = {
+	BARBARIAN: 0,
+}
+
 if(typeof exports !== "undefined"){
 	exports.Soldier = Soldier;
 	exports.Team = Team;
 	exports.GameState = GameState;
+	exports.Unit = Unit;
 }

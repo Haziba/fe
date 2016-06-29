@@ -1,4 +1,4 @@
 module.exports =
 {
-	User: require('./user.js')
+	User: require('./models/user.js'),
 };

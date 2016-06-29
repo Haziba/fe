@@ -1,5 +1,21 @@
 module.exports = function(db, bus){
 	var _me = {
+		all: function(){
+			return new Promise(function(resolve, reject){
+				db.all(db.models.User).then(function(users){
+					for(var i = 0; i < users.length; i++){
+						users[i].inGame = false;
+
+						users[users[i].id] = users[i];
+					}
+
+					resolve(users);
+				}, function(err){
+					console.log('Failed to get all users: ', err);
+				})
+			})
+		},
+
 		getById: function(userId){
 			return new Promise(function(resolve, reject){
 				if(users[userId]){
