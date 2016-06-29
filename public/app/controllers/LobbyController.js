@@ -4,6 +4,8 @@ App.controller('LobbyController', function($scope, $rootScope, $location, bus){
 	$scope.foundGame = false;
 	$scope.queueTimer = "-- seconds in queue";
 
+  $rootScope.nav = "lobby";
+
 	queueTimer = 0;
 
 	var setQueueTime = function(time){

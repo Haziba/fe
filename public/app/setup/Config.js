@@ -21,6 +21,15 @@ App.config(['$routeProvider',
 						$location.path('/lobby');
 				}
 			}
+		}).when('/units', {
+			templateUrl: './app/templates/units.html',
+			controller: 'UnitController',
+			resolve: {
+				data: function($rootScope){
+				//	if(!$rootScope.user.inGame)
+				//		$location.path('/units')
+				}
+			}
 		}).otherwise({
 			redirectTo: '/lobby'
 		});
