@@ -7,10 +7,11 @@ var path = require('path');
 var express = require('express');
 var exphbr = require('express-handlebars');
 var db = require('./server/db.js')(models);
-var users = require('./server/users.js')(db, bus);
-var input = require('./server/input.js')(users);
-require('./server/passport.js')(express, app, users, models);
-require('./server/localLogin.js')(app, users, models);
+var managers = require('./server/managers.js')(db, bus);
+var libraries = require('./server/libraries.js')();
+var input = require('./server/input.js')(managers, libraries);
+require('./server/passport.js')(express, app, managers.User, models);
+require('./server/localLogin.js')(app, managers.User, models, libraries);
 
 require('./server/lobby.js')(bus);
 var Game = require('./server/game.js');
@@ -27,9 +28,9 @@ app.engine('handlebars', hbs.engine);
 app.set('view engine', 'handlebars');
 
 app.get('/', function(req, res){
-	console.log('hit /');
 	res.render('index', {
-		user: req.user
+		user: req.user,
+    items: libraries.Item.all(),
 	});
 });
 
@@ -57,9 +58,10 @@ app.set('ip', ip);
 var server = http.Server(app);
 
 var socket = require('./server/socket.js')(bus, server);
-var game = Game(server, debugEnv, users, socket, bus);
+var game = Game(server, debugEnv, managers.User, socket, bus);
 
-require('./server/api/users/routes.js')(app, express, db, users);
+require('./server/api/users/routes.js')(app, express, db, managers.User);
+require('./server/api/units/routes.js')(app, express, db, managers.User);
 
 server.listen(app.get('port'), app.get('ip'), function () {
   var stdin = process.openStdin();

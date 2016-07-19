@@ -1,0 +1,12 @@
+.units {
+  width: 100%;
+  text-align: center;
+}
+
+.units th {
+  text-align: center;
+}
+
+.units .unitImg {
+  width: 75px;
+}

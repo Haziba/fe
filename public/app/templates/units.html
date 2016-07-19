@@ -1,3 +1,51 @@
-Bawlllzzzzz
+<table class="units">
+  <thead>
+    <th></th>
+    <th>Name</th>
+    <th>Type</th>
+    <th>Chest</th>
+    <th>Helm</th>
+    <th>Right<br />Hand</th>
+    <th>Left<br />Hand</th>
+  </thead>
 
-Location: <span ng-bind="nav"></span>
+  <tbody>
+    <tr ng-repeat="unit in units" data-unit-id="{{$index}}">
+      <td><img class="unitImg" ng-src="img/Units/{{enums.Unit[unit.type]}}/FullImage.png" /></td>
+      <td ng-bind="unit.name"></td>
+      <td ng-bind="enums.Unit[unit.type]"></td>
+      <td><button ng-click="equipItem($index, enums.EquipmentSlot.CHEST)" class="btn btn-default btn-xs" data-slot="{{enums.EquipmentSlot.CHEST}}" ng-bind="itemName(unit, enums.EquipmentSlot.CHEST)"></button></td>
+      <td><button ng-click="equipItem($index, enums.EquipmentSlot.HELMET)" class="btn btn-default btn-xs" data-slot="{{enums.EquipmentSlot.HELMET}}" ng-bind="itemName(unit, enums.EquipmentSlot.HELMET)"></button></td>
+      <td><button ng-click="equipItem($index, enums.EquipmentSlot.RIGHT_HAND)" class="btn btn-default btn-xs" data-slot="{{enums.EquipmentSlot.RIGHT_HAND}}" ng-bind="itemName(unit, enums.EquipmentSlot.RIGHT_HAND)"></button></td>
+      <td><button ng-click="equipItem($index, enums.EquipmentSlot.LEFT_HAND)" class="btn btn-default btn-xs" data-slot="{{enums.EquipmentSlot.LEFT_HAND}}" ng-bind="itemName(unit, enums.EquipmentSlot.LEFT_HAND)"></button></td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="modal fade" id="equipItem" tabindex="-1" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">EQUIP <span class="slotName"></span></h4>
+      </div>
+      <div class="modal-body">
+        <table class="items">
+          <thead>
+            <tr>
+              <th>Item Name</th>
+              <th>Quantity</th>
+            </tr>
+          </thead>
+
+          <tbody>
+          </tbody>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->

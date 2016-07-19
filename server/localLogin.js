@@ -1,4 +1,4 @@
-module.exports = function(app, users, models){
+module.exports = function(app, users, models, libraries){
   app.get('/locallogin', function(req, res){
     if(!req.param('userId')){
       res.status(403).send('No userId');
@@ -12,7 +12,7 @@ module.exports = function(app, users, models){
         user.localLogins++;
 
         users.set(user).then(function(user){
-          res.render('index', {user: user});
+          res.render('index', {user: user, items: libraries.Item.all()});
         });
       }
     });

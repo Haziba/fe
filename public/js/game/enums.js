@@ -20,9 +20,17 @@ var Unit = {
 	BARBARIAN: 0,
 }
 
+var EquipmentSlot = {
+	CHEST: 0,
+	LEFT_HAND: 1,
+	RIGHT_HAND: 2,
+	HELMET: 3,
+}
+
 if(typeof exports !== "undefined"){
 	exports.Soldier = Soldier;
 	exports.Team = Team;
 	exports.GameState = GameState;
 	exports.Unit = Unit;
+	exports.EquipmentSlot = EquipmentSlot;
 }

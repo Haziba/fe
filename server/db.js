@@ -25,7 +25,6 @@ module.exports = function(models){
 
 		all: function(model){
 			var that = this;
-
 			return new Promise(function(resolve, reject){
 				if(!that._db)
 					reject("DB not started");
@@ -38,8 +37,8 @@ module.exports = function(models){
 					if(err != null)
 						reject(err);
 					else {
-						if(obj != null && obj.modelVersion < model.modelVersion){
-							obj = model.dbUpdate(obj);
+						if(obj != null){
+							obj = model.modelUpdate(obj);
 
 							that.set(model, obj);
 						}
@@ -67,8 +66,8 @@ module.exports = function(models){
 					if(err != null)
 						reject(err);
 					else{
-						if(obj != null && obj.modelVersion < model.modelVersion){
-							obj = model.dbUpdate(obj);
+						if(obj != null){
+							obj = model.modelUpdate(obj);
 
 							that.set(model, obj);
 						}

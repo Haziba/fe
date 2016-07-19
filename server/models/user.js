@@ -1,9 +1,11 @@
-var Unit = require('./unit.js');
-var enums = require('../..//public/js/game/enums.js');
+var unit = require('./unit.js');
+var inventoryItem = require('./inventoryItem.js');
+var enums = require('../../public/js/game/enums.js');
+var libraries = require('../libraries.js')();
 
 module.exports =
 {
-	'modelVersion': 5,
+	'modelVersion': 11,
 	'collection': 'users',
 
 	'new': function(userId, userName){
@@ -12,9 +14,13 @@ module.exports =
 		user.modelVersion = this.modelVersion;
 		user.id = userId;
 		user.name = userName;
+
 		user.units = [];
 		for(var i = 0; i < 3; i++)
-			user.units.push(new Unit(enums.Unit.BARBARIAN));
+			user.units.push(unit.new(enums.Unit.BARBARIAN));
+
+		user.inventory = [inventoryItem.new(libraries.Item.getByName("Wooden Sword").id, 1)];
+
 		user.token = this.newToken();
 		user.fbLogins = 0;
 		user.localLogins = 0;
@@ -22,23 +28,28 @@ module.exports =
 		return user;
 	},
 
-	'dbUpdate': function(user){
+	'modelUpdate': function(user){
 		switch(user.modelVersion){
-			case 0:
-				user.units = [0,1,3,2,3,1,0];
 			case 1:
 				user.token = this.newToken();
 			case 2:
 				user.fbLogins = 0;
 			case 3:
 				user.localLogins = 0;
-			case 4:
+			case 7:
 				user.units = [];
 				for(var i = 0; i < 3; i++)
-					user.units.push(new Unit(enums.Unit.BARBARIAN));
+					user.units.push(unit.new(enums.Unit.BARBARIAN));
+			case 10:
+				user.inventory = [inventoryItem.new(libraries.Item.getByName("Wooden Sword").id, 1)];
 		}
 
 		user.modelVersion = this.modelVersion;
+
+		for(var i = 0; i < user.units.length; i++)
+			user.units[i] = unit.modelUpdate(user.units[i]);
+		for(var i = 0; i < user.inventory.length; i++)
+			user.inventory[i] = inventoryItem.modelUpdate(user.inventory[i]);
 
 		return user;
 	},

@@ -2,7 +2,7 @@ App.run(function(bus, $rootScope){
 		var socket = io();
 
 		var areas = ['lobby', 'game'];
-		
+
 		$rootScope.subbedControllers = {};
 
 		for(var i = 0; i < areas.length; i++)
@@ -66,4 +66,22 @@ App.run(function(bus, $rootScope){
 					$location.path('/lobby');
 				}
 			});
-		});
+		})
+
+	.run(function($rootScope){
+		$rootScope.enums = {
+			Soldier: Soldier,
+			Team: Team,
+			GameState: GameState,
+			Unit: Unit,
+			EquipmentSlot: EquipmentSlot,
+		};
+
+		for(var key in $rootScope.enums){
+			for(var enumKey in $rootScope.enums[key]){
+				$rootScope.enums[key][$rootScope.enums[key][enumKey]] = enumKey;
+			}
+		}
+
+		$rootScope.items = window.items;
+	});

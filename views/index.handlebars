@@ -6,6 +6,7 @@
 		<script src="js/lib/angular.min.js"></script>
 		<script src="js/lib/angular-route.min.js"></script>
 		<script src="js/lib/angular-cookies.min.js"></script>
+		<script src="js/lib/bootstrap.min.js"></script>
 		<script src="socket.io/socket.io.js"></script>
 
 		<script src="app/app.js"></script>
@@ -17,7 +18,7 @@
 		<script src="app/controllers/CreateController.js"></script>
 		<script src="app/controllers/LobbyController.js"></script>
 		<script src="app/controllers/GameController.js"></script>
-		<script src="app/controllers/UnitsController.js"></script>
+		<script src="app/controllers/UnitController.js"></script>
 
 		<!-- Start game code -->
 		<script src="js/game/enums.js"></script>
@@ -46,7 +47,8 @@
 		<!-- End game code -->
 
 		<link rel="stylesheet" href="css/main.css" />
-		<link href='https://fonts.googleapis.com/css?family=Metamorphous' rel='stylesheet' type='text/css'>
+		<link rel="stylesheet" href="css/units.css" />
+		<!--<link href='https://fonts.googleapis.com/css?family=Metamorphous' rel='stylesheet' type='text/css'>-->
 
 	</head>
 
@@ -80,7 +82,8 @@
 	</body>
 
 	<script>
-		// Not a fan of this way of getting the user into angular, but it'll do for now
+		// Not a fan of this way of getting data into angular, but it'll do for now
 		window.user = {{{toJSON user}}};
+		window.items = {{{toJSON items}}};
 	</script>
 </html>
