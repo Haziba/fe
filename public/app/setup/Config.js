@@ -3,13 +3,21 @@ App.config(['$routeProvider',
 		$routeProvider.when('/create', {
 			templateUrl: './app/templates/create.html',
 			controller: 'CreateController'
+		}).when('/play', {
+			templateUrl: './app/templates/play.html',
+			controller: 'PlayController',
+			resolve: {
+				data: function($rootScope){
+					if($rootScope.user.inGame)
+						$location.path('/game');
+				}
+			}
 		}).when('/lobby', {
 			templateUrl: './app/templates/lobby.html',
 			controller: 'LobbyController',
 			resolve: {
 				data: function($rootScope){
-					if($rootScope.user.inGame)
-						$location.path('/game');
+					$location.path('/play');
 				}
 			}
 		}).when('/game', {
@@ -18,7 +26,7 @@ App.config(['$routeProvider',
 			resolve: {
 				data: function($rootScope){
 					if(!$rootScope.user.inGame)
-						$location.path('/lobby');
+						$location.path('/play');
 				}
 			}
 		}).when('/units', {

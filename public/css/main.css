@@ -138,7 +138,10 @@ nav>ul.nav-tabs>li>a:hover {
   background-color: #444;
 }
 
-nav>ul.nav-tabs>li.active>a, nav>ul.nav-tabs>li.active>a:hover, nav>ul.nav-tabs>li.active>a:active, nav>ul.nav-tabs>li.active>a:focus {
+nav>ul.nav-tabs>li.active>a,
+nav>ul.nav-tabs>li.active>a:hover,
+nav>ul.nav-tabs>li.active>a:active,
+nav>ul.nav-tabs>li.active>a:focus {
   background-color: initial;
   color: #FFF;
   cursor: pointer;
