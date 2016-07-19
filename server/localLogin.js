@@ -12,7 +12,11 @@ module.exports = function(app, users, models, libraries){
         user.localLogins++;
 
         users.set(user).then(function(user){
-          res.render('index', {user: user, items: libraries.Item.all()});
+          res.render('index', {
+            user: user,
+            items: libraries.Item.all(),
+            levels: libraries.Level.all(),
+          });
         });
       }
     });

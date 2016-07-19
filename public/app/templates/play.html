@@ -2,6 +2,10 @@
 
 <hr />
 
-<div class="play-game">
-  <button id="joinQueue" class="btn btn-primary btn-major" ng-disabled="lookingForGame">Play Game</button>
-</div>
+<ul class="list-inline">
+  <li ng-repeat="level in levels">
+    <button class="btn btn-primary" ng-disabled="!(user.levels[level.id-1] || level.id == 1)">
+      Play<br />{{level.name}}
+    </button>
+  </li>
+</ul>

@@ -5,7 +5,7 @@ var libraries = require('../libraries.js')();
 
 module.exports =
 {
-	'modelVersion': 11,
+	'modelVersion': 12,
 	'collection': 'users',
 
 	'new': function(userId, userName){
@@ -42,6 +42,8 @@ module.exports =
 					user.units.push(unit.new(enums.Unit.BARBARIAN));
 			case 10:
 				user.inventory = [inventoryItem.new(libraries.Item.getByName("Wooden Sword").id, 1)];
+			case 11:
+				user.levelStatus = [];
 		}
 
 		user.modelVersion = this.modelVersion;

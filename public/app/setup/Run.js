@@ -84,4 +84,5 @@ App.run(function(bus, $rootScope){
 		}
 
 		$rootScope.items = window.items;
+		$rootScope.levels = window.levels;
 	});

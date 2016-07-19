@@ -31,6 +31,7 @@ app.get('/', function(req, res){
 	res.render('index', {
 		user: req.user,
     items: libraries.Item.all(),
+    levels: libraries.Level.all(),
 	});
 });
 
